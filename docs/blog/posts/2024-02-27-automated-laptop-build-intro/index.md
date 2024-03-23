@@ -18,7 +18,7 @@ Thanks to [Equal Experts](https://equalexperts.com) for supporting this content.
 
 {{< ee >}}
 
-<!--more-->
+<!-- more -->
 
 ## In the Beginning
 

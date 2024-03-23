@@ -13,7 +13,7 @@ tags:
 
 TBC
 
-<!--more-->
+<!-- more -->
 
 
 ## The Snapshot Report

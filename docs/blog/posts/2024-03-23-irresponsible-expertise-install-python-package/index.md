@@ -13,7 +13,7 @@ Are we experts teaching safe computing? Or are we empowering the less-experience
 
 Part of an exploration of supply chain security.
 
-<!--more-->
+<!-- more -->
 
 Before I start, in case it wasn't obvious: **The views and opinions expressed in this blog are solely those of the author. They do not necessarily reflect the views of my employer, clients or other associates.**
 

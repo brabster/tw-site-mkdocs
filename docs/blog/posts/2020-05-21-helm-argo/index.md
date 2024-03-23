@@ -14,10 +14,10 @@ summary: |
   Helm also supports templating values which can be really helpful - but that's where we run into a problem. Helm uses mustache-style string interpolation, and so does Argo.
 
 ---
-
-{{< res-figure figcaption="Photo by https://unsplash.com/@clicclac" >}}
-  {{< img src="cover.jpg" alt="White and pink sailboat at sea during the daytime" >}}
-{{< /res-figure >}}
+<figure markdown="span">
+  ![White and pink sailboat at sea during the daytime](./cover.jpg)
+  <figcaption>Photo by https://unsplash.com/@clicclac</figcaption>
+</figure>
 
 Argo is a lightweight, Kubernetes-native workflow solution.
 Workflows are implemented as Kubernetes manifests, so Helm is a natural choice for packaging them.
@@ -103,8 +103,9 @@ TEST SUITE: None
 ```
 Running the workflow shows that both types of interpolation have been applied successfully. Note the release name `my-release` in the workflow and pod names, and the workflow UID in the whalesay output.
 
-{{< figure src="argo-success.png"
- alt="Argo web UI, showing the workflow output"
- caption="The Helm-processed workflow running successfully, with interpolated values visible" >}}
+<figure markdown="span">
+  ![Argo web UI, showing the workflow output](./argo-success.png)
+  <figcaption>The Helm-processed workflow running successfully, with interpolated values visible</figcaption>
+</figure>
 
 The [Github repo](https://github.com/brabster/helm-argo-example) includes the working chart in the `working-chart` directory and the post-renderer script at the root.

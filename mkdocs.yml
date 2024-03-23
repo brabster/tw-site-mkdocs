@@ -7,9 +7,19 @@ site_author: brabster
 theme:
   name: material
   language: en
+  favicon: assets/favicons/favicon.ico
+  features:
+    - navigation.tabs
+    - navigation.indexes
+
 
 plugins:
-  - blog: {}
+  - glightbox
+  - meta
+  - search
+  # - optimize needs pngquant
+  - blog:
+      authors_profiles: true
   - rss:
       match_path: blog/posts/.* 
       date_from_meta:
@@ -17,4 +27,13 @@ plugins:
       categories:
         - categories
         - tags
-      use_git: false
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - md_in_html
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - def_list
+  - attr_list

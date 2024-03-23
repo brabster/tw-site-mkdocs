@@ -15,7 +15,7 @@ Thanks to [Equal Experts](https://equalexperts.com) for supporting this content.
 
 {{< ee >}}
 
-<!--more-->
+<!-- more -->
 
 I first wrote on the subject of UDFs in a DBT [back in March 2022](https://www.equalexperts.com/blog/our-thinking/testing-and-deploying-udfs-with-dbt/), after finding discourse on the subject but a lack of good, easily consumed answers. According to Google Search Console, it's been in the top three pieces of content on [equalexperts.com](https://equalexperts.com) in terms of search performance ever since (which I take great pride in, given the wealth of awesome content by amazing folks on there). I take that as evidence there's still demand for a good solution, given that folks are still searching and engaging with that post.
 

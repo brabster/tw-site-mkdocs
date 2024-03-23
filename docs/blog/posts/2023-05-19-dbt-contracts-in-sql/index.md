@@ -12,7 +12,7 @@ tags:
 
 [dbt announced "model contracts"](https://docs.getdbt.com/docs/collaborate/govern/model-contracts) in the recent v1.5 release. This looks like a great feature for dbt, but reminded me that I've been using contract testing with dbt for a couple of years now, [inspired by Pact](https://docs.pact.io/) consumer-driven contracts, but never talked about it. There are some differences, for example: dbt's new feature is very dbt-centric, the approach I've used isn't - dbt certainly helps, but it isn't necessary. There's a [GitHub repo](https://github.com/brabster/dbt_simple_contracts) to follow along with.
 
-<!--more-->
+<!-- more -->
 
 ## Why Contract Testing?
 
@@ -28,9 +28,10 @@ The same approach works with the same benefits for a SQL-based digital product i
 
 I'll show you what I mean with [dbt-labs' Jaffle Shop demo project](https://github.com/dbt-labs/jaffle_shop) as our producer, and we are the product team looking after it. In the lineage graph below, we can see some raw relations[^nomenclature] feeding some staging relations to produce a `customers` and an `orders` relation.
 
-{{< figure
-  src="Jaffle_shop_graph.png"
-  caption="Lineage graph for the demo Jaffle Shop project with a line indicaing which relations are private and which are consumer-facing" >}}
+<figure markdown="span">
+  ![](./Jaffle_shop_graph.png)
+  <figcaption>Lineage graph for the demo Jaffle Shop project with a line indicaing which relations are private and which are consumer-facing</figcaption>
+</figure>
 
 The right-most relations, `customers` and `orders`, are our customer-facing interface. The "upstream" relations are implementation details and hidden from consumers, ideally by permissions. Besides potentially protecting more sensitive data, this hiding of implementation detail from consumers is important for stable contracts. Without it, we lack the flexibility to adapt to change whilst holding the contract stable.
 
@@ -95,9 +96,10 @@ What both teams need is a way to provide their tests to the Jaffle Shop team in 
 
 We create a subdirectory of `tests/contract` in our dbt project. We'll have each consumer contribute their tests directly via a merge or pull request process. dbt will, by default, run their tests as part of a `build` or `test` operation.
 
-{{< figure
-  src="contracts_examples.png"
-  caption="Screenshot of repository showing the contracts directory structure with a marketing dir containing the marketing test and a recommend_a_jaffle dir containing the recommender test" >}}
+<figure markdown="span">
+  ![](./contracts_examples.png)
+  <figcaption>Screenshot of repository showing the contracts directory structure with a marketing dir containing the marketing test and a recommend_a_jaffle dir containing the recommender test</figcaption>
+</figure>
 
 Let's run a `dbt test` for everything under contracts and see what happens...
 

@@ -18,19 +18,19 @@ Thanks to [Equal Experts](https://equalexperts.com) for supporting this content.
 
 {{< ee >}}
 
-<!--more-->
+<!-- more -->
 
 ## Source Data Costs
 
 The raw data contains a row per download, which explains the volume. If there are a million downloads of `requests==1.0.0` on a given day, that's a million rows. The data is partitioned by day, so we can limit the scan to a specific date range if add a `WHERE` clause with a constant value. Let's take a look at what BigQuery estimates scan volume will be for a few example queries. "Worst Cost" in the table below multiplies the scanned bytes by $5/TB for a worst-case cost,
 
-|Query|Worst Cost|
-|--------|-----|----------|
-|{{< figure src="./assets/query_raw_star_one_day.png" caption="All columns, one day" >}}|$0.79|
-|{{< figure src="./assets/query_raw_cols_one_day.png" caption="Interesting columns, one day" >}}|$0.08|
-|{{< figure src="./assets/query_raw_cols_one_month.png" caption="Interesting columns, one month" >}}|$5.25|
-|{{< figure src="./assets/query_raw_cols_one_year.png" caption="Interesting columns, one year" >}}|$51.95|
-|{{< figure src="./assets/query_raw_star_one_year.png" caption="All columns, one year" >}}|$509.95|
+<div class="grid cards" markdown>
+- ![](./assets/query_raw_star_one_day.png) All columns, one day: $0.79
+- ![](./assets/query_raw_cols_one_day.png) Interesting columns, one day: $0.08
+- ![](./assets/query_raw_cols_one_month.png) Interesting columns, one month: $5.25
+- ![](./assets/query_raw_cols_one_year.png) Interesting columns, one year: $51.95
+- ![](./assets/query_raw_star_one_year.png) All columns, one year: $509.95
+</div>
 
 We can see the date partitioning working here - the fewer days we query, the less we scan, the less it costs. Columnar storage also makes a big difference - if we select a few columns, we also scan and pay less than querying them all.
 

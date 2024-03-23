@@ -21,7 +21,7 @@ Thanks to [Equal Experts](https://equalexperts.com) for supporting this content.
 
 {{< ee >}}
 
-<!--more-->
+<!-- more -->
 
 Since publishing the last post, I've heard a couple of anecdotes from other folks about nasty billing surprises after playing with BigQuery. I take that to mean it's not just me being an idiot - it's quite easy to spend accidental money with this service.
 

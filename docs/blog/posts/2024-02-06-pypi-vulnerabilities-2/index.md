@@ -17,7 +17,7 @@ Thanks to [Equal Experts](https://equalexperts.com) for supporting this content.
 
 {{< ee >}}
 
-<!--more-->
+<!-- more -->
 
 ## In the Last Thrilling Episode...
 
@@ -44,10 +44,17 @@ Given that the commit history is immutable, this approach avoids unnecessary tim
 
 ### Backfilling Safety DB history in [the first build](https://github.com/brabster/pypi_vulnerabilities/actions/runs/7716571519/job/21033677275)
 
-{{< figure src="./assets/safety_init_load.png" caption="Backfilling Safety DB history" >}}
+<figure markdown="span">
+  ![](./assets/safety_init_load.png)
+  <figcaption>Backfilling Safety DB history</figcaption>
+</figure>
 
 ### [First build on Feb 2nd](https://github.com/brabster/pypi_vulnerabilities/actions/runs/7716571519/job/21033677275) loads February's commit
-{{< figure src="./assets/safety_next_load.png" caption="First build on Feb 2nd loads February's commit" >}}
+
+<figure markdown="span">
+  ![](./assets/safety_next_load.png)
+  <figcaption>First build on Feb 2nd loads February's commit</figcaption>
+</figure>
 
 ## Taking a Look
 
@@ -100,9 +107,10 @@ The BigQuery sandbox is an awesome capability for that initial exploration of th
 Having sorted an idempotent upload of the latest Safety DB, it's just a case of adding a scheduled workflow to my GitHub actions build.
 That just goes into source control for the workflow as a trigger (c'mon GitLab, it should be THIS EASY).
 
-{{< figure
-  src="./assets/gh_cron.png"
-  caption="Cron schedule in the GitHub actions workflow" >}}
+<figure markdown="span">
+  ![](./assets/gh_cron.png)
+  <figcaption>Cron schedule in the GitHub actions workflow</figcaption>
+</figure>
 
 I run the whole workflow every day at 4am for now, so it'll redeploy the models, including recomputing any materialisations and run my test suite to pick up any data quality issues in new data.
 
