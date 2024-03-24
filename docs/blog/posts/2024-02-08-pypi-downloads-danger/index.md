@@ -12,7 +12,7 @@ tags:
 
 ---
 
-Given a historical view of the [Safety DB](../2024-02-06-pypi-vulnerabilities-2), I need to get a historical view of PyPI downloads. The source dataset contains 274TB at time of writing, and grows every day - one naive query against that table could cost $1,370. A query over a single day can scan hundreds of GB, so I need to do some work to make it usable.
+Given a historical view of the [Safety DB](../2024-02-06-pypi-vulnerabilities-2/index.md), I need to get a historical view of PyPI downloads. The source dataset contains 274TB at time of writing, and grows every day - one naive query against that table could cost $1,370. A query over a single day can scan hundreds of GB, so I need to do some work to make it usable.
 
 Thanks to [Equal Experts](https://equalexperts.com) for supporting this content.
 
@@ -192,4 +192,4 @@ Given that most of my queries are in specific date ranges, I could optimise furt
 
 ## Update 2024-02-17
 
-There actually **is** a "don't bankrupt me" setting, although it's a pain to find. More importantly, there is a quota system lurking in there you can use for much more observable and effective control on a per-project or per-user over-time basis. Read more in [the next post in the series](../2024-02-16-bigquery-quotas).
+There actually **is** a "don't bankrupt me" setting, although it's a pain to find. More importantly, there is a quota system lurking in there you can use for much more observable and effective control on a per-project or per-user over-time basis. Read more in [the next post in the series](../2024-02-16-bigquery-quotas/index.md).

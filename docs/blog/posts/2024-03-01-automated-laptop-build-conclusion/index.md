@@ -11,7 +11,7 @@ tags:
 ---
 
 
-I wrote about why I'd automated my laptop build [last week](../2024-02-27-automated-laptop-build-intro).
+I wrote about why I'd automated my laptop build [last week](../2024-02-27-automated-laptop-build-intro/index.md).
 This post concludes this short series, introducing a [walkthrough video](https://www.youtube.com/watch?v=CyuGg4F850g) and answering some questions about the choices I've made and how I've improved reliability and sustainability.
 
 Thanks to [Equal Experts](https://equalexperts.com) for supporting this content.

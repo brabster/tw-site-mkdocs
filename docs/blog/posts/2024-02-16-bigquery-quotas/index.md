@@ -11,7 +11,7 @@ tags:
 
 ---
 
-[Last time](../2024-02-08-pypi-downloads-danger), I said:
+[Last time](../2024-02-08-pypi-downloads-danger/index.md), I said:
 
 > [BigQuery] doesn't offer a "don't bankrupt me without asking first" setting.
 
@@ -27,7 +27,7 @@ Since publishing the last post, I've heard a couple of anecdotes from other folk
 
 ## The Problem
 
-I describe the problem in detail in [$1,370 Gone In Sixty Seconds](../2024-02-08-pypi-downloads-danger). In summary:
+I describe the problem in detail in [$1,370 Gone In Sixty Seconds](../2024-02-08-pypi-downloads-danger/index.md). In summary:
 
 ### Billing Model
 

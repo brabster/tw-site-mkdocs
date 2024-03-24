@@ -10,7 +10,7 @@ tags:
 
 ---
 
-Since I wrote [my first consumer-driven SQL contracts post](../2023-05-19-dbt-contracts-in-sql/) I've had an opportunity to try the ideas out in a reporting and visualisation-centric context with a team that was interested in the idea.
+Since I wrote [my first consumer-driven SQL contracts post](../2023-05-19-dbt-contracts-in-sql/index.md) I've had an opportunity to try the ideas out in a reporting and visualisation-centric context with a team that was interested in the idea.
 
 <!-- more -->
 

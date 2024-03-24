@@ -5,7 +5,7 @@
 
 ## Recent Engagements
 
-- Data Mesh implementation with a financial services client [Equal Experts]((https://www.equalexperts.com))
+- Data Mesh implementation with a financial services client [Equal Experts](https://www.equalexperts.com)
 - [The Developer Academy Instructor](https://thedeveloperacademy.com/instructors/data-science-part-time) for the [Data Science Bootcamp](https://thedeveloperacademy.com/data-science-bootcamp)
 - Search Relevance Engineering with [John Lewis Partnership](https://johnlewis.com) through [Equal Experts](https://www.equalexperts.com) (see [case study](https://www.equalexperts.com/case-study/the-art-of-cloud-search-how-john-lewis-partners-led-the-way/))
 - Enterprise Matching with a Civil Service Client through [Equal Experts](https://www.equalexperts.com)
@@ -32,5 +32,5 @@
 
 ## CV
 
-[My CV](/paul_brabban_cv.pdf) is available for more detail about my skills and engagements.
+[My CV](../assets/paul_brabban_cv.pdf) is available for more detail about my skills and engagements.
 
