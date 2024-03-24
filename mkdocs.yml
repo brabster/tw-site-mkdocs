@@ -11,7 +11,7 @@ theme:
   favicon: favicons/favicon.ico
   logo: favicons/favicon-32x32.png
   palette:
-    primary: blue
+    primary: blue grey
   features:
     - navigation.tabs
     - navigation.indexes
