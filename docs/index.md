@@ -1,7 +1,7 @@
 # Home
 
 <div class="grid cards" markdown>
-  - ![Profile photo for Paul Brabban](../assets/images/profile_small.gif) Paul Brabban, Lead Consultant at [Equal Experts](https://www.equalexperts.com/blog/author/paul-brabban/)
+  - ![Profile photo for Paul Brabban](./assets/images/profile_small.gif) Paul Brabban, Lead Consultant at [Equal Experts](https://www.equalexperts.com/blog/author/paul-brabban/)
 
     ---
 
