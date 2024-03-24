@@ -11,9 +11,9 @@ tags:
 
 ---
 
-Investigating Python package downloads with the public PyPI downloads dataset and Safety public database. This post covers how I've prepared and published the data to support this kind of analysis, including pure SQL functions to process Semver versions and constraints at scale. This is part of a broader investigation into vulnerability management and update behaviour. Thanks to [Equal Experts](https://equalexperts.com) for supporting this content.
+Investigating Python package downloads with the public PyPI downloads dataset and Safety public database. This post covers how I've prepared and published the data to support this kind of analysis, including pure SQL functions to process Semver versions and constraints at scale. This is part of a broader investigation into vulnerability management and update behaviour.
 
-{{< ee >}}
+--8<-- "ee.md"
 
 <!-- more -->
 
@@ -22,8 +22,6 @@ Investigating Python package downloads with the public PyPI downloads dataset an
 The Python Packaging Authority publishes package download data to BigQuery ([PyPI documentation](https://warehouse.pypa.io/api-reference/bigquery-datasets.html), [Google blog post](https://cloud.google.com/blog/topics/developers-practitioners/analyzing-python-package-downloads-bigquery)). This public dataset seemed like a natural place to start in understanding how packages are used out there in the real world.
 
 There are three tables in the dataset, one of which represents actual package downloads, `bigquery-public-data.pypi.file_downloads`. The Python Packaging User Guide produces some useful documentation about this table [here](https://packaging.python.org/en/latest/guides/analyzing-pypi-package-downloads/). Let's take a look at what we're dealing with.
-
-
 
 <figure markdown="span">
   ![](./assets/pypi_table_schema.png)

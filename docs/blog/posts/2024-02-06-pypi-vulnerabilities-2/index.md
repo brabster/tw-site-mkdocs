@@ -13,9 +13,7 @@ tags:
 
 Following [initial exploration and setup](../2024-01-19-pypi-vulnerabilities-setup/index.md), I wanted to pull in more history from my safety and pypi sources to get a better idea of what might be happening. First up - a view of the Safety vulnerability database over time, explaining the challenges and decisions I made.
 
-Thanks to [Equal Experts](https://equalexperts.com) for supporting this content.
-
-{{< ee >}}
+--8<-- "ee.md"
 
 <!-- more -->
 

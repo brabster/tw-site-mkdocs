@@ -14,9 +14,7 @@ tags:
 I wrote about why I'd automated my laptop build [last week](../2024-02-27-automated-laptop-build-intro/index.md).
 This post concludes this short series, introducing a [walkthrough video](https://www.youtube.com/watch?v=CyuGg4F850g) and answering some questions about the choices I've made and how I've improved reliability and sustainability.
 
-Thanks to [Equal Experts](https://equalexperts.com) for supporting this content.
-
-{{< ee >}}
+--8<-- "ee.md"
 
 <!-- more -->
 
@@ -28,13 +26,19 @@ Thanks to [Equal Experts](https://equalexperts.com) for supporting this content.
 
 I used the [Xfce Fedora spin until March 2022](https://github.com/brabster/workstation-setup) before switching to Xubuntu. It's not obvious to me from the main documentation, but it prioritises pushing the community forward over, for example, compatibility. This was demonstrated by [the switch to cgroups v2 in 2022](https://fedoraproject.org/wiki/Changes/CGroupsV2):
 
-{{< figure src="./assets/fedora.png" caption="Fedora logo" >}}
+<figure markdown="span">
+  ![](./assets/fedora.png)
+  <figcaption>Fedora logo</figcaption>
+</figure>
 
 > Fedora is known for being a leading platform for the enablement of new kernel functions, and this would continue its legacy. The world will eventually move to CGroupsV2 and Fedora should lead the way.
 
 Docker did not work with cgroups v2 and I was using Docker with my client team. I couldn't just turn up on the following Monday morning with "Good News Everyone! Fedora broke Docker on my workstation so let's come up with a plan...". Whilst I appreciate Fedora pushing the industry forward, it wasn't a great fit for a working consultant, who wants to keep up to date and avoid disruption with clients.
 
-{{< figure src="./assets/xubuntu.png" caption="Xubuntu logo" >}}
+<figure markdown="span">
+  ![](./assets/xubuntu.png)
+  <figcaption>Xubuntu logo</figcaption>
+</figure>
 
 Time for a change, and Ubuntu seemed to fit the bill. A couple of years later and I have no complaints - my automation has been more reliable running over a Ubuntu-based distro. The only concern I had greater than reliability was security. In that respect, Canonical and Ubuntu fit the bill, [making statements on security that let me relax a bit](https://ubuntu.com/security).
 
@@ -44,7 +48,10 @@ Why [Xfce](https://www.xfce.org/) instead of the default Ubuntu desktop? Probabl
 
 ## Why Not [Qubes](https://www.qubes-os.org/)?
 
-{{< figure src="./assets/qubes.png" caption="Qubes OS logo" >}}
+<figure markdown="span">
+  ![](./assets/qubes.png)
+  <figcaption>Qubes OS logo</figcaption>
+</figure>
 
 Given my focus on security, it feels worth mentioning [Qubes](https://www.qubes-os.org/), "A reasonably secure operating system" based on VMs. I looked at it back in - I think - 2019 and I was impressed by the experience, I decided against it as a serious option for for my needs for a couple of reasons.
 
@@ -58,7 +65,10 @@ I looked into automating the actual OS installation back on Fedora. It involved 
 
 ## Why [Ansible](https://www.ansible.com/)?
 
-{{< figure src="./assets/ansible.png" caption="Ansible logo" >}}
+<figure markdown="span">
+  ![](./assets/ansible.png)
+  <figcaption>Ansible logo</figcaption>
+</figure>
 
 Glad you asked. Back in the day, I tried the obvious things - dotfiles things, custom scripts. There's something of a history of my early efforts on GitHub, like [this repo](https://github.com/brabster/cinnamon) where I backed up my Cinnamon (a fancier Linux desktop I was using around 2017) settings. Note to self - really need to go through my repos and do some archiving!
 

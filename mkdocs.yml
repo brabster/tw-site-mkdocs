@@ -3,23 +3,23 @@ site_name: Tempered Works Ltd.
 site_url: https://tempered.works
 
 site_author: brabster
+copyright: Copyright &copy; 2018 - 2024 Paul Brabban
 
 theme:
   name: material
   language: en
-  favicon: assets/favicons/favicon.ico
+  favicon: favicons/favicon.ico
   features:
     - navigation.tabs
     - navigation.indexes
 
-
 plugins:
+  - privacy
   - glightbox
   - meta
   - search
   # - optimize needs pngquant
-  - blog:
-      authors_profiles: true
+  - blog
   - rss:
       match_path: blog/posts/.* 
       date_from_meta:
@@ -35,5 +35,25 @@ markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.superfences
+  - pymdownx.snippets:
+      base_path:
+        - snippets
+      check_paths: true
   - def_list
   - attr_list
+
+extra_css:
+  - stylesheets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/brabster
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/paulbrabban
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+

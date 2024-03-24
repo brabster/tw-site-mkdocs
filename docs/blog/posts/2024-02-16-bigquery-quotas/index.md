@@ -17,9 +17,7 @@ tags:
 
 After further work, I find that's not true! This setting is available in the UI, just a bit tricky to find. More importantly, there's another set of controls elsewhere that you **need** to know about if you want to use BigQuery safely.
 
-Thanks to [Equal Experts](https://equalexperts.com) for supporting this content.
-
-{{< ee >}}
+--8<-- "ee.md"
 
 <!-- more -->
 
@@ -44,9 +42,10 @@ Contrary to what I said last time, there **IS** a UI element to set the max byte
       - Advanced Settings
         - Ghosted Text Input Field: "Maximum Bytes Billed"
 
-{{< figure
-  src="./assets/max_bytes_billed.png"
-  caption="Screenshot of the max bytes billed setting in BigQuery UI" >}}
+<figure markdown="span">
+  ![](./assets/max_bytes_billed.png)
+  <figcaption>Screenshot of the max bytes billed setting in BigQuery UI</figcaption>
+</figure>
 
 Easy when you know how.
 
@@ -68,17 +67,19 @@ Note that it's a **project-level** setting - I've not seen a way to set a defaul
 
 Open the project's quota panel.
 
-{{< figure
-  src="./assets/find_quotas.png"
-  caption="Per-project quotas panel" >}}
+<figure markdown="span">
+  ![](./assets/find_quotas.png)
+  <figcaption>Per-project quotas panel</figcaption>
+</figure>
 
 ---
 
 Search for the query usage quota setting.
 
-{{< figure
-  src="./assets/quota_find_query_usage_bq.png"
-  caption="Searching for a specific quota" >}}
+<figure markdown="span">
+  ![](./assets/quota_find_query_usage_bq.png)
+  <figcaption>Searching for a specific quota</figcaption>
+</figure>
 
 ---
 
@@ -96,17 +97,20 @@ To adjust the quota you have to select the checkbox next to the quota(s) you wan
 
 You have the option of setting a limit on query bytes scanned for the project, or per-user. I'm setting a limit of 1TB per day for the whole project here. You have to uncheck "unlimited" to update the setting.
 
-{{< figure
-  src="./assets/quota_update_bq.png"
-  caption="Update quota panel" >}}
+
+<figure markdown="span">
+  ![](./assets/quota_update_bq.png)
+  <figcaption>Update quota panel</figcaption>
+</figure>
 
 ---
 
 Hit submit request, and it'll update. But does it work? I've risked the spend so you don't have to...
 
-{{< figure
-  src="./assets/query_usage_quota_effect.png"
-  caption="Effect of quota update" >}}
+<figure markdown="span">
+  ![](./assets/query_usage_quota_effect.png)
+  <figcaption>Effect of quota update</figcaption>
+</figure>
 
 Woohoo! I tried to run a 3.4TB query, and I was prevented from doing so. I can see that the query was stopped at the planning stage, before any execution took place - so I was billed nothing, instead of around $17.
 
@@ -117,9 +121,10 @@ This is a project-level setting - so if you're working as part of an organisatio
 There's some useful info in the quotas view that helps you understand your utilisation over time.
 Here's my quota use - you can see where I made the mistakes I talked about last time and scanned several TB in a day!
 
-{{< figure
-  src="./assets/query_usage_quota_metrics.png"
-  caption="Quota console metrics for usage of a particular quota over recent history" >}}
+<figure markdown="span">
+  ![](./assets/query_usage_quota_metrics.png)
+  <figcaption>Quota console metrics for usage of a particular quota over recent history</figcaption>
+</figure>
 
 If you aren't able to access this information, I'd suggest to your GCP Overlords they try to make it available to you, so you can work out what you want that quota set to. There's no useful information provided in the BigQuery UI, even when you hit a quota limit.
 

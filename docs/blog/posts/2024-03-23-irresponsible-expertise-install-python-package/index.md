@@ -73,7 +73,6 @@ Ready? Let's go.
 
 https://packaging.python.org/en/latest/tutorials/installing-packages
 
-
 Number one on the search results? Official documentation. Opening with detailed instructions to execute Python at the command line, this official Python documentation explicitly invites "newcomers" to participate.
 
 Despite thousands of words dedicated to working around the system security constraints that might trip the audience up on their way to download untrusted software from the internet, I can't see any evidence that the article says anything about why those constraints are there and how they might be protecting you, and nothing on the other risks I'm looking for. It only mentions avoiding installation in the system Python.
@@ -87,13 +86,17 @@ https://docs.python.org/3/installing/index.html
 
 Number two is more official Python documentation. Instructions for using `venv` avoid calling out the security-related risks around installing in the system Python installation. The last section on "installing binary extensions" implies the capability of installation to execute code but it doesn't call it out and links to [Installing Scientific Packages](https://packaging.python.org/en/latest/guides/installing-scientific-packages/) which encourages using old versions:
 
-{{< figure src="./assets/2_versions.png"
-    caption="Screen capture of python docs recommending old versions of packages" >}}
+<figure markdown="span">
+  ![](./assets/2_versions.png)
+  <figcaption>Screen capture of python docs recommending old versions of packages</figcaption>
+</figure>
 
 Later in the same document, advice to install to system Python for installers that require building from source and don't support virtual environments:
 
-{{< figure src="./assets/2_system.png"
-    caption="Screen capture of python docs recommending installation to system Python without mentioning risks" >}}
+<figure markdown="span">
+  ![](./assets/2_system.png)
+  <figcaption>Screen capture of python docs recommending installation to system Python without mentioning risks</figcaption>
+</figure>
 
 Because the search result links out to a document that encourages compiling from source and installing into the system Python, does not warn of any risks and explicitly targets scientists, I'm grading this documentation as encouraging bad practice.
 
@@ -105,9 +108,10 @@ https://datatofish.com/install-package-python-using-pip/
 
 OK, so we open with:
 
-{{< figure
-    src="./assets/3_wtf.png"
-    caption="Screen capture of datatofish.com advising Python newbies to blindly subvert system security" >}}
+<figure markdown="span">
+  ![](./assets/3_wtf.png)
+  <figcaption>Screen capture of datatofish.com advising Python newbies to blindly subvert system security</figcaption>
+</figure>
 
 Running software unnecessarily with admin rights maximises the damage a mistake can cause.
 [Microsoft put a bit of effort into encouraging the opposite behaviour](https://learn.microsoft.com/en-us/windows/security/application-security/application-control/user-account-control/how-it-works).
@@ -122,9 +126,10 @@ https://www.listendata.com/2019/04/install-python-package.html
 
 Same again, for example:
 
-{{< figure
-    src="./assets/4_admin.png"
-    caption="Screen capture of listendata.com advising Python newbies to blindly subvert system security" >}}
+<figure markdown="span">
+  ![](./assets/4_admin.png)
+  <figcaption>Screen capture of listendata.com advising Python newbies to blindly subvert system security</figcaption>
+</figure>
 
 ## 5. Python Land
 
@@ -138,9 +143,10 @@ You know what? I think this one is rather good. It beats the official documentat
 
 Here's an example.
 
-{{< figure src="./assets/5.pythonland.png"
-    caption="Screen capture from python.land showing considered, thoughtful and actionable advice to help users stay safe"
-    >}}
+<figure markdown="span">
+  ![](./assets/5_pythonland.png)
+  <figcaption>Screen capture from python.land showing considered, thoughtful and actionable advice to help users stay safe</figcaption>
+</figure>
 
 ## Summary
 
@@ -154,8 +160,7 @@ Having worked with folks in the data space at all career stages of Python develo
 
 I know there's a noble thing we're doing about trying to be as inclusive as possible but neglecting to inform people of the risks they are exposed to feels wrong. To me, it feels a bit like [cigarette advertising back in the day](https://www.lung.org/research/sotc/by-the-numbers/10-bad-things-to-entice-kids) (although, I think and hope, well-intentioned rather than malicious).
 
-Get a great buzz! 
-
-(Don't mention the health risks)
+> Get a great buzz! 
+> (Don't mention the health risks)
 
 From here, I'll think about what I can do to have a more positive outcome for this work.

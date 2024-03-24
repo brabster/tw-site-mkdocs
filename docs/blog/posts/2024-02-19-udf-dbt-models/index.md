@@ -11,9 +11,7 @@ tags:
 
 As part of my work on the PyPI downloads dataset, I needed a way of matching package versions to vulnerability report ranges. I didn't find a solution I trusted, so I implemented a solution from spec with decent test coverage and CI/CD automation in user defined functions (UDFs). This post covers a novel approach to incorporate UDFs into the dbt ecosystem that is working really well for me - treating UDFs as dbt models with custom materialization.
 
-Thanks to [Equal Experts](https://equalexperts.com) for supporting this content.
-
-{{< ee >}}
+--8<-- "ee.md"
 
 <!-- more -->
 
@@ -79,66 +77,44 @@ That means dbt knows what depends on this macro - and what it depends on, as I c
 
 Here's a snippet from yesterday's GitHub actions run - the workflow just ran `dbt build`.
 
-{{< figure
-  src="./assets/actions_workflow.png"
-  caption="GitHub actions workflow log showing the sequence of actions dbt took after dbt build">}}
+<figure markdown="span">
+  ![](./assets/actions_workflow.png)
+  <figcaption>GitHub actions workflow log showing the sequence of actions dbt took after dbt build</figcaption>
+</figure>
 
----
+### Do my UDFs get automatically deployed when I use the dbt commands that deploy my models like `dbt run`, `dbt build`?
+Yes.
 
+### Do UDFs deploy concurrently with the rest of the graph?
+Yes, I have 8 threads in this deployment and you can see udf models deploying alongside view models.
 
-Do my UDFs get automatically deployed when I use the dbt commands that deploy my models like `dbt run`, `dbt build`?
-: Yes.
+### Can I test my UDFs as part of `dbt build` and `dbt test`?
+Yes, I have unit tests defined for every macro and you can see dbt executing them concurrently in the build as their dependencies become satisfied.
 
----
+### Can I `ref` my UDFs in my models as I would any other dbt object, and dbt translates that into the correct database, schema and name?
+Yes, the effects of those refs allow dbt to run the udf deployments and tests alongside the other operations it needs to.
 
-Do UDFs deploy concurrently with the rest of the graph?
-: Yes, I have 8 threads in this deployment and you can see udf models deploying alongside view models.
+### Can I apply descriptions to my UDFs that appear in the data warehouse?
+Yes, here's a screenshot from BigQuery taking advantage of the new BigQuery Studio improved UI.
 
----
+<figure markdown="span">
+  ![](./assets/udf_meta_bq.png)
+  <figcaption>The matches_multi_spec UDF in BigQuery console, showing the metadata available including the description I provided</figcaption>
+</figure>
 
-Can I test my UDFs as part of `dbt build` and `dbt test`?
-: Yes, I have unit tests defined for every macro and you can see dbt executing them concurrently in the build as their dependencies become satisfied.
+### Can I `select` and `exclude` my UDFs when I use any dbt command?
+Yes, you can select them like any other model.
 
----
+### Do dbt docs include my UDFs?
+Yes, including correct dependencies in the graph
 
-Can I `ref` my UDFs in my models as I would any other dbt object, and dbt translates that into the correct database, schema and name?
-: Yes, the effects of those refs allow dbt to run the udf deployments and tests alongside the other operations it needs to.
+<div class="grid cards" markdown>
+- ![](./assets/udf_dbt_docs.png) dbt docs representation of the UDF
+- ![](./assets/udf_dbt_docs_graph.png) dbt docs lineage graph for the udf, showing the udf it depends on and where it it used
+</div>
 
----
-
-Can I apply descriptions to my UDFs that appear in the data warehouse?
-: Yes, here's a screenshot from BigQuery taking advantage of the new BigQuery Studio improved UI.
-
----
-
-{{< figure
-  src="./assets/udf_meta_bq.png"
-  caption="The matches_multi_spec UDF in BigQuery console, showing the metadata available including the description I provided">}}
-
----
-
-Can I `select` and `exclude` my UDFs when I use any dbt command?
-: Yes, you can select them like any other model.
-
----
-
-Do dbt docs include my UDFs?
-: Yes, including correct dependencies in the graph
-
-{{< columns >}}
-{{< figure
-  src="./assets/udf_dbt_docs.png"
-  caption="dbt docs representation of the UDF">}}
-{{< column >}}
-{{< figure
-  src="./assets/udf_dbt_docs_graph.png"
-  caption="dbt docs lineage graph for the udf, showing the udf it depends on and where it it used">}}
-{{< endcolumns >}}
-
----
-
-Do UDFs deploy concurrently with the rest of the graph?
-: Yes, plenty of evidence for that provided already.
+### Do UDFs deploy concurrently with the rest of the graph?
+Yes, plenty of evidence for that provided already.
 
 ## How It Works
 

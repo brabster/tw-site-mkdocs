@@ -14,9 +14,7 @@ I've invested a fair bit of time over the last few years incrementally automatin
 Now, I've got to a point where I can reliably wipe, rebuild, and pick up working where I left off in under thirty minutes.
 This post explains why I've invested that time.
 
-Thanks to [Equal Experts](https://equalexperts.com) for supporting this content.
-
-{{< ee >}}
+--8<-- "ee.md"
 
 <!-- more -->
 
@@ -34,9 +32,10 @@ What thoughts and feelings do those scenarios trigger for you? Somewhere on this
 
 `abject terror <--------> no problem`
 
-{{< figure
-  src="./assets/crying.gif"
-  caption="baby crying, credit https://giphy.com/gifs/lwYxf0qKEjnoI" >}}
+<figure markdown="span">
+  ![](./assets/crying.gif)
+  <figcaption>baby crying, credit https://giphy.com/gifs/lwYxf0qKEjnoI</figcaption>
+</figure>
 
 I'd guess most of us are somewhere in the middle.
 
@@ -49,9 +48,10 @@ From my own experience and occasional conversations with peers over the last few
 - You've maybe got a cloud backup but are unsure what that covers (and if you think you've been compromised, could your backup include something that lets the naughty folks back in?)
 - You can't remember what you had installed, how you installed it, how you customised it... strap in for a few days of "argh, where's (insert application here)"
 
-{{< figure
-  src="./assets/one-does-not-simply.jpg"
-  caption="One does not simply reinstall from scratch meme, credit https://imgflip.com/memegenerator/One-Does-Not-Simply" >}}
+<figure markdown="span">
+  ![](./assets/one-does-not-simply.jpg)
+  <figcaption>One does not simply reinstall from scratch meme, credit https://imgflip.com/memegenerator/One-Does-Not-Simply</figcaption>
+</figure>
 
 That's where I was a few years ago.
 

@@ -14,9 +14,7 @@ tags:
 
 Given a historical view of the [Safety DB](../2024-02-06-pypi-vulnerabilities-2/index.md), I need to get a historical view of PyPI downloads. The source dataset contains 274TB at time of writing, and grows every day - one naive query against that table could cost $1,370. A query over a single day can scan hundreds of GB, so I need to do some work to make it usable.
 
-Thanks to [Equal Experts](https://equalexperts.com) for supporting this content.
-
-{{< ee >}}
+--8<-- "ee.md"
 
 <!-- more -->
 
@@ -159,10 +157,10 @@ GROUP BY
 
 Now I'm running an initial query to find the latest partition date in the target table, and then query and merge new rows starting from that date, which is a constant now in the merge query. Nice and clean - but not front-and-centre in the dbt docs nor built into dbt incremental models. Now, my [daily merges run over 20-25GB](https://github.com/brabster/pypi_vulnerabilities/actions/runs/7794554168/job/21256082949#step:8:117), not 3.4TB!
 
-
-{{< figure
-  src="./assets/incr_model_after.png"
-  caption="Build log showing 20GB merge" >}}
+<figure markdown="span">
+  ![](./assets/incr_model_after.png)
+  <figcaption>Build log showing 20GB merge</figcaption>
+</figure>
 
 ## Materialized Views
 
