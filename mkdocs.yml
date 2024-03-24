@@ -9,6 +9,9 @@ theme:
   name: material
   language: en
   favicon: favicons/favicon.ico
+  logo: favicons/favicon-32x32.png
+  palette:
+    primary: blue
   features:
     - navigation.tabs
     - navigation.indexes
@@ -19,9 +22,10 @@ plugins:
   - meta
   - search
   # - optimize needs pngquant
-  - blog
+  - blog:
+      blog_dir: .
   - rss:
-      match_path: blog/posts/.* 
+      match_path: posts/.* 
       date_from_meta:
         as_creation: date
       categories:
