@@ -1,3 +1,9 @@
 [build]
     command = "mkdocs build --strict"
     publish = "site"
+
+[context.production.environment]
+    SITE_URL = "$URL"
+
+[context.deploy-preview.environment]
+    SITE_URL = "$DEPLOY_PRIME_URL"

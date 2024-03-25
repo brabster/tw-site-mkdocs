@@ -1,6 +1,6 @@
 site_name: Tempered Works Ltd.
 site_description: Software and Data Consulting Services
-site_url: !ENV [URL, DEPLOY_PRIME_URL, 'http://localhost:8000']
+site_url: !ENV [SITE_URL, 'http://localhost:8000']
 
 site_author: brabster
 copyright: Copyright &copy; 2018 - 2024 Paul Brabban
