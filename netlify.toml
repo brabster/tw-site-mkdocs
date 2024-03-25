@@ -3,7 +3,4 @@
     publish = "site"
 
 [context.production.environment]
-    SITE_URL = "$URL"
-
-[context.deploy-preview.environment]
-    SITE_URL = "$DEPLOY_PRIME_URL"
+    SITE_URL = "https://tempered.works"
