@@ -1,3 +1,6 @@
 [build]
     command = "mkdocs build --strict"
     publish = "site"
+
+[context.production.environment]
+    SITE_URL = "https://tempered.works"
