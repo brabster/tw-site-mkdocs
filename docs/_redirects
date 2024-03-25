@@ -1,0 +1,3 @@
+# Netlify redirects for old site URLs https://docs.netlify.com/routing/redirects/
+
+/index.xml /feed_rss_created.xml
