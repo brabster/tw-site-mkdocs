@@ -45,6 +45,7 @@ markdown_extensions:
       check_paths: true
   - def_list
   - attr_list
+  - footnotes
 
 extra_css:
   - stylesheets/extra.css
