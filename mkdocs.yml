@@ -32,6 +32,7 @@ plugins:
       categories:
         - categories
         - tags
+      
 
 markdown_extensions:
   - toc:
@@ -60,7 +61,7 @@ extra:
       link: https://github.com/brabster
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/paulbrabban
-
+    
 validation:
   omitted_files: warn
   absolute_links: warn
