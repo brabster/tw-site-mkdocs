@@ -8,7 +8,7 @@ copyright: Copyright &copy; 2018 - 2024 Paul Brabban
 theme:
   name: material
   language: en
-  favicon: favicons/favicon.ico
+  favicon: favicon.ico
   logo: favicons/favicon-32x32.png
   palette:
     primary: blue grey
