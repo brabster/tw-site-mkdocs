@@ -25,7 +25,7 @@ plugins:
   # - optimize needs pngquant
   - blog:
       blog_dir: .
-      post_url_format: "blog/{date}/{slug}"
+      post_url_format: "posts/{date}/{slug}"
   - rss:
       match_path: posts/.* 
       date_from_meta:
