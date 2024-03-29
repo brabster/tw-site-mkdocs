@@ -33,6 +33,8 @@ plugins:
       categories:
         - categories
         - tags
+  - optimize:
+      enabled: !ENV [CI, false]
       
 
 markdown_extensions:
