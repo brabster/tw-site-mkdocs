@@ -1,5 +1,5 @@
 [build]
-    command = "scripts/deploy_requirements.sh && emkdocs build --strict"
+    command = "scripts/deploy_requirements.sh && mkdocs build --strict"
     publish = "site"
 
 [context.production.environment]
