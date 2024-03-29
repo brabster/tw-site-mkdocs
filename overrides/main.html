@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+    {% if page and page.meta and page.meta.cover_image  %}
+        <meta property="og:image" content="{{ config.site_url }}{{ page.meta.cover_image }}" />
+    {% endif %}
+{% endblock %}

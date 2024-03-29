@@ -1,6 +1,7 @@
 ---
 title: Rebuild with mkdocs-material
 date: 2024-03-29
+cover_image: 2024-03-29-mkdocs-material/assets/hero.jpg
 ---
 
 ![A photo from a hotel in Manchester, of a new tower construction nearby in the foreground with skyline in the background](./assets/hero.jpg)
