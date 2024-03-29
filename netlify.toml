@@ -1,5 +1,5 @@
 [build]
-    command = "pip install git+https://${GH_TOKEN}@github.com/squidfunk/mkdocs-material-insiders.git && mkdocs build --strict"
+    command = "apt-get install -y pngquant && pip install git+https://${GH_TOKEN}@github.com/squidfunk/mkdocs-material-insiders.git && mkdocs build --strict"
     publish = "site"
 
 [context.production.environment]
