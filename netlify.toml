@@ -1,5 +1,5 @@
 [build]
-    command = "scripts/deploy_requirements.sh && mkdocs build --strict"
+    command = "pip install git+https://${GH_TOKEN}@github.com/squidfunk/mkdocs-material-insiders.git && mkdocs build --strict"
     publish = "site"
 
 [context.production.environment]
