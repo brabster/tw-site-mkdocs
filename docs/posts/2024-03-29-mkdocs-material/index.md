@@ -1,5 +1,5 @@
 ---
-title: Rebuild with mkdocs-material
+title: Now on mkdocs-material
 date: 2024-03-29
 ---
 
