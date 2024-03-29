@@ -1,7 +1,6 @@
 ---
 title: Rebuild with mkdocs-material
 date: 2024-03-29
-cover_image: 2024-03-29-mkdocs-material/assets/hero.jpg
 ---
 
 ![A photo from a hotel in Manchester, of a new tower construction nearby in the foreground with skyline in the background](./assets/hero.jpg)
@@ -10,11 +9,9 @@ I started with a [custom Gatsby site](../2018-08-19-setting-up-a-gatsby-site/ind
 
 <!-- more -->
 
-# Summary
-
 [Gatsby](#starting-with-gatsby) gave me too much flexibility and work to do, which wasn't a good investment for me. [Hugo with beautifulhugo](#hugo-and-beautifulhugo) theme was a pain in places to get working how I wanted it to, and I saw some accessibility problems. I was unconvinced it was well supported. [mkdocs-material](#mkdocs-and-mkdocs-material) has provided a relatively simple and effective experience so far and the pagespeed numbers speak for themselves. The way the sponsorship support model is put together gives me confidence for the future.
 
-# Starting with Gatsby
+## Starting with Gatsby
 
 <figure markdown="span">
   ![](./assets/gatsby-wayback.png)
@@ -39,7 +36,7 @@ What did I want? The Gatsby exercise helped me figure that out.
 - a clean and accessible look and feel, that provides a good experience to a visitor
 - no tracking, just server-side traffic metrics to see what was being used and any problems related to URLs
 
-## Sorting the CV
+### Sorting the CV
 
 It became clear that my CV didn't work as part of the site build process.
 I've had the same basic setup for a long time now - it's a LaTeX document that uses a `moderncv` template.
@@ -57,7 +54,7 @@ to build it. I'll work in a PR and let the hardened environment on the build run
 The update/build process for my CV is independent of my website but that's not turned out to be an issue so far.
 It's a bit out of date but easy enough to update as the need arises. As I'm a permie for [Equal Experts](https://equalexperts.com) these days it's not a priority right now!
 
-# Hugo and beautifulhugo
+## Hugo and beautifulhugo
 
 I'd been using [Hugo](https://gohugo.io/)-based static sites with clients for documentation sites supporting automatic docs generation and publishing workflows.
 The experience looked like it'd tick more of the things I wanted than my Gatsby experience so I thought I'd give it a go. There are lots of themes to choose from, and I went with [beautifulhugo](https://themes.gohugo.io/themes/beautifulhugo/), a minimalist clean-looking theme that gave me a blog and content pages. My earliest commits on the [repo](https://github.com/brabster/tw-site-hugo) go back to Nov 2020, so it's lasted me over three years. Why did I switch?
@@ -78,7 +75,7 @@ That leads to the third problem - my chosen theme didn't feel very well supporte
 
 Time to look elsewhere. Since 2020, I've worked with new teams who instead used [mkdocs](https://www.mkdocs.org/) - but there's a more fundamental difference than just the underlying framework, that gives me confidence that this switch should see me good for a while.
 
-# mkdocs and mkdocs-material
+## mkdocs and mkdocs-material
 
 [mkdocs](https://www.mkdocs.org/) is a pretty lean framework. The capabilities are basic, extended by [plugins](https://www.mkdocs.org/dev-guide/plugins/). What convinced me to switch was the [mkdocs-material](https://squidfunk.github.io/mkdocs-material/) theme.
 
