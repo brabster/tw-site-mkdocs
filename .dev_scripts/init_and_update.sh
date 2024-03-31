@@ -20,7 +20,7 @@ echo "install safety for vulnerability check; it prints its own messages about n
 pip install --upgrade safety
 
 echo "install or upgrade project-specific dependencies"
-pip install -U -r ${PROJECT_DIR}/requirements.txt
+pip install -U --only-binary :all: -r ${PROJECT_DIR}/requirements.txt
 
 echo "check for vulnerabilities"
 safety check

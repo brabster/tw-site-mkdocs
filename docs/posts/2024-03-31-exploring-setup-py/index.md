@@ -4,7 +4,7 @@ date: 2024-03-31
 ---
 ![My tabby cat Maddie peering closely at my laptop screen](./assets/hero.webp)
 
-When I wrote about [dangerous advice about installing Python packages last week](../2024-03-23-irresponsible-expertise-install-python-package/), I was curious about the dangers of `setup.py`. How is it exploited? What is the Python community doing to prevent this abuse? What would happen if `setup.py` were neutralised?
+When I wrote about [dangerous advice about installing Python packages last week](../2024-03-23-irresponsible-expertise-install-python-package/index.md), I was curious about the dangers of `setup.py`. How is it exploited? What is the Python community doing to prevent this abuse? What would happen if `setup.py` were neutralised?
 
 <!-- more -->
 
