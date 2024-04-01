@@ -1,12 +1,10 @@
 ---
 title: Why I Automated My Laptop Build
 date: 2024-02-27
-category: DevOps
-tags:
- - security
- - automation
- - ubuntu
- - ansible
+categories:
+  - security
+  - operations
+  - automation
 
 ---
 

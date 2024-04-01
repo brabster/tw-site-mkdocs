@@ -1,11 +1,9 @@
 ---
 title: Irresponsible Expertise - Python Packages
 date: 2024-03-23
-category: Security
-tags:
- - security
- - beginners
- - vulnerabilities
+categories:
+  - python
+  - security
 
 ---
 

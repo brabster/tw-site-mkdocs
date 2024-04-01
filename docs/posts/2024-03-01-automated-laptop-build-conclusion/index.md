@@ -1,13 +1,10 @@
 ---
 title: Living with an Automated Laptop Build
 date: 2024-03-02
-category: DevOps
-tags:
- - security
- - automation
- - ubuntu
- - ansible
-
+categories:
+  - security
+  - operations
+  - automation
 ---
 
 

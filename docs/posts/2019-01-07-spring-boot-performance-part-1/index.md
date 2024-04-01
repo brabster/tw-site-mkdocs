@@ -1,14 +1,8 @@
 ---
 title: Performance with Spring Boot and Gatling (Part 1)
 date: 2019-01-07
-category: DevOps
-tags:
- - performance
- - spring-boot
- - spring-security
- - gatling
- - java
- - scala
+categories:
+    - performance
 description: Exploring a surprising performance problem in a simple Spring Boot app with the Gatling load testing framework.
 ---
 

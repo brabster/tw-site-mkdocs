@@ -1,13 +1,9 @@
 ---
 title: 'Field Report: Visualisation Contracts'
 date: 2023-10-25
-category: SQL
-tags:
- - dbt
- - sql
- - contract-testing
- - data-mesh
-
+categories:
+    - insights
+    - contracts
 ---
 
 Since I wrote [my first consumer-driven SQL contracts post](../2023-05-19-dbt-contracts-in-sql/index.md) I've had an opportunity to try the ideas out in a reporting and visualisation-centric context with a team that was interested in the idea.

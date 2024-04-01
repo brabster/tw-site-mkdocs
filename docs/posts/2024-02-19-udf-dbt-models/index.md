@@ -1,12 +1,8 @@
 ---
 title: Materialized UDFs in a dbt World
 date: 2024-02-19
-category: Analytics
-tags:
- - dbt
- - bigquery
- - udf
-
+categories:
+  - insights
 ---
 
 As part of my work on the PyPI downloads dataset, I needed a way of matching package versions to vulnerability report ranges. I didn't find a solution I trusted, so I implemented a solution from spec with decent test coverage and CI/CD automation in user defined functions (UDFs). This post covers a novel approach to incorporate UDFs into the dbt ecosystem that is working really well for me - treating UDFs as dbt models with custom materialization.

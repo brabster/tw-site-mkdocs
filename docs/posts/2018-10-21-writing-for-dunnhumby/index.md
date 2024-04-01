@@ -1,11 +1,8 @@
 ---
 title: Writing on the Dunnhumby Engineering Blog
 date: 2018-10-21
-category: Data Engineering
-tags:
- - blogging
- - apache-beam
- - scio
+categories:
+    - insights
 description: I've authored a couple of articles on the Dunnhumby engineering blog.
 ---
 

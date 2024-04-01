@@ -3,7 +3,10 @@ site_description: Software and Data Consulting Services
 site_url: !ENV [SITE_URL, DEPLOY_PRIME_URL, 'http://localhost:8000']
 
 site_author: brabster
-copyright: Copyright &copy; 2018 - 2024 Paul Brabban
+copyright: |
+  Copyright &copy; 2018 - 2024 Paul Brabban.
+  Views expressed are my own and may not represent those of my employer or other associated entity.
+
 
 theme:
   name: material
@@ -19,7 +22,6 @@ theme:
     - content.code.copy
     - content.code.annotate
 
-
 plugins:
   - privacy
   - glightbox
@@ -29,6 +31,15 @@ plugins:
   - blog:
       blog_dir: .
       post_url_format: "posts/{date}/{slug}"
+      categories_toc: true
+      categories_allowed:
+        - automation
+        - contracts
+        - insights
+        - operations
+        - performance
+        - python
+        - security
   - rss:
       match_path: posts/.* 
       date_from_meta:
@@ -65,6 +76,9 @@ extra:
       link: https://github.com/brabster
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/paulbrabban
+    - icon: fontawesome/solid/paper-plane
+      link: mailto:paul@tempered.works
+
     
 validation:
   omitted_files: warn

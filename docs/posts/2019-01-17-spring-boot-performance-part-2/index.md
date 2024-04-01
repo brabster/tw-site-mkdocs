@@ -1,14 +1,8 @@
 ---
 title: Performance with Spring Boot and Gatling (Part 2)
 date: 2019-01-17
-category: DevOps
-tags:
- - performance
- - spring-boot
- - spring-security
- - gatling
- - java
- - scala
+categories:
+    - performance
 description: Tracking down a performance problem - (Threads | Sessions | Passwords)?
 ---
 
