@@ -14,7 +14,7 @@ theme:
     primary: blue grey
   features:
     - navigation.tabs
-    - navigation.indexes
+    - toc.integrate
     - content.footnote.tooltips
     - content.code.copy
     - content.code.annotate
@@ -29,6 +29,7 @@ plugins:
   - blog:
       blog_dir: .
       post_url_format: "posts/{date}/{slug}"
+      blog_toc: true
   - rss:
       match_path: posts/.* 
       date_from_meta:
