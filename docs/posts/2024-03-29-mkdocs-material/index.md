@@ -103,4 +103,6 @@ A significant improvement - the worst issue pagespeed highlights is my images no
 
 There's an interesting aspect there. mkdocs-material provides its own plugins for some optional features and mentions (recommends?) specific third-party plugins (like the glightbox or RSS plugins) for others. It feels like the author is taking some responsibility for the availability and safety of those third-party plugins. I'm not sure whether this is really the case, maybe I'll shoot a query over.
 
+- Edit - response from mkdocs-material author [here](https://github.com/squidfunk/mkdocs-material/discussions/6997#discussioncomment-8971925).
+
 I'm very happy to sign up for $15 per month to support this brilliant effort. The project is currently funded to the tune of nearly $15k/month! I appreciate the effort Martin has put into explaining the funding and support model, and it gives me the confidence to hand over my cash - in exchange for a supported product, not for someone to pursue their hobby project.

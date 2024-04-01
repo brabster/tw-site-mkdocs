@@ -31,6 +31,7 @@ plugins:
   - blog:
       blog_dir: .
       post_url_format: "posts/{date}/{slug}"
+      post_date_format: MMM d, yyyy
       categories_toc: true
       categories_allowed:
         - automation
