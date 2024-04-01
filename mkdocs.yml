@@ -16,7 +16,9 @@ theme:
     - navigation.tabs
     - navigation.indexes
     - content.footnote.tooltips
-  custom_dir: overrides
+    - content.code.copy
+    - content.code.annotate
+
 
 plugins:
   - privacy
