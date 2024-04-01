@@ -1,16 +1,16 @@
 ---
 title: Packer & Fedora Gotchas
 date: 2019-11-07
-category: Development
-tags:
- - packer
- - fedora
- - dracut
-summary: |
-    Lately, I've been working in virtual machines to strengthen my security posture for clients.
-    There's more to come on that, but for now I wanted to share a fix for a confusing problem I had.
-    I was trying to install Fedora 31 as a [Packer](https://www.packer.io/) build.
+categories:
+    - security
+    - automation
 ---
+
+Lately, I've been working in virtual machines to strengthen my security posture for clients.
+There's more to come on that, but for now I wanted to share a fix for a confusing problem I had.
+I was trying to install Fedora 31 as a [Packer](https://www.packer.io/) build.
+
+<!-- more -->
 
 It's been a while!
 I've got lots on my blog-backlog but here's a tidbit in case it helps anyone else out there.

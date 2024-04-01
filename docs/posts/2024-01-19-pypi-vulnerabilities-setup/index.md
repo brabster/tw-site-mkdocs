@@ -1,14 +1,10 @@
 ---
 title: Analysing PyPI Downloads
 date: 2024-01-19
-category: Analytics
-tags:
- - python
- - vulnerabilities
- - security
- - dbt
- - bigquery
-
+categories:
+  - python
+  - security
+  - insights
 ---
 
 Investigating Python package downloads with the public PyPI downloads dataset and Safety public database. This post covers how I've prepared and published the data to support this kind of analysis, including pure SQL functions to process Semver versions and constraints at scale. This is part of a broader investigation into vulnerability management and update behaviour.

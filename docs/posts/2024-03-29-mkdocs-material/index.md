@@ -1,6 +1,8 @@
 ---
 title: Now on mkdocs-material
 date: 2024-03-29
+categories:
+  - operations
 ---
 
 ![A photo from a hotel in Manchester, of a new tower construction nearby in the foreground with skyline in the background](./assets/hero.jpg)

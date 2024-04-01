@@ -1,13 +1,9 @@
 ---
 title: Consumer-Driven Contracts for SQL Data Products
 date: 2023-05-27
-category: SQL
-tags:
- - dbt
- - sql
- - contract-testing
- - data-mesh
-
+categories:
+  - insights
+  - contracts
 ---
 
 [dbt announced "model contracts"](https://docs.getdbt.com/docs/collaborate/govern/model-contracts) in the recent v1.5 release. This looks like a great feature for dbt, but reminded me that I've been using contract testing with dbt for a couple of years now, [inspired by Pact](https://docs.pact.io/) consumer-driven contracts, but never talked about it. There are some differences, for example: dbt's new feature is very dbt-centric, the approach I've used isn't - dbt certainly helps, but it isn't necessary. There's a [GitHub repo](https://github.com/brabster/dbt_simple_contracts) to follow along with.

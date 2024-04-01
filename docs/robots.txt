@@ -1,5 +1,5 @@
 Sitemap: https://tempered.works/sitemap.xml
 
 User-agent: *
-Disallow: /tags/
-Disallow: /categories/
+Disallow: /tag/
+Disallow: /category/

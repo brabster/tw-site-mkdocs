@@ -1,23 +1,17 @@
 ---
 title: Bashing Alpine
 date: 2020-06-07
-category: DevOps
-tags:
- - alpine
- - docker
- - scripting
- - bash
- - ash
- - gotcha
-description: For those times when a script is both missing and exactly where it should be.
+categories:
+  - automation
 ---
-
 
 <figure markdown="span">
   ![A bear, lying on its side facepalming](./bradley-howington-P6rYiIgGT6k-unsplash.jpg)
   <figcaption>Photo by https://unsplash.com/@bradleyhowington</figcaption>
 </figure>
 
+
+For those times when a script is both missing and exactly where it should be.
 
 So this annoying and trivial little problem catches me out every so often. I am always misled by the error message! You'll see what I mean shortly. For context, it usually happens when I'm working in Docker containers on a build.
 

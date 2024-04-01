@@ -1,12 +1,9 @@
 ---
 title: Checking your Dependencies
 date: 2020-12-03
-category: DevOps
-tags:
- - gotcha
- - dependency-check
- - security
-description: Should you check dependencies on every push?
+categories:
+    - security
+    - automation
 ---
 
 Following high-profile incidents like the [2017 Equifax Breach](https://www.wired.com/story/equifax-breach-no-excuse/), checking your dependencies for vulnerabilities is a common practice today.

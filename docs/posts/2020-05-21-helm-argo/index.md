@@ -1,19 +1,18 @@
 ---
 title: Helm Charts for Argo Workflows
 date: 2020-05-23
-category: Data Engineering
-tags:
- - kubernetes
- - helm
- - argo
- - how-to
-summary: |
-  Argo is a lightweight, Kubernetes-native workflow solution.
-  Workflows are implemented as Kubernetes manifests, so Helm is a natural choice for packaging them.
-
-  Helm also supports templating values which can be really helpful - but that's where we run into a problem. Helm uses mustache-style string interpolation, and so does Argo.
-
+categories:
+  - insights
+  - automation
 ---
+
+Argo is a lightweight, Kubernetes-native workflow solution.
+Workflows are implemented as Kubernetes manifests, so Helm is a natural choice for packaging them.
+
+Helm also supports templating values which can be really helpful - but that's where we run into a problem. Helm uses mustache-style string interpolation, and so does Argo.
+
+<!-- more -->
+
 <figure markdown="span">
   ![White and pink sailboat at sea during the daytime](./cover.jpg)
   <figcaption>Photo by https://unsplash.com/@clicclac</figcaption>

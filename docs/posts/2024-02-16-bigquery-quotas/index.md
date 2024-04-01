@@ -1,14 +1,11 @@
 ---
 title: The BigQuery Safety Net
 date: 2024-02-16
-category: Analytics
-tags:
- - dbt
- - bigquery
- - gcp
- - google-cloud-platform
- - finops
-
+categories:
+  - python
+  - security
+  - insights
+  - operations
 ---
 
 [Last time](../2024-02-08-pypi-downloads-danger/index.md), I said:

@@ -1,11 +1,8 @@
 ---
 title: Scala Types in Scio Pipelines
 date: 2018-07-29
-category: Data Engineering
-tags:
- - scala
- - apache-beam
- - scio
+categories:
+  - insights
 description: For very little effort, Scala's Type Aliases can help you keep track of what means what in your Scio Beam pipelines.
 ---
 
