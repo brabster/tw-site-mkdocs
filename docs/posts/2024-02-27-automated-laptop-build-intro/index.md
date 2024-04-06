@@ -12,9 +12,9 @@ I've invested a fair bit of time over the last few years incrementally automatin
 Now, I've got to a point where I can reliably wipe, rebuild, and pick up working where I left off in under thirty minutes.
 This post explains why I've invested that time.
 
---8<-- "ee.md"
-
 <!-- more -->
+
+--8<-- "ee.md"
 
 ## In the Beginning
 

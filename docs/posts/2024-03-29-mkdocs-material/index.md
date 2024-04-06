@@ -5,9 +5,9 @@ categories:
   - operations
 ---
 
-![A photo from a hotel in Manchester, of a new tower construction nearby in the foreground with skyline in the background](./assets/hero.jpg)
+![A photo from a hotel in Manchester, of a new tower construction nearby in the foreground with skyline in the background](/2024-03-29-mkdocs-material/assets/hero.jpg)
 
-I started with a [custom Gatsby site](../2018-08-19-setting-up-a-gatsby-site/index.md), then switched to Hugo (which I didn't write about). Last weekend, I switched again to mkdocs. Am I addicted to fiddling and changing stuff? Well, maybe... but each of those changes happened because of problems or concerns I had. I hope that mkdocs and mkdocs-material will be my home for a while. Pull up a seat and let's take a look at how and why I ended up here.
+I started with a custom Gatsby site, which I wrote about, then switched to Hugo (which I didn't write about). Last weekend, I switched again to mkdocs. Am I addicted to fiddling and changing stuff? Well, maybe... but each of those changes happened because of problems or concerns I had. I hope that mkdocs and mkdocs-material will be my home for a while. Pull up a seat and let's take a look at how and why I ended up here.
 
 <!-- more -->
 

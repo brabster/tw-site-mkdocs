@@ -10,9 +10,9 @@ categories:
 
 Given a historical view of the [Safety DB](../2024-02-06-pypi-vulnerabilities-2/index.md), I need to get a historical view of PyPI downloads. The source dataset contains 274TB at time of writing, and grows every day - one naive query against that table could cost $1,370. A query over a single day can scan hundreds of GB, so I need to do some work to make it usable.
 
---8<-- "ee.md"
-
 <!-- more -->
+
+--8<-- "ee.md"
 
 ## Source Data Costs
 

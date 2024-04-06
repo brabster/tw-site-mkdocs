@@ -14,9 +14,9 @@ categories:
 
 After further work, I find that's not true! This setting is available in the UI, just a bit tricky to find. More importantly, there's another set of controls elsewhere that you **need** to know about if you want to use BigQuery safely.
 
---8<-- "ee.md"
-
 <!-- more -->
+
+--8<-- "ee.md"
 
 Since publishing the last post, I've heard a couple of anecdotes from other folks about nasty billing surprises after playing with BigQuery. I take that to mean it's not just me being an idiot - it's quite easy to spend accidental money with this service.
 

@@ -7,9 +7,9 @@ categories:
 
 As part of my work on the PyPI downloads dataset, I needed a way of matching package versions to vulnerability report ranges. I didn't find a solution I trusted, so I implemented a solution from spec with decent test coverage and CI/CD automation in user defined functions (UDFs). This post covers a novel approach to incorporate UDFs into the dbt ecosystem that is working really well for me - treating UDFs as dbt models with custom materialization.
 
---8<-- "ee.md"
-
 <!-- more -->
+
+--8<-- "ee.md"
 
 I first wrote on the subject of UDFs in a DBT [back in March 2022](https://www.equalexperts.com/blog/our-thinking/testing-and-deploying-udfs-with-dbt/), after finding discourse on the subject but a lack of good, easily consumed answers. According to Google Search Console, it's been in the top three pieces of content on [equalexperts.com](https://equalexperts.com) in terms of search performance ever since (which I take great pride in, given the wealth of awesome content by amazing folks on there). I take that as evidence there's still demand for a good solution, given that folks are still searching and engaging with that post.
 
