@@ -4,7 +4,9 @@
     "codespaces": {
       "repositories": {
         "squidfunk/mkdocs-material-insiders": {
-          "contents": "read"
+          "permissions": {
+            "contents": "read"
+          }
         }
       }
     }
