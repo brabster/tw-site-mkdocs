@@ -50,13 +50,15 @@ Hit generate token, and you'll get a token back. You'll need to copy it ready fo
 
 ### Use the Fine-Grained Token
 
+If this token escapes, all the thief gets is the `mkdocs-material-insiders`, not whatever goodies they can find in my network of organisations!
+
 How you do this will vary depending on how you operate your dev and CI environments.
 I'll refer you back to the [Insiders getting started documentation] here, with the following edits:
 
 - your fine-grained token is a drop-in replacement for the classic token and will work where the docs refer to `GH_TOKEN`
 - you need to update the repo to your fork, so `squidfunk/mkdocs-material-insiders` to `your-account/mkdocs-material-insiders`
 
-For example, my local pip dependency becomes `git+https://${GH_TOKEN}@github.com/brabster/mkdocs-material-insiders.git`
+For example, my local pip dependency becomes `git+https://${GH_TOKEN}@github.com/brabster/mkdocs-material-insiders.git`.
 
 ## Updating the Fork
 
