@@ -44,7 +44,7 @@ You then specify the permissions you want the token to have. Read access to repo
 Hit generate token, and you'll get a token back. You'll need to copy it ready for the next step.
 
 <figure markdown="span">
-  ![](./assets/github_token_2.png)
+  ![](./assets/github_token_3.png)
   <figcaption>Screenshot of GitHub access token value, deleted straight after the screenshot!</figcaption>
 </figure>
 
