@@ -50,7 +50,7 @@ Hit generate token, and you'll get a token back. You'll need to copy it ready fo
 
 ### Use the Fine-Grained Token
 
-If this token escapes, all the thief gets is the `mkdocs-material-insiders`, not whatever goodies they can find in my network of organisations!
+If this token escapes, all the thief gets is the contents of `mkdocs-material-insiders`, not whatever goodies they can find in my network of organisations!
 
 How you do this will vary depending on how you operate your dev and CI environments.
 I'll refer you back to the [Insiders getting started documentation](https://squidfunk.github.io/mkdocs-material/insiders/getting-started/#with-pip-latest) here, with the following edits:
