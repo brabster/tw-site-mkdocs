@@ -5,7 +5,7 @@ date: 2024-04-13
 
 ![Aiming an arrow at a target as a hero image](./assets/hero.jpg)
 
-`mkdocs-material-insiders` is the version of `mkdocs-material` with extra sponsor-only features. I wanted to use some of those features, but I didn't like the risk of GitHub classic personal access tokens. I'll describe how fine-grained access tokens, currently in beta, mitigate the risk and how I set up to use them for local development and in CI.
+`mkdocs-material-insiders` is the version of `mkdocs-material` with extra sponsor-only features. I wanted to use some of those features, but I didn't like the risk of GitHub classic personal access tokens. I'll describe how fine-grained access tokens, currently in beta, mitigate the risk and how I set up to use them for local development and in CI. The solution works, because that's how I wrote and published this post!
 
 <!-- more -->
 
