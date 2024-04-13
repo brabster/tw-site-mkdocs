@@ -27,7 +27,7 @@ Hit the fork button. It took a while but worked fine, so don't worry if it stall
 
 ### Create Fine-Grained PAT
 
-You'll find access tokens under `Settings -> Developer Settings -> Personal access tokens -> Fine-grained tokens` - here's a [link straight there](https://github.com/settings/personal-access-tokens/new). Fill in some details and you'll find your fork available in the repo list for your account.
+You'll find access tokens under `Settings -> Developer Settings -> Personal access tokens -> Fine-grained tokens` - here's a [link straight there](https://github.com/settings/personal-access-tokens/new)[^1]. Fill in some details and you'll find your fork available in the repo list for your account.
 
 <figure markdown="span">
   ![](./assets/github_token_1.png)
@@ -67,3 +67,5 @@ Hopefully, the limitation where you can't create a fine-grained PAT for a repo y
 By default, your fork will fall behind the upstream insiders build. On your fork, you'll see an option to sync, which you can hit to catch up as needed. GitHub docs with sync options are [here](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork). There are options to sync automatically, some examples in these [Stackoverflow answers](https://stackoverflow.com/questions/23793062/can-forks-be-synced-automatically-in-github).
 
 I'm deeply lazy and I like being up to date a great deal, so I'll probably automate it... but that's something for another day!
+
+[^1]: Or am I trying to steal your GitHub auth details with a site that looks like GitHub? :thinking: :rofl:
