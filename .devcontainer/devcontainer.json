@@ -3,7 +3,7 @@
   "customizations": {
     "codespaces": {
       "repositories": {
-        "squidfunk/mkdocs-material-insiders": {
+        "brabster/mkdocs-material-insiders": {
           "permissions": {
             "contents": "read"
           }
