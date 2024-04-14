@@ -74,7 +74,7 @@ That means dbt knows what depends on this macro - and what it depends on, as I c
 Here's a snippet from yesterday's GitHub actions run - the workflow just ran `dbt build`.
 
 <figure markdown="span">
-  ![](./assets/actions_workflow.png)
+  ![GitHub actions workflow log showing the sequence of actions dbt took after dbt build](./assets/actions_workflow.png)
   <figcaption>GitHub actions workflow log showing the sequence of actions dbt took after dbt build</figcaption>
 </figure>
 
@@ -94,7 +94,7 @@ Yes, the effects of those refs allow dbt to run the udf deployments and tests al
 Yes, here's a screenshot from BigQuery taking advantage of the new BigQuery Studio improved UI.
 
 <figure markdown="span">
-  ![](./assets/udf_meta_bq.png)
+  ![The matches_multi_spec UDF in BigQuery console, showing the metadata available including the description I provided](./assets/udf_meta_bq.png)
   <figcaption>The matches_multi_spec UDF in BigQuery console, showing the metadata available including the description I provided</figcaption>
 </figure>
 
@@ -105,8 +105,8 @@ Yes, you can select them like any other model.
 Yes, including correct dependencies in the graph
 
 <div class="grid cards" markdown>
-- ![](./assets/udf_dbt_docs.png) dbt docs representation of the UDF
-- ![](./assets/udf_dbt_docs_graph.png) dbt docs lineage graph for the udf, showing the udf it depends on and where it it used
+- ![dbt docs representation of the UDF](./assets/udf_dbt_docs.png) dbt docs representation of the UDF
+- ![dbt docs lineage graph for the udf, showing the udf it depends on and where it it used](./assets/udf_dbt_docs_graph.png) dbt docs lineage graph for the udf, showing the udf it depends on and where it it used
 </div>
 
 ### Do UDFs deploy concurrently with the rest of the graph?

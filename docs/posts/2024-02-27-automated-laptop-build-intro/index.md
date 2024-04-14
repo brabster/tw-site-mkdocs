@@ -31,7 +31,7 @@ What thoughts and feelings do those scenarios trigger for you? Somewhere on this
 `abject terror <--------> no problem`
 
 <figure markdown="span">
-  ![](./assets/crying.gif)
+  ![baby crying, credit Giphy](./assets/crying.gif)
   <figcaption>baby crying, credit https://giphy.com/gifs/lwYxf0qKEjnoI</figcaption>
 </figure>
 
@@ -47,7 +47,7 @@ From my own experience and occasional conversations with peers over the last few
 - You can't remember what you had installed, how you installed it, how you customised it... strap in for a few days of "argh, where's (insert application here)"
 
 <figure markdown="span">
-  ![](./assets/one-does-not-simply.jpg)
+  ![One does not simply reinstall from scratch meme, credit https://imgflip.com/memegenerator/One-Does-Not-Simply](./assets/one-does-not-simply.jpg)
   <figcaption>One does not simply reinstall from scratch meme, credit https://imgflip.com/memegenerator/One-Does-Not-Simply</figcaption>
 </figure>
 
