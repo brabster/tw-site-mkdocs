@@ -16,7 +16,7 @@ I started with a [custom Gatsby site](../2018-08-19-setting-up-a-gatsby-site/ind
 ## Starting with Gatsby
 
 <figure markdown="span">
-  ![](./assets/gatsby-wayback.png)
+  ![tempered.works in 2020, thanks to the Internet Archive Wayback machine](./assets/gatsby-wayback.png)
   <figcaption>tempered.works in 2020, thanks to the Internet Archive Wayback machine</figcaption>
 </figure>
 
@@ -45,7 +45,7 @@ I've had the same basic setup for a long time now - it's a LaTeX document that u
 There's a bunch of dependencies needed to build it and they're nothing to do with my site tech.
 
 <figure markdown="span">
-  ![](./assets/cv.png)
+  ![My out-of-date CV, built from its own repo and a Travis CI pipeline to handle the weird and wonderful LaTeX dependencies](./assets/cv.png)
   <figcaption>My out-of-date CV, built from its own repo and a Travis CI pipeline to handle the weird and wonderful LaTeX dependencies</figcaption>
 </figure>
 
@@ -65,7 +65,7 @@ I think there were three main reasons, in no particular order.
 The theme was dark when I viewed it on my phone, and under that theme, some elements like blockquotes were hard to read.
 
 <figure markdown="span">
-  ![](./assets/hugo_dark.png)
+  ![beautifulhugo blockquotes, hard to read on my mobile device](./assets/hugo_dark.png)
   <figcaption>beautifulhugo blockquotes, hard to read on my mobile device</figcaption>
 </figure>
 
@@ -90,12 +90,12 @@ As you read around the docs, you see references to ["Insiders"](https://squidfun
 The ease of use is one way the approach shines. Another is the technical quality of the work. Let's take a look at pagespeed metrics for my old Hugo site versus my new mkdocs-material site.
 
 <figure markdown="span">
-  ![](./assets/pagespeed_old.png)
+  ![beautifulhugo mobile site pagespeed metrics; performance 49, accessibility 82, best practices 93, SEO 87](./assets/pagespeed_old.png)
   <figcaption>beautifulhugo mobile site pagespeed metrics; performance 49, accessibility 82, best practices 93, SEO 87</figcaption>
 </figure>
 
 <figure markdown="span">
-  ![](./assets/pagespeed_new.png)
+  ![mkdocs-material mobile site pagespeed metrics; performance 98, accessibility 83, best practices 96, SEO 100](./assets/pagespeed_new.png)
   <figcaption>mkdocs-material mobile site pagespeed metrics; performance 98, accessibility 83, best practices 96, SEO 100</figcaption>
 </figure>
 

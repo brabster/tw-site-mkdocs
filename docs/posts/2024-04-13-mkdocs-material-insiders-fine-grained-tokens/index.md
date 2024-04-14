@@ -30,21 +30,21 @@ Hit the fork button. It took a while but worked fine, so don't worry if it stall
 You'll find access tokens under `Settings -> Developer Settings -> Personal access tokens -> Fine-grained tokens` - here's a [link straight there](https://github.com/settings/personal-access-tokens/new)[^1]. Fill in some details and you'll find your fork available in the repo list for your account.
 
 <figure markdown="span">
-  ![](./assets/github_token_1.png)
+  ![Screenshot of GitHub access token settings, with the forked repo selected](./assets/github_token_1.png)
   <figcaption>Screenshot of GitHub access token settings, with the forked repo selected</figcaption>
 </figure>
 
 You then specify the permissions you want the token to have. Read access to repo contents is all that's needed.
 
 <figure markdown="span">
-  ![](./assets/github_token_2.png)
+  ![Screenshot of GitHub access token settings, showing the contents read permission required](./assets/github_token_2.png)
   <figcaption>Screenshot of GitHub access token settings, showing the contents read permission required</figcaption>
 </figure>
 
 Hit generate token, and you'll get a token back. You'll need to copy it ready for the next step.
 
 <figure markdown="span">
-  ![](./assets/github_token_3.png)
+  ![Screenshot of GitHub access token value, deleted straight after the screenshot!](./assets/github_token_3.png)
   <figcaption>Screenshot of GitHub access token value, deleted straight after the screenshot!</figcaption>
 </figure>
 

@@ -24,7 +24,7 @@ This post concludes this short series, introducing a [walkthrough video](https:/
 I used the [Xfce Fedora spin until March 2022](https://github.com/brabster/workstation-setup) before switching to Xubuntu. It's not obvious to me from the main documentation, but it prioritises pushing the community forward over, for example, compatibility. This was demonstrated by [the switch to cgroups v2 in 2022](https://fedoraproject.org/wiki/Changes/CGroupsV2):
 
 <figure markdown="span">
-  ![](./assets/fedora.png)
+  ![Fedora logo](./assets/fedora.png)
   <figcaption>Fedora logo</figcaption>
 </figure>
 
@@ -33,7 +33,7 @@ I used the [Xfce Fedora spin until March 2022](https://github.com/brabster/works
 Docker did not work with cgroups v2 and I was using Docker with my client team. I couldn't just turn up on the following Monday morning with "Good News Everyone! Fedora broke Docker on my workstation so let's come up with a plan...". Whilst I appreciate Fedora pushing the industry forward, it wasn't a great fit for a working consultant, who wants to keep up to date and avoid disruption with clients.
 
 <figure markdown="span">
-  ![](./assets/xubuntu.png)
+  ![Xubuntu logo](./assets/xubuntu.png)
   <figcaption>Xubuntu logo</figcaption>
 </figure>
 
@@ -46,7 +46,7 @@ Why [Xfce](https://www.xfce.org/) instead of the default Ubuntu desktop? Probabl
 ## Why Not [Qubes](https://www.qubes-os.org/)?
 
 <figure markdown="span">
-  ![](./assets/qubes.png)
+  ![Qubes OS logo](./assets/qubes.png)
   <figcaption>Qubes OS logo</figcaption>
 </figure>
 
@@ -63,7 +63,7 @@ I looked into automating the actual OS installation back on Fedora. It involved 
 ## Why [Ansible](https://www.ansible.com/)?
 
 <figure markdown="span">
-  ![](./assets/ansible.png)
+  ![Ansible logo](./assets/ansible.png)
   <figcaption>Ansible logo</figcaption>
 </figure>
 
