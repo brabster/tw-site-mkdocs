@@ -1,0 +1,14 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "customizations": {
+    "codespaces": {
+      "repositories": {
+        "brabster/mkdocs-material-insiders": {
+          "permissions": {
+            "contents": "read"
+          }
+        }
+      }
+    }
+  }
+}
