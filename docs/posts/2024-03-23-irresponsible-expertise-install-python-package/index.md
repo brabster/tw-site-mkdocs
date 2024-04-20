@@ -85,14 +85,14 @@ https://docs.python.org/3/installing/index.html
 Number two is more official Python documentation. Instructions for using `venv` avoid calling out the security-related risks around installing in the system Python installation. The last section on "installing binary extensions" implies the capability of installation to execute code but it doesn't call it out and links to [Installing Scientific Packages](https://packaging.python.org/en/latest/guides/installing-scientific-packages/) which encourages using old versions:
 
 <figure markdown="span">
-  ![Screen capture of python docs recommending old versions of packages](./assets/2_versions.png)
+  ![Screen capture of python docs recommending old versions of packages](./assets/2_versions.webp)
   <figcaption>Screen capture of python docs recommending old versions of packages</figcaption>
 </figure>
 
 Later in the same document, advice to install to system Python for installers that require building from source and don't support virtual environments:
 
 <figure markdown="span">
-  ![Screen capture of python docs recommending installation to system Python without mentioning risks](./assets/2_system.png)
+  ![Screen capture of python docs recommending installation to system Python without mentioning risks](./assets/2_system.webp)
   <figcaption>Screen capture of python docs recommending installation to system Python without mentioning risks</figcaption>
 </figure>
 
@@ -107,7 +107,7 @@ https://datatofish.com/install-package-python-using-pip/
 OK, so we open with:
 
 <figure markdown="span">
-  ![Screen capture of datatofish.com advising Python newbies to blindly subvert system security](./assets/3_wtf.png)
+  ![Screen capture of datatofish.com advising Python newbies to blindly subvert system security](./assets/3_wtf.webp)
   <figcaption>Screen capture of datatofish.com advising Python newbies to blindly subvert system security</figcaption>
 </figure>
 
@@ -125,7 +125,7 @@ https://www.listendata.com/2019/04/install-python-package.html
 Same again, for example:
 
 <figure markdown="span">
-  ![Screen capture of listendata.com advising Python newbies to blindly subvert system security](./assets/4_admin.png)
+  ![Screen capture of listendata.com advising Python newbies to blindly subvert system security](./assets/4_admin.webp)
   <figcaption>Screen capture of listendata.com advising Python newbies to blindly subvert system security</figcaption>
 </figure>
 
@@ -142,7 +142,7 @@ You know what? I think this one is rather good. It beats the official documentat
 Here's an example.
 
 <figure markdown="span">
-  ![Screen capture from python.land showing considered, thoughtful and actionable advice to help users stay safe](./assets/5_pythonland.png)
+  ![Screen capture from python.land showing considered, thoughtful and actionable advice to help users stay safe](./assets/5_pythonland.webp)
   <figcaption>Screen capture from python.land showing considered, thoughtful and actionable advice to help users stay safe</figcaption>
 </figure>
 

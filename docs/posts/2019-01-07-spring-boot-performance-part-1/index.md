@@ -18,7 +18,7 @@ Eventually, the load balancer's readiness checks would timeout and it'd refuse t
 
 Here's what our little prototype system looked like:
 
-![Diagram showing the components parts of the prototype when we discovered the performance problem](orig-arch-diag.jpg)
+![Diagram showing the components parts of the prototype when we discovered the performance problem](./orig-arch-diag.webp)
 
 We're building an API, rather than a website. 
 Clients authenticate by passing a username and password in the request.
@@ -161,13 +161,13 @@ If you cloned the project, you can try changing the scenario in [LoadTest.scala]
 
 Gatling saves a report of metrics and charts for each test. There's a couple that I think give us interesting insight into what just happened that we might not have seen as the test was running.
 
-![Bar chart showing 15 requests responded in around 200 milliseconds, with other requests uniformly distributed up to almost 30 seconds](gatling-slow-response-time-distribution.png)
+![Bar chart showing 15 requests responded in around 200 milliseconds, with other requests uniformly distributed up to almost 30 seconds](gatling-slow-response-time-distribution.webp)
 
 The "Response Time Distribution" report tells us that the fastest few requests are served in around 200ms. So it takes at least 200ms to serve a request! Then there's an roughly uniform distribution of request times up to 30 seconds. The test only ran for around 70 seconds in total.
 
 Next, the "Number of requests per second" chart shows more clearly that the app isn't keeping up, even with these low request rates. The number of active users (those that have made a request and not yet had a response) climbs until Gatling stops sending new requests.
 
-![Line chart showing the number of new requests per second and the number of active requests over time.](gatling-slow-request-response-rate.png)
+![Line chart showing the number of new requests per second and the number of active requests over time.](gatling-slow-request-response-rate.webp)
 
 You can see the app is not quite able to keep up at 40 requests per second. as we ramp to 60 the line swings upwards as it really starts to fall behind. 45 seconds or so into the test the number of requests per second drops from 100 to zero, and the number of active requests, just over 1000 by this point, stops climbing and starts to fall as the app starts to clear its backlog.
 

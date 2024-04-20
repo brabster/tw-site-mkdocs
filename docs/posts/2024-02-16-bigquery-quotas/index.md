@@ -40,7 +40,7 @@ Contrary to what I said last time, there **IS** a UI element to set the max byte
         - Ghosted Text Input Field: "Maximum Bytes Billed"
 
 <figure markdown="span">
-  ![Screenshot of the max bytes billed setting in BigQuery UI](./assets/max_bytes_billed.png)
+  ![Screenshot of the max bytes billed setting in BigQuery UI](./assets/max_bytes_billed.webp)
   <figcaption>Screenshot of the max bytes billed setting in BigQuery UI</figcaption>
 </figure>
 
@@ -65,7 +65,7 @@ Note that it's a **project-level** setting - I've not seen a way to set a defaul
 Open the project's quota panel.
 
 <figure markdown="span">
-  ![Per-project quotas panel](./assets/find_quotas.png)
+  ![Per-project quotas panel](./assets/find_quotas.webp)
   <figcaption>Per-project quotas panel</figcaption>
 </figure>
 
@@ -74,7 +74,7 @@ Open the project's quota panel.
 Search for the query usage quota setting.
 
 <figure markdown="span">
-  ![Searching for a specific quota](./assets/quota_find_query_usage_bq.png)
+  ![Searching for a specific quota](./assets/quota_find_query_usage_bq.webp)
   <figcaption>Searching for a specific quota</figcaption>
 </figure>
 
@@ -83,7 +83,7 @@ Search for the query usage quota setting.
 You get some information about the current quota setting and actual usage - I've not run any queries in this project today, if I had you would see that in the usage metrics.
 
 {{< figure
-  src="./assets/quota_query_usage_per_day_bq.png"
+  src="./assets/quota_query_usage_per_day_bq.webp"
   caption="Information about a quota, including current limit and real usage in the current period" >}}
 
 ---
@@ -96,7 +96,7 @@ You have the option of setting a limit on query bytes scanned for the project, o
 
 
 <figure markdown="span">
-  ![Update quota panel](./assets/quota_update_bq.png)
+  ![Update quota panel](./assets/quota_update_bq.webp)
   <figcaption>Update quota panel</figcaption>
 </figure>
 
@@ -105,7 +105,7 @@ You have the option of setting a limit on query bytes scanned for the project, o
 Hit submit request, and it'll update. But does it work? I've risked the spend so you don't have to...
 
 <figure markdown="span">
-  ![Effect of quota update](./assets/query_usage_quota_effect.png)
+  ![Effect of quota update](./assets/query_usage_quota_effect.webp)
   <figcaption>Effect of quota update</figcaption>
 </figure>
 
@@ -119,7 +119,7 @@ There's some useful info in the quotas view that helps you understand your utili
 Here's my quota use - you can see where I made the mistakes I talked about last time and scanned several TB in a day!
 
 <figure markdown="span">
-  ![Quota console metrics for usage of a particular quota over recent history](./assets/query_usage_quota_metrics.png)
+  ![Quota console metrics for usage of a particular quota over recent history](./assets/query_usage_quota_metrics.webp)
   <figcaption>Quota console metrics for usage of a particular quota over recent history</figcaption>
 </figure>
 

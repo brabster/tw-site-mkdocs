@@ -30,7 +30,7 @@ We can increase that by an order of magnitude to 2000 threads in `application.pr
 
 Running our Gatling test shows that this change has adversely affected performance. We see more active users at peak and a funny dip in the actives line as the backlog is cleared. That dip, marked on the chart below, is a few requests timing out.
 
-![Requests per second and active users](1000-threads-req-sec.png)
+![Requests per second and active users](1000-threads-req-sec.webp)
 
 That didn't help, so let's put the max thread count back to the default before we try anything else! If you're following along, I recommend using `clean`, as in `mvn clean spring-boot:run` to ensure that nothing is remembered from the previous build. You can lose a lot of time acting on misleading results otherwise!
 
@@ -77,19 +77,19 @@ The quick and easy way to check whether something that Spring Security is autoco
 We have a winner! You can see that the performance is improved. No active requests throughout the test - the app is keeping up easily. The charts tell the same story. Let's compare side by side to get a feel for the difference.
 
 ### Response time distribution, before:
-![Histogram of response time distributions, with Spring Security](../2019-01-07-spring-boot-performance-part-1/gatling-slow-response-time-distribution.png)
+![Histogram of response time distributions, with Spring Security](../2019-01-07-spring-boot-performance-part-1/gatling-slow-response-time-distribution.webp)
 
 ### Response time distribution, after:
-![Histogram of response time distributions, without Spring Security](no-spring-security-response-time-dist.png)
+![Histogram of response time distributions, without Spring Security](no-spring-security-response-time-dist.webp)
 
 Instead of a spread of response times all the way up to 30 seconds, we have all responses served within a few milliseconds. Much better! On to requests per second.
 
 ### Requests per Second and Active Users, before:
-![Plots of requests per second and active users, with Spring Security](../2019-01-07-spring-boot-performance-part-1/gatling-slow-request-response-rate.png)
+![Plots of requests per second and active users, with Spring Security](../2019-01-07-spring-boot-performance-part-1/gatling-slow-request-response-rate.webp)
 
 
 ### Requests per Second and Active Users, after:
-![Plots of requests per second and active users, without Spring Security](no-spring-security-req-sec.png)
+![Plots of requests per second and active users, without Spring Security](no-spring-security-req-sec.webp)
 
 To appreciate the difference, note the different scale for Active Users, the y-axis on the right, and the total time the test ran for on the x-axis. Before, the number of active users climbed faster than the request rate, indicating that requests would start timing out if the test hadn't ended. After we remove Spring Security, the number of active users is the same as the request rate throughout the test, so the app is keeping up perfectly with the load.
 

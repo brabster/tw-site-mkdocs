@@ -20,12 +20,12 @@ The Python Packaging Authority publishes package download data to BigQuery ([PyP
 There are three tables in the dataset, one of which represents actual package downloads, `bigquery-public-data.pypi.file_downloads`. The Python Packaging User Guide produces some useful documentation about this table [here](https://packaging.python.org/en/latest/guides/analyzing-pypi-package-downloads/). Let's take a look at what we're dealing with.
 
 <figure markdown="span">
-  ![file_downloads table schema, showing over 20 columns](./assets/pypi_table_schema.png)
+  ![file_downloads table schema, showing over 20 columns](./assets/pypi_table_schema.webp)
   <figcaption>file_downloads table schema, showing over 20 columns</figcaption>
 </figure>
 
 <figure markdown="span">
-  ![Table details, showing the size in bytes and rows](./assets/pypi_table_details.png)
+  ![Table details, showing the size in bytes and rows](./assets/pypi_table_details.webp)
   <figcaption>Table details, showing the size in bytes and rows</figcaption>
 </figure>
 
@@ -76,7 +76,7 @@ Now I need to glue the download data and the vulnerability data together. I want
 I couldn't find any functions I could call from BigQuery to process semver constraints. Semver isn't straightforward to process, but I worked from the [spec](https://semver.org/) as best I could. It took me a couple of days and 14 functions to solve the problem in pure SQL with enough test coverage to give me any confidence in correctness.
 
 <figure markdown="span">
-  ![UDFs involved in the semver matching calculation](./assets/semver_udfs.png)
+  ![UDFs involved in the semver matching calculation](./assets/semver_udfs.webp)
   <figcaption>UDFs involved in the semver matching calculation</figcaption>
 </figure>
 
@@ -102,7 +102,7 @@ FROM examples
 ```
 
 <figure markdown="span">
-  ![Example results of previous query](./assets/semver_example.png)
+  ![Example results of previous query](./assets/semver_example.webp)
   <figcaption>Example results of previous query</figcaption>
 </figure>
 
@@ -135,7 +135,7 @@ Having put all this together in dbt, I can easily test, deploy and perform data 
 ## Analysis
 
 <figure markdown="span">
-  ![Pie chart showing vulnerable downloads at 5.2% of total](./assets/overall_downloads.png)
+  ![Pie chart showing vulnerable downloads at 5.2% of total](./assets/overall_downloads.webp)
   <figcaption>Pie chart showing vulnerable downloads at 5.2% of total</figcaption>
 </figure>
 

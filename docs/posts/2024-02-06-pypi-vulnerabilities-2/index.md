@@ -39,14 +39,14 @@ Given that the commit history is immutable, this approach avoids unnecessary tim
 ### Backfilling Safety DB history in [the first build](https://github.com/brabster/pypi_vulnerabilities/actions/runs/7716571519/job/21033677275)
 
 <figure markdown="span">
-  ![Backfilling Safety DB history](./assets/safety_init_load.png)
+  ![Backfilling Safety DB history](./assets/safety_init_load.webp)
   <figcaption>Backfilling Safety DB history</figcaption>
 </figure>
 
 ### [First build on Feb 2nd](https://github.com/brabster/pypi_vulnerabilities/actions/runs/7716571519/job/21033677275) loads February's commit
 
 <figure markdown="span">
-  ![First build on Feb 2nd loads February's commit](./assets/safety_next_load.png)
+  ![First build on Feb 2nd loads February's commit](./assets/safety_next_load.webp)
   <figcaption>First build on Feb 2nd loads February's commit</figcaption>
 </figure>
 
@@ -102,7 +102,7 @@ Having sorted an idempotent upload of the latest Safety DB, it's just a case of 
 That just goes into source control for the workflow as a trigger (c'mon GitLab, it should be THIS EASY).
 
 <figure markdown="span">
-  ![Cron schedule in the GitHub actions workflow](./assets/gh_cron.png)
+  ![Cron schedule in the GitHub actions workflow](./assets/gh_cron.webp)
   <figcaption>Cron schedule in the GitHub actions workflow</figcaption>
 </figure>
 

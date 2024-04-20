@@ -27,8 +27,6 @@ plugins:
   - glightbox
   - meta
   - search
-  - optimize:
-      optimize_png: false
   - blog:
       blog_dir: .
       post_url_format: "posts/{date}/{slug}"

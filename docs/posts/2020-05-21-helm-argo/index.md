@@ -14,7 +14,7 @@ Helm also supports templating values which can be really helpful - but that's wh
 <!-- more -->
 
 <figure markdown="span">
-  ![White and pink sailboat at sea during the daytime](./cover.jpg)
+  ![White and pink sailboat at sea during the daytime](./cover.webp)
   <figcaption>Photo by https://unsplash.com/@clicclac</figcaption>
 </figure>
 
@@ -103,7 +103,7 @@ TEST SUITE: None
 Running the workflow shows that both types of interpolation have been applied successfully. Note the release name `my-release` in the workflow and pod names, and the workflow UID in the whalesay output.
 
 <figure markdown="span">
-  ![Argo web UI, showing the workflow output](./argo-success.png)
+  ![Argo web UI, showing the workflow output](./argo-success.webp)
   <figcaption>The Helm-processed workflow running successfully, with interpolated values visible</figcaption>
 </figure>
 

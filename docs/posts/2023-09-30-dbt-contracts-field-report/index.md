@@ -17,7 +17,7 @@ The first concrete need we saw for a contract was between the data product and a
 I can't share the actual artefacts that we were working with, so I'll use a publicly available example to illustrate. [This PediatricsOverview Tableau visulisation, by Bridget Winds Cogley](https://public.tableau.com/app/profile/bridget/viz/PediatricsOverview/Overview), will serve well as an example.
 
 <figure markdown="span">
-  ![Example Tableau dashboard screenshot. Several different types of visualisation are visible, illustrating some of the complexity that dashboards contain. I think I can use this for commercial purposes with appropriate credit!](./example_tableau_viz.png)
+  ![Example Tableau dashboard screenshot. Several different types of visualisation are visible, illustrating some of the complexity that dashboards contain. I think I can use this for commercial purposes with appropriate credit!](./example_tableau_viz.webp)
   <figcaption>Example Tableau dashboard screenshot. Several different types of visualisation are visible, illustrating some of the complexity that dashboards contain. I think I can use this for commercial purposes with appropriate credit!</figcaption>
 </figure>
 
@@ -36,7 +36,7 @@ If the query, filtering or aggregation that a visualisation depends on could not
 Dashboards may not have capabilities to proactively monitor and report these kinds of obvious issues, meaning that the next person who tries to look at the dashboard is the first opportunity you have to detect the problem, when the see something like this:
 
 <figure markdown="span">
-  ![Example Tableau error message, preventing use of the dashboard](./example_tableau_error.png)
+  ![Example Tableau error message, preventing use of the dashboard](./example_tableau_error.webp)
   <figcaption>Example Tableau error message, preventing use of the dashboard</figcaption>
 </figure>
 
@@ -54,13 +54,13 @@ Next, I paired with team members involved with building and assuring the dashboa
 
 |Expected|Actual|Cause|
 |-|-|-|
-|![Rounding error for an expected integer value in a float-value column](./example_int_round.png)|135,113.2 admissions|Rounding error for an expected integer value in a float-value column|
-|![Missing data for the expected date ranges](./example_int_round.png)|0 admissions|Missing data for the expected date ranges|
-|![Misclassified data for the expected date ranges](./example_int_round.png)|77,412 admissions|Misclassified data for the expected date ranges|
-|![Different filter value for "Cluster 1", clusters hardcoded into the dashboard](./example_typo.png)|0 (Cluster 1)|Different filter value for "Cluster 1", clusters hardcoded into the dashboard|
-|![Different filter value for "Cluster 1", with clusters being generated from the data](./example_typo.png)|Cluster 1 missing|Different filter value for "Cluster 1", with clusters being generated from the data|
-|!["MED IT UNIT" filtered out of the underlying data](./example_filtered_value.png)|"MED IT UNIT" missing|"MED IT UNIT" filtered out of the underlying data|
-|![Typo "MED IT UNI" in some rows](./example_filtered_value.png)|"MED IT UNIT" 3003, "MED IT UNI" 4004|Typo "MED IT UNI" in some rows|
+|![Rounding error for an expected integer value in a float-value column](./example_int_round.webp)|135,113.2 admissions|Rounding error for an expected integer value in a float-value column|
+|![Missing data for the expected date ranges](./example_int_round.webp)|0 admissions|Missing data for the expected date ranges|
+|![Misclassified data for the expected date ranges](./example_int_round.webp)|77,412 admissions|Misclassified data for the expected date ranges|
+|![Different filter value for "Cluster 1", clusters hardcoded into the dashboard](./example_typo.webp)|0 (Cluster 1)|Different filter value for "Cluster 1", clusters hardcoded into the dashboard|
+|![Different filter value for "Cluster 1", with clusters being generated from the data](./example_typo.webp)|Cluster 1 missing|Different filter value for "Cluster 1", with clusters being generated from the data|
+|!["MED IT UNIT" filtered out of the underlying data](./example_filtered_value.webp)|"MED IT UNIT" missing|"MED IT UNIT" filtered out of the underlying data|
+|![Typo "MED IT UNI" in some rows](./example_filtered_value.webp)|"MED IT UNIT" 3003, "MED IT UNI" 4004|Typo "MED IT UNI" in some rows|
 
 There are just a few illustrative examples to give you an idea of the fragility lurking under even a relatively simple dashboard. In our real case, we had a multi-page dashboard, where each page consisted of a set of interdependent visualisations designed to tell one facet of a mission critical story.
 
