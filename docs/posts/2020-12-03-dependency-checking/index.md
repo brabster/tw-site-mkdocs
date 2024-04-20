@@ -26,7 +26,7 @@ My thinking, argued in the rest of the post, is that:
 
 I'd bet the first time you put a dependency check into your build, you did what I did. You run the check when you push. When the check fails, you break the build.
 
-<!-- {{< img src="push.jpg"
+<!-- {{< img src="push.webp"
     alt="A push sign on a door"
     >}} -->
 

@@ -19,11 +19,11 @@ Given a historical view of the [Safety DB](../2024-02-06-pypi-vulnerabilities-2/
 The raw data contains a row per download, which explains the volume. If there are a million downloads of `requests==1.0.0` on a given day, that's a million rows. The data is partitioned by day, so we can limit the scan to a specific date range if add a `WHERE` clause with a constant value. Let's take a look at what BigQuery estimates scan volume will be for a few example queries. "Worst Cost" in the table below multiplies the scanned bytes by $5/TB for a worst-case cost,
 
 <div class="grid cards" markdown>
-- ![All columns, one day: $0.79](./assets/query_raw_star_one_day.png) All columns, one day: $0.79
-- ![Interesting columns, one day: $0.08](./assets/query_raw_cols_one_day.png) Interesting columns, one day: $0.08
-- ![Interesting columns, one month: $5.25](./assets/query_raw_cols_one_month.png) Interesting columns, one month: $5.25
-- ![Interesting columns, one year: $51.95](./assets/query_raw_cols_one_year.png) Interesting columns, one year: $51.95
-- ![All columns, one year: $509.95](./assets/query_raw_star_one_year.png) All columns, one year: $509.95
+- ![All columns, one day: $0.79](./assets/query_raw_star_one_day.webp) All columns, one day: $0.79
+- ![Interesting columns, one day: $0.08](./assets/query_raw_cols_one_day.webp) Interesting columns, one day: $0.08
+- ![Interesting columns, one month: $5.25](./assets/query_raw_cols_one_month.webp) Interesting columns, one month: $5.25
+- ![Interesting columns, one year: $51.95](./assets/query_raw_cols_one_year.webp) Interesting columns, one year: $51.95
+- ![All columns, one year: $509.95](./assets/query_raw_star_one_year.webp) All columns, one year: $509.95
 </div>
 
 We can see the date partitioning working here - the fewer days we query, the less we scan, the less it costs. Columnar storage also makes a big difference - if we select a few columns, we also scan and pay less than querying them all.
@@ -106,7 +106,7 @@ One of the tricky parts is that I'm expecting a hefty scan on the first run, as 
 I was busy with client work for the next couple of days - I remembered to update the `max_bytes_billed` down from the 5TB I needed for the backfill to 50Gb I thought I'd need for the incrementals.
 When I got home, I noticed a billing alarm in my email. I was expecting it as the first scan was a bit heavy, but I checked anyway - I realised I'd spent £40, when I was expecting ~£10. Looking into it, I noticed that the build at 50GB had failed. I realised that I was [getting a 3.4TB scan every time it ran](https://github.com/brabster/pypi_vulnerabilities/actions/runs/7734493314/job/21088578787), instead of the much smaller scan I was expecting for the incrementals.
 
-![Build log showing 3.4TB merge](./assets/incr_model_before.png)
+![Build log showing 3.4TB merge](./assets/incr_model_before.webp)
 
 ## Fixing It
 
@@ -154,7 +154,7 @@ GROUP BY
 Now I'm running an initial query to find the latest partition date in the target table, and then query and merge new rows starting from that date, which is a constant now in the merge query. Nice and clean - but not front-and-centre in the dbt docs nor built into dbt incremental models. Now, my [daily merges run over 20-25GB](https://github.com/brabster/pypi_vulnerabilities/actions/runs/7794554168/job/21256082949#step:8:117), not 3.4TB!
 
 <figure markdown="span">
-  ![Build log showing 20GB merge](./assets/incr_model_after.png)
+  ![Build log showing 20GB merge](./assets/incr_model_after.webp)
   <figcaption>Build log showing 20GB merge</figcaption>
 </figure>
 

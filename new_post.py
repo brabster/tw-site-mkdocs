@@ -19,7 +19,7 @@ title: {args.title}
 date: {date.today()}
 ---
 
-![hero image](./assets/hero.jpg)
+![hero image](./assets/hero.webp)
 
 intro snippet
 

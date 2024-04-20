@@ -129,7 +129,7 @@ I can now use these in the config like this:
 
 Here's the observatory's advice on those headers.
 
-![Mozilla's Observatory, showing the summary for the website](observatory.png)
+![Mozilla's Observatory, showing the summary for the website](observatory.webp)
 
 
 ## What about Performance?
@@ -138,7 +138,7 @@ A similar approach to benchmark performance, using Google's [Page Speed](https:/
 Right now, we're getting 71% on the mobile optimisation benchmark, and 90% on the desktop benchmark.
 Whilst the site feels very snappy to me, there's probably work to do there when I have time, but at least I have a measurement to start from.
 
-![Google's Page Speed tool, showing the poor mobile performance for the website](pagespeed.png)
+![Google's Page Speed tool, showing the poor mobile performance for the website](pagespeed.webp)
 
 ## Monitoring
 
@@ -152,7 +152,7 @@ and I found [UptimeRobot](https://uptimerobot.com). They have a generous free ti
 It's been checking for three hours now and everything looks good.
 I can also see that the response times are between 150-250ms, which is a useful measure to have historical data on!
 
-![Uptime Robot's dashboard for availability and latency history, showing 100% availability and latency between 150-250ms](uptimerobot.png)
+![Uptime Robot's dashboard for availability and latency history, showing 100% availability and latency between 150-250ms](uptimerobot.webp)
 
 ## Finally... DNS and TLS Setup
 

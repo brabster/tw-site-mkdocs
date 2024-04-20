@@ -6,7 +6,7 @@ categories:
 ---
 
 <figure markdown="span">
-  ![A bear, lying on its side facepalming](./bradley-howington-P6rYiIgGT6k-unsplash.jpg)
+  ![A bear, lying on its side facepalming](./bradley-howington-P6rYiIgGT6k-unsplash.webp)
   <figcaption>Photo by https://unsplash.com/@bradleyhowington</figcaption>
 </figure>
 

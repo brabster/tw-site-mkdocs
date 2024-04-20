@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -euo pipefail
+
+if egrep -r '.jpg|.png' docs/; then
+    echo "maybe references to images not optimised to webp"
+    exit 1
+fi
+
+

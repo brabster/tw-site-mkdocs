@@ -82,7 +82,7 @@ dependencies {
 }
 ```
 
-{{< img src="latest-stable-meme.jpg" alt="Meme. Anakin: I inited a new Kotlin project in Gradle. Padme: So it's got the latest versions of everything, right? Right?" >}}
+{{< img src="latest-stable-meme.webp" alt="Meme. Anakin: I inited a new Kotlin project in Gradle. Padme: So it's got the latest versions of everything, right? Right?" >}}
 (credit to https://imgflip.com/)
 
 Do we have the latest versions of these default dependencies? How would we know?

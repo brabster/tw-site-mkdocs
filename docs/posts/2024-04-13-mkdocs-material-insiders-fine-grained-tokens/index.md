@@ -3,7 +3,7 @@ title: Fine-Grained GitHub Access Tokens with mkdocs-material-insiders
 date: 2024-04-13
 ---
 
-![Aiming an arrow at a target as a hero image](./assets/hero.jpg)
+![Aiming an arrow at a target as a hero image](./assets/hero.webp)
 
 `mkdocs-material-insiders` is the version of `mkdocs-material` with extra sponsor-only features. I wanted to use some of those features, but I didn't like the risk of GitHub classic personal access tokens. I'll describe how fine-grained access tokens, currently in beta, mitigate the risk and how I set up to use them for local development and in CI. The solution works, because that's how I wrote and published this post!
 
@@ -30,21 +30,21 @@ Hit the fork button. It took a while but worked fine, so don't worry if it stall
 You'll find access tokens under `Settings -> Developer Settings -> Personal access tokens -> Fine-grained tokens` - here's a [link straight there](https://github.com/settings/personal-access-tokens/new)[^1]. Fill in some details and you'll find your fork available in the repo list for your account.
 
 <figure markdown="span">
-  ![Screenshot of GitHub access token settings, with the forked repo selected](./assets/github_token_1.png)
+  ![Screenshot of GitHub access token settings, with the forked repo selected](./assets/github_token_1.webp)
   <figcaption>Screenshot of GitHub access token settings, with the forked repo selected</figcaption>
 </figure>
 
 You then specify the permissions you want the token to have. Read access to repo contents is all that's needed.
 
 <figure markdown="span">
-  ![Screenshot of GitHub access token settings, showing the contents read permission required](./assets/github_token_2.png)
+  ![Screenshot of GitHub access token settings, showing the contents read permission required](./assets/github_token_2.webp)
   <figcaption>Screenshot of GitHub access token settings, showing the contents read permission required</figcaption>
 </figure>
 
 Hit generate token, and you'll get a token back. You'll need to copy it ready for the next step.
 
 <figure markdown="span">
-  ![Screenshot of GitHub access token value, deleted straight after the screenshot!](./assets/github_token_3.png)
+  ![Screenshot of GitHub access token value, deleted straight after the screenshot!](./assets/github_token_3.webp)
   <figcaption>Screenshot of GitHub access token value, deleted straight after the screenshot!</figcaption>
 </figure>
 
