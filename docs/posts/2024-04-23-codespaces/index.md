@@ -25,7 +25,7 @@ A couple of weeks ago, I wanted to fix my website's RSS plugin. It was incorrect
 
 Immediately after running `python -m pip install -U -r requirements/development.txt`, as the stream of package installations flew by, I realised that anything nasty in that code or its sprawling network dependencies could have compromised me. By the time I'd thought about it, it would have been too late. (To be clear - I was working on my own laptop rather than the one my employer or my client gave me, so the blast radius was relatively restricted).
 
-Another example - after reading [this LinkedIn post on how the recruitment "tech test" process can be an attack vector](https://www.linkedin.com/feed/update/urn:li:activity:7178644736809836544/), it occurred to me that a "candidate" could pull the same trick **returning** a tech test for review. I've reviewed tech tests in the past and it got me thinking. Even with some defences, like running stuff in containers, I still felt pretty uneasy about the risk.
+Another example - after reading [this LinkedIn post on how the recruitment "tech test" process can be an attack vector](https://www.linkedin.com/feed/update/urn:li:activity:7178644736809836544/), it occurred to me that a "candidate" could pull the same trick **returning** a tech test for review with something covert and nasty hidden inside. I've reviewed tech tests in the past and it got me thinking. Even with some defences, like running stuff in containers, I still felt pretty uneasy about the risk.
 
 To be clear - we're not talking about one or two dependencies either. The `requirements.txt` for this site's repo has only three dependencies in it. How many dependencies get installed to `mkdocs serve` this site?
 
