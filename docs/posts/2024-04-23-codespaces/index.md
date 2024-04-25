@@ -17,7 +17,7 @@ To date, I've worked with software projects by cloning a repository onto my loca
 
 ## Just Enough and No More
 
-Let's say want to do some work on a repository. I want that software and all its dependencies, plugins, IDE extensions and whatever other weird and wonderful gubbins are needed to have access to just what's needed and no more. Running locally as I have been, that's certainly not the case. Any one of those things being compromised could get access to any credentials lying around on my disk, my browser's stored passwords, credentials for any sites I'm currently logged into, and probably even my password manager if it's unlocked. Anything I can see and do, it can see and do by default too.
+Let's say that I want to do some work on a repository. I want that software and all its dependencies, plugins, IDE extensions and whatever other weird and wonderful gubbins are needed to have access to just what's needed and no more. Running locally as I have been, that's certainly not the case. Any one of those things being compromised could get access to any credentials lying around on my disk, my browser's stored passwords, credentials for any sites I'm currently logged into, and probably even my password manager if it's unlocked. Anything I can see and do, it can see and do by default too.
 
 ## Risky Examples
 
@@ -101,6 +101,11 @@ There are a couple of things I can think of that might cause problems. I'm lucky
 ## Alternatives
 
 If you're not using GitHub you're not totally out of luck. I think [Gitpod](https://docs.gitlab.com/ee/integration/gitpod.html) is basically the same idea on GitLab, and I'm sure there are others.
+
+## Bonus - IDE on your Phone
+
+I PR'd this post, went downstairs to make a cup of tea and noticed a typo whilst reviewing on my phone. Codespaces actually works and it's just about usable on my phone!
+
 
 ## Wrapping
 
