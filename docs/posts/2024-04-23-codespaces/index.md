@@ -5,7 +5,7 @@ date: 2024-04-23
 
 ![A photo of a crab on a night dive in the red sea. Credit: me](./assets/crab.webp)
 
-Why I've been trialling GitHub Codespaces as a more secure alternative to local development.
+Why I've been trialling GitHub Codespaces as a more secure alternative to local development. Who knew you can code on your phone?
 
 --8<-- "ee.md"
 
@@ -104,8 +104,14 @@ If you're not using GitHub you're not totally out of luck. I think [Gitpod](http
 
 ## Bonus - IDE on your Phone
 
-I PR'd this post, went downstairs to make a cup of tea and noticed a typo whilst reviewing on my phone. Codespaces actually works and it's just about usable on my phone!
+So I PR'd this post, went downstairs to make a cup of tea and noticed a typo whilst reviewing on my phone. Codespaces actually works and it's just about usable on my phone - certainly good enough to fix a typo and upload this screenshot.
 
+<figure markdown="span">
+ ![Screenshot of this blog post being written in a Codespaces browser window on my phone](./assets/phone.webp)
+ <figcaption>Screenshot of this blog post being written in a Codespaces browser window on my phone</figcaption>
+</figure>
+
+This obvious-in-hindsight discovery opens the possibility I gave up on years ago - taking my super small, light, convenient tablet and a little keyboard when I'm away from home and still being able to write software. Imagine...
 
 ## Wrapping
 
