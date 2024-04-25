@@ -23,11 +23,11 @@ Let's say that I want to do some work on a repository. I want that software and 
 
 A couple of weeks ago, I wanted to fix my website's RSS plugin. It was incorrectly rendering images, and that was messing up my content on [Equal Experts' Network Blogs page](https://www.equalexperts.com/network-blogs/). The plugin is [mkdocs-rss-plugin](https://github.com/Guts/mkdocs-rss-plugin), so I cloned the repo and followed the instructions to get set to write code and run tests.
 
-Immediately after running `python -m pip install -U -r requirements/development.txt`, as the stream of package installations flew by, I realised that anything nasty in that code, or its sprawling network dependencies could have compromised me. By the time I'd thought about it, it would have been too late. (To be clear - I was working on my own laptop rather than the one my employer or my client gave me, so the blast radius was relatively restricted).
+Immediately after running `python -m pip install -U -r requirements/development.txt`, as the stream of package installations flew by, I realised that anything nasty in that code or its sprawling network dependencies could have compromised me. By the time I'd thought about it, it would have been too late. (To be clear - I was working on my own laptop rather than the one my employer or my client gave me, so the blast radius was relatively restricted).
 
 Another example - after reading [this LinkedIn post on how the recruitment "tech test" process can be an attack vector](https://www.linkedin.com/feed/update/urn:li:activity:7178644736809836544/), it occurred to me that a "candidate" could pull the same trick **returning** a tech test for review. I've reviewed tech tests in the past and it got me thinking. Even with some defences, like running stuff in containers, I still felt pretty uneasy about the risk.
 
-To be clear - we're not talking about one or two dependencies either. The `requirements.txt` for this repo has only three dependencies in it. How many dependencies get installed to `mkdocs serve` this site?
+To be clear - we're not talking about one or two dependencies either. The `requirements.txt` for this site's repo has only three dependencies in it. How many dependencies get installed to `mkdocs serve` this site?
 
 ```bash
 (venv) @brabster ➜ /workspaces/tw-site-mkdocs (codespaces) $ pip freeze|wc -l
