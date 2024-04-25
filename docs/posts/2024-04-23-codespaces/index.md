@@ -56,7 +56,7 @@ Why is it so hard to partition up a single-user machine like my personal laptop?
 
 ## Admin Rights to the Rescue?
 
-I've certainly come across folks who are of the opinion that the risk with software comes from "admin rights". If you don't install it with admin rights it's fine, right? I work from the assumption that **any software that's on my laptop can do anything I can do** on this laptop. I don't think there's much more harm you can do with admin rights than you can do as me.
+I've certainly come across folks who are of the opinion that the risk with software comes from "admin rights". If you don't install it with admin rights it's fine, right? I work from the assumption that **any software that's on my laptop can do anything I can do on this laptop**. I don't think there's much more harm you can do with admin rights than you can do as me.
 
 > Oh, and no, I don't run as admin, and I have neutered sudo to comply with Cyber Essentials. I talked about the hows and whys in my post about [automating my laptop build](https://tempered.works/posts/2024/03/02/living-with-an-automated-laptop-build/#cyber-essentials).
 
