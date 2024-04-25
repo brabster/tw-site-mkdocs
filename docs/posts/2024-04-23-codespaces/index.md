@@ -3,9 +3,9 @@ title: Why Try Codespaces?
 date: 2024-04-23
 ---
 
-![A photo of a crab on a night dive in the red sea. Credit: me](./assets/crab.webp)
+![A photo of a crab on a night dive in the red sea. Credit: me](./assets/phone.webp)
 
-Why I've been trialling GitHub Codespaces as a more secure alternative to local development. Who knew you can code on your phone?
+Why I've been trialling GitHub Codespaces as a more secure alternative to local development. I never expected to be pushing changes from my phone!
 
 --8<-- "ee.md"
 
