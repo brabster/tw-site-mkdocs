@@ -17,7 +17,7 @@ To date, I've worked with software projects by cloning a repository onto my loca
 
 ## Just Enough and No More
 
-Let's say that I want to do some work on a repository. I want that software and all its dependencies, plugins, IDE extensions and whatever other weird and wonderful gubbins are needed to have access to just what's needed and no more. Running locally as I have been, that's certainly not the case. Any one of those things being compromised could get access to any credentials lying around on my disk, my browser's stored passwords, credentials for any sites I'm currently logged into, and probably even my password manager if it's unlocked. Anything I can see and do, it can see and do by default too.
+Let's say that I want to do some work on a repository. I want that software and all its dependencies, plugins, IDE extensions and whatever other weird and wonderful gubbins are involved to have access to just what's needed to work on the software and no more. Running locally as I have been, that's certainly not the case. Any one of those things being compromised could get access to any credentials lying around on my disk, my browser's stored passwords, credentials for any sites I'm currently logged into, and probably even my password manager if it's unlocked. Anything I can see and do, it can see and do by default too.
 
 ## Risky Examples
 
