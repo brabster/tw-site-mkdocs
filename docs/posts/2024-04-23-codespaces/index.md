@@ -17,7 +17,7 @@ To date, I've worked with software projects by cloning a repository onto my loca
 
 ## Just Enough and No More
 
-Let's say that I want to do some work on a repository. I want that software and all its dependencies, plugins, IDE extensions and whatever other weird and wonderful gubbins are involved to have access to just what's needed to work on the software and no more. Running locally as I have been, that's certainly not the case. Any one of those things being compromised could get access to any credentials lying around on my disk, my browser's stored passwords, credentials for any sites I'm currently logged into, and probably even my password manager if it's unlocked. Anything I can see and do, it can see and do by default too.
+Let's say that I want to do some work on a repository. I want that software and all its dependencies, plugins, IDE extensions and whatever other weird and wonderful gubbins are involved to have access to just what's needed and no more. That's certainly not the case when I work locally. An attacker compromising any of those things could get access to any credentials on disk or environment variables, my browser's stored passwords, credentials for any sites I'm currently logged into, and probably even my password manager if it's unlocked. Anything I can see and do, it can see and do by default too.
 
 ## Risky Examples
 
@@ -36,7 +36,7 @@ To be clear - we're not talking about one or two dependencies either. The `requi
 
 Fifty-three packages get installed. Who maintains them? What are their motivations? How burnt out and susceptible to an offer of "help" or to take over their package are they all feeling? I know a little about how one of those packages is run, beyond that I have no idea.
 
-Now maybe you're not so concerned. What are the chances something bad will happen to you? How bad would it be? I can't say. My take is simply that if something bad happened and there was something reasonable I knew about and could have done to prevent it... I'd rather not be in that position. The potential impact feels like it far outweighs the risk, so I've been looking for reasonable mitigations.
+Now maybe you're not so concerned. What are the chances something bad will happen to you? How bad would it be? I can't say. My view is that if something bad happened and there was something reasonable I knew about and could have done to prevent it... I'd rather not be in that position. The potential impact feels like it far outweighs the risk, so I've been looking for reasonable mitigations.
 
 ## Local Defenses?
 
@@ -46,7 +46,7 @@ How to stay secure? It's a laughably unfair fight. I have to defend against ever
 
 For example, my first attempts a couple of weeks ago to use devcontainers to keep projects away from my local filesystem and services in VSCode met with failure because the extension seems [incompatible with a rootless docker (or rootless anything) install](https://github.com/microsoft/vscode-remote-release/issues/7354).
 
-My day job isn't defending - it's solving problems and delivering value for clients. It's up to me how much time and effort I put into defence and both are limited. I've concluded that attackers, who have spent **their** professional lives attacking computer systems, are going to be way better at attacking than I could possibly be at defending. Any of these things I could try, making my own life more difficult, and still miss something that leaves me exposed.
+My day job isn't defending - it's solving problems and delivering value for clients. It's up to me how much time and effort I put into defence and both are limited. I've concluded that attackers, who have spent **their careers** attacking computer systems, are going to be way better at attacking than I could possibly be at defending. Any of these things I could try, making my own life more difficult, and still miss something that leaves me exposed.
 
 ## Operating System Architecture at Fault?
 
