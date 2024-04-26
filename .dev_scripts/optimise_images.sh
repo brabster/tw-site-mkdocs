@@ -17,9 +17,11 @@ resize_and_webp () {
 
 for image_path in $(find docs -name *.png); do
     resize_and_webp "${image_path}"
+    rm "${image_path}"
 done
 
 for image_path in $(find docs -name *.jpg); do
     resize_and_webp "${image_path}"
+    rm "${image_path}"
 done
 

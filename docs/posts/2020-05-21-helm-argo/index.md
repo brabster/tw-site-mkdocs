@@ -47,7 +47,7 @@ $ helm install broken-example ./broken-chart
 Error: parse error at (argo-hello-world.example/templates/hello-world.yml:12): function "workflow" not defined
 ```
 
-# Nesting Interpolation
+## Nesting Interpolation
 
 We *can* solve the problem by wrapping the Argo variable interpolation with Helm variable interpolation and backticks, like this:
 
@@ -59,7 +59,7 @@ If our template doesn't have too many Argo interpolations, this solution might b
 More complex templates, like [this one](https://github.com/argoproj/argo/blob/master/examples/parallelism-nested.yaml), can use a lot of Argo interpolated expressions.
 Manually escaping those expressions would be irritating, and it would render the workflow templates pretty unreadable. There's a better way.
 
-# Changing Delimiters
+## Changing Delimiters
 
 If we could change the delimiters that either Argo or Helm use to start and end their interpolation expressions, then the two tools could work together. Neither supports that directly (although Argo has [an open issue that might implement it](https://github.com/argoproj/argo/issues/2430)). All is not lost though, because Helm supports post-processing the Kubernetes manifests it produces. We can use `sed` to find and replace alternative delimiters for the Argo expressions.
 
