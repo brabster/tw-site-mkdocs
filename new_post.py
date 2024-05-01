@@ -26,9 +26,12 @@ date: {date.today()}
 
 intro snippet
 
+--8<-- "ee.md"
+
 <!-- more -->
 
 ## Header 1
 
+--8<-- "blog-feedback.md"
 
 ''')

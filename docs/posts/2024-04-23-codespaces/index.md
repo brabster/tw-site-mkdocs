@@ -117,6 +117,4 @@ This obvious-in-hindsight discovery opens the possibility I gave up on years ago
 
 I've used codespaces with a couple of projects now, including writing this post, and had no problems that weren't covered by the documentation. I'll be putting out a bit of how-to content, but for now, I've recorded a [5-minute video to give you a taste of the real-world Codespaces experience](https://youtu.be/88sPBtJp6gA?feature=shared) for the short on time!
 
----
-!!! question "Feedback"
-    If you want to get in touch with me about the content in this post, you can find me on [LinkedIn](https://www.linkedin.com/in/paulbrabban) or [raise an issue](https://github.com/brabster/tw-site-mkdocs/issues)/[start a discussion](https://github.com/brabster/tw-site-mkdocs/discussions) in the GitHub repo. I'll be happy to credit you for any corrections or additions!
+--8<-- "blog-feedback.md"
