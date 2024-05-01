@@ -1,5 +1,6 @@
 import argparse
 import os
+import re
 
 from datetime import date
 
@@ -7,7 +8,9 @@ ap = argparse.ArgumentParser()
 ap.add_argument('title', default='title')
 args = ap.parse_args()
 
-POST_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'docs', 'posts', f'{date.today()}-{args.title}')
+title_filename = f'{date.today()}-{re.sub(r'[ _]', '-', args.title.lower())}'
+
+POST_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'docs', 'posts', f'{title_filename}')
 
 os.mkdir(POST_DIR)
 os.mkdir(os.path.join(POST_DIR, 'assets'))
