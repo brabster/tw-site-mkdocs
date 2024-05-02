@@ -25,8 +25,8 @@ You can change the default behaviour of pip on your computer so that it won't in
 I set an environment variable `PIP_REQUIRE_VIRTUALENV` to `true` in scripts where I interact with pip. For example, [the init_and_update.sh script in this repository sets PIP_REQUIRE_VIRTUALENV](https://github.com/brabster/tw-site-mkdocs/blob/27b7a94d7dcaf0fd51c39395a205db1e5de1e9a2/.dev_scripts/init_and_update.sh#L5). I also set it one-off as a system-wide environment variable.
 
 ```console
-paul@laptop:~$ export PIP_REQUIRE_VIRTUALENV=true
-paul@laptop:~$ pip install safety
+$ export PIP_REQUIRE_VIRTUALENV=true
+$ pip install safety
 ERROR: Could not find an activated virtualenv (required).
 ```
 
@@ -46,7 +46,7 @@ $ pip install -U -r requirements.txt # install and update packages in this venv 
 
 ### Pipenv, Poetry et al.
 
-I've used [pipenv](https://pipenv.pypa.io/en/latest/). I've used [Poetry](https://python-poetry.org/). There's several more. In my experience, they're far more trouble than they're worth. I have a bunch of anecdotes about this that I'll share another day.
+I've used [pipenv](https://pipenv.pypa.io/en/latest/). I've used [Poetry](https://python-poetry.org/). There's several more. In my experience, they're far more trouble than they're worth. I have a bunch of stories about this that I'll share another day.
 
 
 ### Conda
@@ -56,28 +56,66 @@ I haven't used conda. One of the reasons for that is complexity around commercia
 
 ## Assessing Dependency Risk
 
-Any software you bring onto your computer has the potential to hurt you. In the case of Python, just installing it a package can let bad actors loose on your computer. My working assumption is that any software running on the computer I'm using can do anything I can do.
+Any software you bring onto your computer has the potential to hurt you. In the case of Python, just installing it a package can let bad actors loose on your computer. My working assumption is that any software running on the computer I'm using can do anything I can do, including accessing any passwords, access tokens, session tokens I have. Maybe even my password manager if it's unlocked.
 
-> How can you tell whether a Python package is trustworthy?
+To exacerbate the problem, I don't trust what I see on the internet. Anyone can publish anything they want and say anything they want. Identities can and have been stolen and used to inject malware into previously safe software. Maintainers can be bought out or get burnt out. I don't think there's anything I can do here that completely mitigates the risks, but I can reduce it. I'll take this opportunity to plug [a responsible, in-depth treatment of package handling over at python.land](https://python.land/virtual-environments/installing-packages-with-pip).
 
-Very good question. I don't think you really can. I'll share the strategies I use for determining whether I'm going to take the risk of using a dependency these days. I use other mitigations like [minimising dependency use](#minimising-dependency-use), [using least-privilege credentials](#using-least-privilege-credentials) and more recently [developing in the cloud](#developing-in-the-cloud) to mitigate the residual risk and give myself more breathing space.
+### Is the package popular?
 
-The basic algorithm I think I use is:
+A heavily-used package is a juicy target for bad actors. On the other hand... heavily-used packages have more eyeballs on them. They're more likely to be looked at by security researchers, and if there is a problem I'm in a larger crowd of potential victims, so a lower chance that I will exploited before I have a chance to respond or my credentials and so on expire or are changed. On balance, I prefer packages with evidence of large user communities.
 
-### Do I need it, or do I want it?
+- search for articles and blogs mentioning it
+- check out GitHub stars, forks
+
+Special mention to [libraries.io](https://libraries.io/search?q=colourama&sort=dependents_count), providing a search interface with metrics about how a package is used by others - `Sort: Dependents`.
+
+!!! warning
+    **Copy-paste the package name from somewhere you trust!** The bad actors love publishing malware-laden packages with similar names to popular legitimate packages. These packages are downloaded thousands of times before they are identified and removed!
+
+
+### Minimising Dependency Use
 
 There's so much software out there, a solution for every problem or suboptimal thing you could imagine. I save myself the time of more in-depth thinking by just trying to be honest with myself about whether I really need something or not.
 
-- Do I need to use Poetry? No, I can use pip, and avoid a dependency.
-- Do I really need to use murmurhash? No, I can use Python's built-in `hash`.
+- Do I really need to use `Poetry`? No, I can use boring old `pip`.
+- Do I really need to use `murmurhash`? No, I can use Python's boring old built-in `hash`.
+- Do I really need to use `colorama`? No, I can live with boring old monochrome terminal text.
 
+Remember too that just because you're making boring choices in the name of safety does not mean the packages you do choose to depend on are make safety-over-coolness choices. Every time you avoid a dependency, you're actually cutting out that dependency, and its dependencies, and their dependencies and so on! That whole subtree of dependencies, and the choices their maintainers make, and their vulnerabilities? Not your problem anymore.
 
+### Using Common Cross-Project Dependencies
 
-## Minimising Dependency Use
+I also try to use the same dependencies everywhere, instead of allowing variation without good reason. That helps me really get to know those dependencies and their maintainers whilst reducing the exposure I have to different suppl chains generally.
 
+Want more on this topic? [ZDD (Zero Dependency Development)](https://gist.github.com/sleepyfox/8415e64da732c7fea02f21f1c0314f62) is a well argued and more detailed case for minimising and elimiating dependencies.
 
+### Well-Maintained Dependencies
+
+I'm suspicious of packages that:
+
+- have only one maintainer - bus factor, anyone?
+- have more than five maintainers - (who are all these people? how do they decide what to approve or not?)
+- don't have a history of being updated regularly
+- don't have any obvious source of funding and don't ask for any
+- don't have a security policy
+
+I have more Opinions on this one, but they're less related directly to malicious software. I'll pop that on my backlog for a future post while I yell at some clouds.
 
 ## Updating Dependencies Automatically
+
+I think it's fair to say that keeping your dependencies up to date is not an industry standard practice [^1]. Tools like Pipenv, Poetry and the like default you to locking the exact version of every dependency, and their dependencies, and so on. They instruct you to commit these lockfiles to source control. Unless you go run special commands to update them and then commit those changes, all your app will be frozen in time, accumulating vulnerabilities that you won't even know about unless you're [scanning them for vulnerabilities](#scanning-for-vulnerabilities).
+
+Another checkmark for `pip` which does not have this behaviour by default. If you look at any of my more recent Python repositories, you'll find minimum-bound version constraints, along with builds and IDE support for automatically updating versions.
+
+### Example: dbt_bigquery_template
+
+I have exactly one dependency in [dbt_bigquery_template](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/requirements.txt#L1), which is currently this:
+
+`dbt-bigquery>=1.7.0`
+
+This translates as "get me the latest **release** of `dbt-bigquery`". Unlike some other ecosystems I've had the misfortune of needing to work with, `pip` has a wonderful feature in [requiring an explicit flag `--pre` to include pre-release versions](https://pip.pypa.io/en/stable/cli/pip_install/#pre-release-versions), so you won't get the technically-latest-but-unstable `1.8.0b2` beta. The latest release is currently [dbt-bigquery 1.7.7](https://libraries.io/pypi/dbt-bigquery/1.7.7).
+
+When I open `dbt_bigquery_template` in VSCode, [the init-and-update task](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.vscode/tasks.json#L7) automatically kicks off and runs a series of commands updating different kinds of dependencies includeing [pip install -U -r ${PROJECT_DIR}/requirements.txt](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.dev_scripts/init_and_update.sh#L23). [`-U` means `--upgrade`](https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-U) and updates all dependencies to their latest versions.
 
 ## Scanning for Vulnerabilities
 
@@ -92,3 +130,5 @@ There's so much software out there, a solution for every problem or suboptimal t
 
 
 --8<-- "blog-feedback.md"
+
+[^1]: This is the one that kickstarted my interest in this area 18 months or so ago. I shared my practice of automatically updating dependencies instead of updating only when I became aware of vulnerabilities in the Equal Experts network and I saw quite the spectrum of opinion! Cue me chewing on it, trying to get to the bottom of why I feel so strongly that it's the least-bad approach of the options available and gather my thoughts and evidence together to argue the case properly.
