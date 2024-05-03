@@ -3,15 +3,15 @@ title: My Python Data Supply Chain Security Story
 date: 2024-05-01
 ---
 
-![hero image](./assets/hero.webp)
+![A photo taken whilst SCUBA diving of Thresher shark circling off a seamount in the Phillipines. Credit: me](./assets/hero.webp)
 
-We data practitioners - data scientists, data engineers, analytics engineers, et al. - have a hard time when it comes to security. We're exposed to tools that demand we write code and deal with the messy world of programming languages and packages. We're have little choice but to drag insights out of real and  sensitive data, because insights don't hide in test data. Training, career paths and dev-experience effort typically overlook data folks, depriving them of knowledge about the risks they're exposed to and how to mitigate them. Read on and I'll share what I do (and why) to protect myself, Equal Experts and my clients from the security risks lurking behind every piece of software.
+We data practitioners - data scientists, data engineers, analytics engineers, et al. - have a hard time when it comes to security. We're exposed to tools that demand we write code and deal with the messy world of programming languages and packages. We have little choice but to drag insights out of real and sensitive data, because insights don't hide in test data. Training, career paths and dev-experience effort typically overlook data folks, depriving them of knowledge about the risks they're exposed to and how to mitigate them. Read on and I'll share what I do (and why) to protect myself, Equal Experts and my clients from the security risks lurking behind every piece of software.
 
 --8<-- "ee.md"
 
 <!-- more -->
 
-When I speak to fellow data practitioners like (but not exclusively) data scientists, data engineers and analysts/analytics engineers, I find there's common concern about the security risks they're exposed to, but a lack of clear, pragmatic guidance on how to mitigate them. A lot of the guidance out there, like [Snyk's Python security best practices](https://snyk.io/blog/python-security-best-practices-cheat-sheet/), focuses on traditional software engineering.
+When I speak to fellow data practitioners like (but not exclusively) data scientists, data engineers and analysts/analytics engineers, I find there's a common concern about the security risks they're exposed to, but a lack of clear, pragmatic guidance on how to mitigate them. A lot of the guidance out there, like [Snyk's Python security best practices](https://snyk.io/blog/python-security-best-practices-cheat-sheet/), focuses on traditional software engineering.
 
 This story covers the things I've learned to do in my day-to-day over the past decade or more.
 
@@ -19,11 +19,11 @@ This story covers the things I've learned to do in my day-to-day over the past d
 
 ## Partitioning My Work
 
-I have at least three different, isolated working environments that I use locally. One laptop is for my personal stuff. At any given time it may have access to credentials for my AWS accounts, my GCP account, my password manager and GMail. If someone bad got into the first two they could run me up a painful bill, despite having billing alarms set up (I talk about that in [$1,370 Gone in Sixty Seconds](../2024-02-08-pypi-downloads-danger/index.md)). If they got into either of the last two they can steal my identity and do untold harm to me and my family. I really need to minimse the risk on that computer!
+I have at least three different, isolated working environments that I use locally. One laptop is for my personal stuff. At any given time it may have access to credentials for my AWS accounts, my GCP account, my password manager and GMail. If someone bad got into the first two they could run me up a painful bill, despite having billing alarms set up (I talk about that in [$1,370 Gone in Sixty Seconds](../2024-02-08-pypi-downloads-danger/index.md)). If they got into either of the last two they can steal my identity and do untold harm to me and my family. I really need to minimise the risk on that computer!
 
-Then I have a laptop that Equal Experts gave me. This will have credentials for EE things that I have a responsibilty to protect. EE-related work on here.
+Then I have a laptop that Equal Experts gave me. This will have credentials for EE things that I have a responsibility to protect. EE-related work on here.
 
-Finally I have a laptop that I do client work on. Same deal, even greater responsibility to protect. This laptop is used for nothing but client work.
+Finally, I have a laptop that I do client work on. Same deal, with even greater responsibility to protect. This laptop is used for nothing but client work.
 
 I have a separate long, strong password for all three, and their disks are all encrypted. That's the basic layer of protection - if any one were ever compromised, it's bad enough. But it's better than all three being compromised. There's more about how I manage multiple laptops and additional security measures I use in my posts on [automating my laptop build](../2024-02-27-automated-laptop-build-intro/index.md) and [living with an automated laptop build](../2024-03-01-automated-laptop-build-conclusion/index.md).
 
@@ -42,12 +42,12 @@ $ pip install safety
 ERROR: Could not find an activated virtualenv (required).
 ```
 
-There are [a number of other ways to tell pip not to install in the system python](https://docs.python-guide.org/dev/pip-virtualenv/#requiring-an-active-virtual-environment-for-pip) if environment variables don't work for you.
+There are [several other ways to tell pip not to install in the system Python](https://docs.python-guide.org/dev/pip-virtualenv/#requiring-an-active-virtual-environment-for-pip) if environment variables don't work for you.
 
 
 ## Using pip
 
-For the past 18 months, I've used plain old [pip, the Python Packaging Authority's recommended tooling](https://packaging.python.org/en/latest/guides/tool-recommendations/#installing-packages) and I'm actually very happy with it and would recommend it to other Python practitioners. My workflow with pip and venv is:
+For the past 18 months, I've used plain old [pip, the Python Packaging Authority's recommended tooling](https://packaging.python.org/en/latest/guides/tool-recommendations/#installing-packages) and I'm very happy with it and would recommend it to other Python practitioners. My workflow with pip and venv is:
 
 ```console
 $ python -m venv venv # create a venv for the current project if needed
@@ -58,22 +58,22 @@ $ pip install -U -r requirements.txt # install and update packages in this venv 
 
 ### Pipenv, Poetry et al.
 
-I've used [pipenv](https://pipenv.pypa.io/en/latest/). I've used [Poetry](https://python-poetry.org/). There's several more. In my experience, they're far more trouble than they're worth. I have a bunch of stories about this that I'll share another day.
+I've used [pipenv](https://pipenv.pypa.io/en/latest/). I've used [Poetry](https://python-poetry.org/). There are several more. In my experience, they're far more trouble than they're worth. I have a bunch of stories about this that I'll share another day.
 
 ### Conda
 
-I haven't used conda. One of the reasons for that is complexity around commercial use in the [terms of service](https://conda-forge.org/blog/2020/11/20/anaconda-tos/) to warrant a [clarifying blog post](https://legal.anaconda.com/policies/en/). I expect the advice here around managing dependencies applies equally to conda but I can't say for sure.
+I haven't used conda. One of the reasons for that is the complexity around commercial use in the [terms of service](https://conda-forge.org/blog/2020/11/20/anaconda-tos/) to warrant a [clarifying blog post](https://legal.anaconda.com/policies/en/). I expect the advice here around managing dependencies applies equally to conda but I can't say for sure.
 
 
 ## Assessing Dependency Risk
 
-Any software you bring onto your computer has the potential to hurt you. In the case of Python, just installing it a package can let bad actors loose on your computer. My working assumption is that any software running on the computer I'm using can do anything I can do, including accessing any passwords, access tokens, session tokens I have. Maybe even my password manager if it's unlocked.
+Any software you bring onto your computer has the potential to hurt you. In the case of Python, just installing a package can let bad actors loose on your computer. My working assumption is that any software running on the computer I'm using can do anything I can do, including accessing any passwords, access tokens, and session tokens I have. Maybe even my password manager if it's unlocked.
 
 To exacerbate the problem, I don't trust what I see on the internet. Anyone can publish anything they want and say anything they want. Identities can and have been stolen and used to inject malware into previously safe software. Maintainers can be bought out or get burnt out. I don't think there's anything I can do here that completely mitigates the risks, but I can reduce it. I'll take this opportunity to plug [a responsible, in-depth treatment of package handling over at python.land](https://python.land/virtual-environments/installing-packages-with-pip).
 
 ### Is the package popular?
 
-A heavily-used package is a juicy target for bad actors. On the other hand... heavily-used packages have more eyeballs on them. They're more likely to be looked at by security researchers, and if there is a problem I'm in a larger crowd of potential victims, so a lower chance that I will exploited before I have a chance to respond or my credentials and so on expire or are changed. On balance, I prefer packages with evidence of large user communities.
+A heavily-used package is a juicy target for bad actors. On the other hand... heavily-used packages have more eyeballs on them. They're more likely to be looked at by security researchers, and if there is a problem I'm in a larger crowd of potential victims, so a lower chance that I will be exploited before I have a chance to respond or my credentials and so on expire or are changed. On balance, I prefer packages with evidence of large user communities.
 
 - search for articles and blogs mentioning it
 - check out GitHub stars, forks
@@ -88,26 +88,26 @@ Special mention to [libraries.io](https://libraries.io/search?q=colourama&sort=d
 
 There's so much software out there, a solution for every problem or suboptimal thing you could imagine. I save myself the time of more in-depth thinking by just trying to be honest with myself about whether I really need something or not.
 
-> [Python is famous for its "batteries included" philosphy](https://docs.python.org/3/tutorial/stdlib.html#batteries-included), so I find it's worth checking whether you can use something built in for no additional risk rather than a package that does expose you to new risks.
+> [Python is famous for its "batteries included" philosophy](https://docs.python.org/3/tutorial/stdlib.html#batteries-included), so I find it's worth checking whether you can use something built in for no additional risk rather than a package that does expose you to new risks.
 
 - Do I really need to use `Poetry`? No, I can use boring old `pip`.
 - Do I really need to use `murmurhash`? No, I can use Python's boring old built-in `hash`.
 - Do I really need to use `colorama`? No, I can live with boring old monochrome terminal text.
 
-Remember too that just because you're making boring choices in the name of safety does not mean the packages you do choose to depend on are make safety-over-coolness choices. Every time you avoid a dependency, you're actually cutting out that dependency, and its dependencies, and their dependencies and so on! That whole subtree of dependencies, and the choices their maintainers make, and their vulnerabilities? Not your problem anymore.
+Remember too that just because you're making boring choices in the name of safety does not mean the packages you do choose to depend on are make safety-over-coolness choices. Every time you avoid a dependency, you're cutting out that dependency, and its dependencies, and their dependencies and so on! That whole subtree of dependencies, and the choices their maintainers make, and their vulnerabilities? Not your problem anymore.
 
 ### Using Common Cross-Project Dependencies
 
 I also try to use the same dependencies everywhere, instead of allowing variation without good reason. That helps me really get to know those dependencies and their maintainers whilst reducing the exposure I have to different supply chains generally.
 
-Want more on this topic? [ZDD (Zero Dependency Development)](https://gist.github.com/sleepyfox/8415e64da732c7fea02f21f1c0314f62) is a well argued and more detailed case for minimising and elimiating dependencies.
+Want more on this topic? [ZDD (Zero Dependency Development)](https://gist.github.com/sleepyfox/8415e64da732c7fea02f21f1c0314f62) is a well-argued and more detailed case for minimising and eliminating dependencies.
 
 ### Well-Maintained Dependencies
 
 I'm suspicious of packages that:
 
 - have only one maintainer - bus factor, high risk of burnout, where are checks, measures and accountability?
-- have more than five maintainers - (who are all these people? how do they decide what to approve or not?)
+- have more than five maintainers - (who are all these people? How do they decide what to approve or not?)
 - don't have a history of being updated regularly
 - don't have any obvious source of funding and don't ask for any
 - aren't backed by an organisation I trust
@@ -118,7 +118,7 @@ I have more *Opinions* on this one, but they're less related directly to malicio
 
 ## Updating Dependencies Automatically
 
-I think it's fair to say that keeping your dependencies up to date is not an industry standard practice[^1]. Tools like Pipenv, Poetry and the like default you to locking the exact version of every dependency, and their dependencies, and so on. They instruct you to commit these lockfiles to source control. Unless you go run special commands to update them and then commit those changes, all your app will be frozen in time, accumulating vulnerabilities that you won't even know about unless you're [scanning them for vulnerabilities](#scanning-for-vulnerabilities).
+I think it's fair to say that keeping your dependencies up to date is not an industry standard practice[^1]. Tools like Pipenv, Poetry and the like default you to locking the exact version of every dependency, and their dependencies, and so on. They instruct you to commit these lockfiles to source control. Unless you go run special commands to update them and then commit those changes, your app will be frozen in time, accumulating vulnerabilities that you won't even know about unless you're [scanning them for vulnerabilities](#scanning-for-vulnerabilities).
 
 Another checkmark for `pip` which does not lock by default. If you look at any of my more recent Python repositories, you'll find minimum-bound version constraints, along with builds and IDE support for automatically updating versions.
 
@@ -136,21 +136,21 @@ When I open `dbt_bigquery_template` in VSCode, [the init-and-update task](https:
 
 The build for `dbt_bigquery_template` does the same thing. [This line in the workflow is basically the same as the line in the VSCode task script](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.github/actions/setup_dbt/action.yml#L18). Assuming you close and re-open VSCode at least once each day, that means your development environment and your build or workflow management system are both within a few hours of latest and one another at any given point in time. You don't need to freeze the world forever to avoid "works-on-my-machine" problems.
 
-There's a lot more to day about automatically updating dependencies, but I'll keep things minimal for this post.
+There's a lot more to say about automatically updating dependencies, but I'll keep things minimal for this post.
 
-First - in my opinion, this is the least bad approach, not a perfect solution. The big risk - if something you're depending on **becomes** bad, you'll pick it up automatically. I think vulnerabilities that we do and do not know about in old software is a much bigger risk. Updating automatically you get all the security fixes straightaway, at no time cost to your team, before the manual-updaters have had chance to realise there's a problem, prioritise the work to update, decide whether it needs fixing, and get round to dealing with it. I take it as validating that regulators are increasingly calling for timely and automatic updates everywhere from IoT devices to phones, servers and so on - so staying up to date seems to be generally accepted as the better position to be in.
+First - in my opinion, this is the least bad approach, not a perfect solution. The big risk - if something you're depending on **becomes** bad, you'll pick it up automatically. I think vulnerabilities that we do and do not know about in old software are a much bigger risk. Updating automatically you get all the security fixes straight away, at no time cost to your team, before the manual updaters have had a chance to realise there's a problem, prioritise the work to update, decide whether it needs fixing, and get around to dealing with it. I take it as validating that regulators are increasingly calling for timely and automatic updates everywhere from IoT devices to phones, servers and so on - so staying up to date seems to be generally accepted as the better position to be in.
 
-I've used this approach for several months or so with multiple teams collaborating over multiple repositories and I can't recall any significant problems. The main inconvience that occurs are those rare occasions when a dependency lets a breaking change through, which you find out about the next day. I see this as a feature, not a bug. These kinds of breaks aren't subtle. Any sort of automated build process or your orchestration tooling is going to notice when version conflicts can't be resolved, an API change prevents your tests from running or the maintainers change something that your permissions don't let you do. I maybe wouldn't pick the most mission-critical thing you can find to kick off learning how auto-updating works with a new client!
+I've used this approach for several months or so with multiple teams collaborating over multiple repositories and I can't recall any significant problems. The main inconvenience that occurs is those rare occasions when a dependency lets a breaking change through, which you find out about the next day. I see this as a feature, not a bug. These kinds of breaks aren't subtle. Any sort of automated build process or your orchestration tooling is going to notice when version conflicts can't be resolved, an API change prevents your tests from running or the maintainers change something that your permissions don't let you do. I maybe wouldn't pick the most mission-critical thing you can find to kick off learning how auto-updating works with a new client!
 
-It's very useful to know when a breaking change just landed on you. You can deal with it while it's fresh, before the work has had any chance to pile up. You get to understand how reliable your dependencies **really** are - perhaps a dependency that keeps breaking you isn't so trustworthy after all? Most importantly - you don't find out you've got multiple breaking changes in the way when your scans alert you to a critical must-fix vulnerability in the two-year old version of that dependency you haven't updated.
+It's very useful to know when a breaking change just landed on you. You can deal with it while it's fresh before the work has had any chance to pile up. You get to understand how reliable your dependencies **really** are - perhaps a dependency that keeps breaking you isn't so trustworthy after all? Most importantly - you don't find out you've got multiple breaking changes in the way when your scans alert you to a critical must-fix vulnerability in the two-year-old version of that dependency you haven't updated.
 
 Speaking of which...
 
 ## Scanning for Vulnerabilities
 
-Tools like [safetycli](https://safetycli.com/product/safety-cli) and [Snyk](https://snyk.io/) will scan your installed dependencies and tell you whether there's any known vulnerabilities in there. You'll see my use of the safetycli python package to scan dependencies as part of my init-and-update process both [locally](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.dev_scripts/init_and_update.sh#L29) and in [build and workflow infrastructure](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.github/actions/setup_dbt/action.yml#L23).
+Tools like [safetycli](https://safetycli.com/product/safety-cli) and [Snyk](https://snyk.io/) will scan your installed dependencies and tell you whether there are any known vulnerabilities in there. You'll see my use of the safetycli python package to scan dependencies as part of my init-and-update process both [locally](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.dev_scripts/init_and_update.sh#L29) and in [build and workflow infrastructure](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.github/actions/setup_dbt/action.yml#L23).
 
-They both offer free single-developer plans at time of writing for your personal and side-projects, and paid plans for teams and enterprises. There's other options too - [GitLab, for example, provides some vulnerability scanning tooling](https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#python), so check what your organisation might already be using for a potentially easy option.
+They both offer free single-developer plans at the time of writing for your personal and side-projects and paid plans for teams and enterprises. There are other options too - [GitLab, for example, provides some vulnerability scanning tooling](https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#python), so check what your organisation might already be using for a potentially easy option.
 
 I wrote a little about how and when to check your dependencies back in [Checking your Depenedencies](../2020-12-03-dependency-checking/index.md).
 
@@ -175,7 +175,7 @@ $ safety check
 https://pyup.io or email sales@pyup.io
 ```
 
-It's been a long read to here, so I'll briefly mention a couple more points and wrap.
+It's been a long read to here, so I'll briefly mention a couple more points and wrap up.
 
 ## Using Least-Privilege Credentials
 
@@ -183,15 +183,15 @@ Try to avoid having powerful credentials lying around, or using more powerful cr
 
 ## Cloud Controls
 
-There are powerful controls in Cloud infrastructures to limit cost exposure and where data be copied to. I've been looking around at Google Cloud and [quotas are cost controls far more proactive and effective than billing alarms](../2024-02-16-bigquery-quotas/). [VPC Service Perimeters](https://cloud.google.com/vpc-service-controls/docs/service-perimeters) can prevent data being transferred outside your organisation. Both are effectively disabled by default and not straightforward to use, but I'm building my understanding and will share some pragmatic advice when I have some.
+There are powerful controls in Cloud infrastructures to limit cost exposure and where data can be copied. I've been looking around at Google Cloud and [quotas are cost controls far more proactive and effective than billing alarms](../2024-02-16-bigquery-quotas/). [VPC Service Perimeters](https://cloud.google.com/vpc-service-controls/docs/service-perimeters) can prevent data from being transferred outside your organisation. Both are effectively disabled by default and not straightforward to use, but I'm building my understanding and will share some pragmatic advice when I have some.
 
 ## Templating
 
-There's a lot going on here, and you'll hit issues as you work with more repositories. I start small and build up. [dbt_bigquery_template](https://github.com/brabster/dbt_bigquery_template) is one way I'm speeding up and improving consistency in my dbt projects (and there's a [short walkthrough video](https://youtu.be/KQg6D0Mkyks?feature=shared) that touches on some of the content here) I've also had some interesting success using [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) to reuse scripts and so on across multiple repositories and teams in a fairly effortless manner, which I'll write about another day.
+A lot is going on here, and you'll hit issues as you work with more repositories. I start small and build up. [dbt_bigquery_template](https://github.com/brabster/dbt_bigquery_template) is one way I'm speeding up and improving consistency in my dbt projects (and there's a [short walkthrough video](https://youtu.be/KQg6D0Mkyks?feature=shared) that touches on some of the content here) I've also had some interesting success using [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) to reuse scripts and so on across multiple repositories and teams in a fairly effortless manner, which I'll write about another day.
 
 ## Wrap
 
-If you got this far - wow, well done. I'd love any feedback - including anything I got wrong, or didn't make sense, or I should have covered! There's some information about how to get in touch here.
+If you got this far - wow, well done. I'd love any feedback - including anything I got wrong or didn't make sense, or I should have covered! There's some information about how to get in touch here.
 
 --8<-- "blog-feedback.md"
 
