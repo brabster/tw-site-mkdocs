@@ -183,7 +183,7 @@ Try to avoid having powerful credentials lying around, or using more powerful cr
 
 ## Cloud Controls
 
-There are powerful controls in Cloud infrastructures to limit cost exposure and where data can be copied. I've been looking around at Google Cloud and [quotas are cost controls far more proactive and effective than billing alarms](../2024-02-16-bigquery-quotas/). [VPC Service Perimeters](https://cloud.google.com/vpc-service-controls/docs/service-perimeters) can prevent data from being transferred outside your organisation. Both are effectively disabled by default and not straightforward to use, but I'm building my understanding and will share some pragmatic advice when I have some.
+There are powerful controls in Cloud infrastructures to limit cost exposure and where data can be copied. I've been looking around at Google Cloud and [quotas are cost controls far more proactive and effective than billing alarms](../2024-02-16-bigquery-quotas/index.md). [VPC Service Perimeters](https://cloud.google.com/vpc-service-controls/docs/service-perimeters) can prevent data from being transferred outside your organisation. Both are effectively disabled by default and not straightforward to use, but I'm building my understanding and will share some pragmatic advice when I have some.
 
 ## Templating
 
