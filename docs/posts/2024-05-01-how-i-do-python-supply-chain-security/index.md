@@ -11,7 +11,7 @@ We data practitioners - data scientists, data engineers, analytics engineers, et
 
 <!-- more -->
 
-When I speak to fellow data practitioners like (but not exclusively) data scientists, data engineers and analysts/analytics engineers, I find there's a common concern about the security risks they're exposed to, but a lack of clear, pragmatic guidance on how to mitigate them. A lot of the guidance out there, like [Snyk's Python security best practices](https://snyk.io/blog/python-security-best-practices-cheat-sheet/), focuses on traditional software engineering.
+When I speak to fellow data practitioners I find there's a common concern about the security risks they're exposed to, but a lack of clear, pragmatic guidance on how to mitigate them. A lot of the guidance out there, like [Snyk's Python security best practices](https://snyk.io/blog/python-security-best-practices-cheat-sheet/), focuses on traditional software engineering. "Data" work can be a little different.
 
 This story covers the things I've learned to do in my day-to-day over the past decade or more.
 
@@ -25,7 +25,7 @@ Then I have a laptop that Equal Experts gave me. This will have credentials for 
 
 Finally, I have a laptop that I do client work on. Same deal, with even greater responsibility to protect. This laptop is used for nothing but client work.
 
-I have a separate long, strong password for all three, and their disks are all encrypted. That's the basic layer of protection - if any one were ever compromised, it's bad enough. But it's better than all three being compromised. There's more about how I manage multiple laptops and additional security measures I use in my posts on [automating my laptop build](../2024-02-27-automated-laptop-build-intro/index.md) and [living with an automated laptop build](../2024-03-01-automated-laptop-build-conclusion/index.md).
+I have a separate long, strong password for all three (I can reliably hold about four such passwords in my brain at once, if I'm using them regularly and don't have to change them all at once!), and their disks are all encrypted. That's the basic layer of protection - if any one were ever compromised, it's bad enough. But it's better than all three being compromised. There's more about how I manage multiple laptops and additional security measures I use in my posts on [automating my laptop build](../2024-02-27-automated-laptop-build-intro/index.md) and [living with an automated laptop build](../2024-03-01-automated-laptop-build-conclusion/index.md).
 
 > I've recently been having a great experience with even more protective partitioning - a dedicated, isolated, customisable development environment per **repository** with GitHub Codespaces. I think it's the future. If coding in the cloud is an option for you, I'd recommend giving it a try with an open mind. I've even got [a Codespaces walkthrough and video to help](../2024-04-23-codespaces/index.md)!
 
@@ -130,7 +130,9 @@ I have exactly one dependency in [dbt_bigquery_template](https://github.com/brab
 
 `dbt-bigquery>=1.7.0`
 
-This translates as "get me the latest **release** of `dbt-bigquery`". Unlike some other ecosystems I've had the misfortune of needing to work with, `pip` has a wonderful feature in [requiring an explicit flag `--pre` to include pre-release versions](https://pip.pypa.io/en/stable/cli/pip_install/#pre-release-versions), so you won't get the technically-latest-but-unstable `1.8.0b2` beta. Yay! The latest release is currently [dbt-bigquery 1.7.7](https://libraries.io/pypi/dbt-bigquery/1.7.7).
+This translates as "get me the latest **release** of `dbt-bigquery` that's no older than `1.7.0`". The low bound ensures that I know things will blow up if somehow I get an older dependency than I'm expectng. If there's a problem with the latest version, and I can't fix it right now, I can still pin to the previous working version temporarily - but I've found this is a rare exception rather than a fatiguing everyday occurrence.
+
+ Unlike some other ecosystems I've had the misfortune of needing to work with, `pip` has a wonderful feature in [requiring an explicit flag `--pre` to include pre-release versions](https://pip.pypa.io/en/stable/cli/pip_install/#pre-release-versions), so you won't get the technically-latest-but-unstable `1.8.0b2` beta. Yay! The latest release is currently [dbt-bigquery 1.7.7](https://libraries.io/pypi/dbt-bigquery/1.7.7).
 
 When I open `dbt_bigquery_template` in VSCode, [the init-and-update task](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.vscode/tasks.json#L7) automatically kicks off and runs a series of commands updating different kinds of dependencies including [`pip install -U -r ${PROJECT_DIR}/requirements.txt`](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.dev_scripts/init_and_update.sh#L23). [`-U` means `--upgrade`](https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-U) and updates any dependencies you've already got to their latest versions if newer versions are available.
 
@@ -138,9 +140,19 @@ The build for `dbt_bigquery_template` does the same thing. [This line in the wor
 
 There's a lot more to say about automatically updating dependencies, but I'll keep things minimal for this post.
 
-First - in my opinion, this is the least bad approach, not a perfect solution. The big risk - if something you're depending on **becomes** bad, you'll pick it up automatically. I think vulnerabilities that we do and do not know about in old software are a much bigger risk. Updating automatically you get all the security fixes straight away, at no time cost to your team, before the manual updaters have had a chance to realise there's a problem, prioritise the work to update, decide whether it needs fixing, and get around to dealing with it. I take it as validating that regulators are increasingly calling for timely and automatic updates everywhere from IoT devices to phones, servers and so on - so staying up to date seems to be generally accepted as the better position to be in.
+### The Least-Bad Solution
 
-I've used this approach for several months or so with multiple teams collaborating over multiple repositories and I can't recall any significant problems. The main inconvenience that occurs is those rare occasions when a dependency lets a breaking change through, which you find out about the next day. I see this as a feature, not a bug. These kinds of breaks aren't subtle. Any sort of automated build process or your orchestration tooling is going to notice when version conflicts can't be resolved, an API change prevents your tests from running or the maintainers change something that your permissions don't let you do. I maybe wouldn't pick the most mission-critical thing you can find to kick off learning how auto-updating works with a new client!
+First - in my opinion, this is the least bad approach, not a perfect solution. The big risk - if something you're depending on **becomes** bad, you'll pick it up automatically. I think vulnerabilities that we do and do not know about in old software are a much bigger risk. Updating automatically you get all the security fixes straight away, at no time cost to your team, before the manual updaters have had a chance to realise there's a problem, prioritise the work to update, decide whether it needs fixing, and get around to dealing with it.
+
+I take it as validating that regulators are increasingly calling for timely and automatic updates everywhere from IoT devices to phones, servers and so on - so staying up to date seems to be generally accepted as the better position to be in.
+
+### Works In Practice
+
+I've used this approach for several months or so with multiple teams collaborating over multiple repositories and I can't recall any significant problems. The main inconvenience that occurs is those rare occasions when a dependency lets a breaking change through, which you find out about the next day.
+
+I see this as a feature, not a bug. These kinds of breaks aren't subtle. Any sort of automated build process or your orchestration tooling is going to notice when version conflicts can't be resolved, an API change prevents your tests from running or the maintainers change something that your permissions don't let you do. I maybe wouldn't pick the most mission-critical thing you can find to kick off learning how auto-updating works with a new client!
+
+### Imcreased Awareness
 
 It's very useful to know when a breaking change just landed on you. You can deal with it while it's fresh before the work has had any chance to pile up. You get to understand how reliable your dependencies **really** are - perhaps a dependency that keeps breaking you isn't so trustworthy after all? Most importantly - you don't find out you've got multiple breaking changes in the way when your scans alert you to a critical must-fix vulnerability in the two-year-old version of that dependency you haven't updated.
 
