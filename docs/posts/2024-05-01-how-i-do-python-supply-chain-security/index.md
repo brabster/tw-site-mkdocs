@@ -1,5 +1,5 @@
 ---
-title: My Python Data Supply Chain Security Story
+title: How I Do Python Data Supply Chain Security
 date: 2024-05-01
 ---
 
