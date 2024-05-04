@@ -138,7 +138,7 @@ I have exactly one dependency in [dbt_bigquery_template](https://github.com/brab
 
 `dbt-bigquery>=1.7.0`
 
-This translates as "get me the latest **release** of `dbt-bigquery` that's no older than `1.7.0`". The low bound ensures that I know things will blow up if somehow I get an older dependency than the last one I considered (`1.7.0` in this case). If there's a problem with the latest version, and I can't fix it right now, I can still pin to the previous working version temporarily - but I've found this is a rare exception rather than a fatiguing everyday occurrence.
+This translates as "get me the latest **release** of `dbt-bigquery` that's no older than `1.7.0`". The low bound ensures that I know things will blow up if somehow I get an older dependency than the last one I had reason to look at (`1.7.0` in this case). If there's a problem with the latest version, and I can't fix it right now, I can still pin to the previous working version temporarily - but I've found this is a rare exception rather than a fatiguing everyday occurrence.
 
  Unlike some other ecosystems I've had the misfortune of needing to work with, `pip` has a wonderful feature in [requiring an explicit flag `--pre` to include pre-release versions](https://pip.pypa.io/en/stable/cli/pip_install/#pre-release-versions), so you won't get the technically-latest-but-unstable `1.8.0b2` beta. Yay! The latest release is currently [dbt-bigquery 1.7.7](https://libraries.io/pypi/dbt-bigquery/1.7.7).
 
@@ -206,7 +206,7 @@ https://pyup.io or email sales@pyup.io
 ```
 ### Scanning vs. Automatically Updating?
 
-I scan my dependencies after installing the latest versions. As I mentioned before, auto-updating is not a perfect solution, and I could still have a vulnerability even after updating - for example, a known issue with no fix available. We seem to be getting pretty good at responsible disclosure of late. It seems much more rare that I get a vulnerability notice that's not already fixed - and I'll never get the alert because I'll already have the fix installed.
+I scan my dependencies after installing the latest versions. As I mentioned before, auto-updating is not a perfect solution, and I could still have a vulnerability even after updating - for example, a known issue with no fix available. We seem to be getting pretty good at responsible disclosure of late. It seems much more rare that I get a vulnerability notice that's not already fixed - auto-updating means I'll already have the fix installed by the time the alert would have landed in my inbox.
 
 If I do end up in that situation, my options are limited. Try to fix it myself? Not very safe nor likely to be feasible. Add an ignore? I haven't had to do this for a while but [safety, for example, looks to have better support now for expiring ignores](https://docs.safetycli.com/safety-docs/administration/safety-policy-files) than last time I had to do it. Lastly - shut the thing down until a fix is available. It's worth considering in a pinch, particularly if the software or pipeline isn't all that time- or mission-critical.
 
