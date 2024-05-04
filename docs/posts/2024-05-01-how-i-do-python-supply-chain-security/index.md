@@ -13,9 +13,16 @@ We data practitioners - data scientists, data engineers, analytics engineers, et
 
 When I speak to fellow data practitioners I find there's a common concern about the security risks they're exposed to, but a lack of clear, pragmatic guidance on how to mitigate them. A lot of the guidance out there, like [Snyk's Python security best practices](https://snyk.io/blog/python-security-best-practices-cheat-sheet/), focuses on traditional software engineering. "Data" work can be a little different.
 
-This story covers the things I've learned to do in my day-to-day over the past decade or more.
+This story covers the things I've learned to do in my day-to-day over the past decade or more, including:
 
-> If there's anything in here that's news to you, please don't take away any idea that you should just have known these things. I've just been around a while and had the good fortune to get the right prompt at the right time to think about some of these things.
+- [Partitioning My Work](#partitioning-my-work)
+- [Using pip](#using-pip)
+- [Assessing Dependency Risk](#assessing-dependency-risk)
+- [Keeping Dependencies Up To Date](#updating-dependencies-automatically)
+- [Scanning for Vulnerabilities](#scanning-for-vulnerabilities)
+- [Using Least-Privilege Credentials](#using-least-privilege-credentials)
+- [Cloud Controls](#cloud-controls)
+- [Templating](#templating)
 
 ## Partitioning My Work
 
@@ -33,7 +40,7 @@ I have a separate long, strong password for all three (I can reliably hold about
 
 It's really easy to install into your system Python by mistake - you forget to activate the venv, or you think it's active when it's not. Ideally, your system permissions are set up so that you can't write to your system Python installation, but I find that's quite rare. It's certainly not the case on the current Ubuntu OS on the laptop I'm sitting in front of right now.
 
-You can change the default behaviour of pip on your computer so that it won't install in the system python.
+You can change the default behaviour of pip on your computer so that it won't install in the system Python.
 I set an environment variable `PIP_REQUIRE_VIRTUALENV` to `true` in scripts where I interact with pip. For example, [the init_and_update.sh script in this repository sets PIP_REQUIRE_VIRTUALENV](https://github.com/brabster/tw-site-mkdocs/blob/27b7a94d7dcaf0fd51c39395a205db1e5de1e9a2/.dev_scripts/init_and_update.sh#L5). I also set it one-off as a system-wide environment variable.
 
 ```console
@@ -58,18 +65,18 @@ $ pip install -U -r requirements.txt # install and update packages in this venv 
 
 ### Pipenv, Poetry et al.
 
-I've used [pipenv](https://pipenv.pypa.io/en/latest/). I've used [Poetry](https://python-poetry.org/). There are several more. In my experience, they're far more trouble than they're worth. I have a bunch of stories about this that I'll share another day.
+I've used [pipenv](https://pipenv.pypa.io/en/latest/). I've used [Poetry](https://python-poetry.org/). There are several more. In my experience, they don't deliver significant benefits over pip and are more trouble than they're worth. I have a bunch of stories about this that I'll share another day.
 
 ### Conda
 
-I haven't used conda. One of the reasons for that is the complexity around commercial use in the [terms of service](https://conda-forge.org/blog/2020/11/20/anaconda-tos/) to warrant a [clarifying blog post](https://legal.anaconda.com/policies/en/). I expect the advice here around managing dependencies applies equally to conda but I can't say for sure.
+I haven't used conda. One of the reasons for that is the complexity around commercial use in the [terms of service](https://conda-forge.org/blog/2020/11/20/anaconda-tos/) to warrant a [clarifying blog post](https://legal.anaconda.com/policies/en/). I think the advice here applies equally to conda users but I can't speak from my own experience.
 
 
 ## Assessing Dependency Risk
 
 Any software you bring onto your computer has the potential to hurt you. In the case of Python, just installing a package can let bad actors loose on your computer. My working assumption is that any software running on the computer I'm using can do anything I can do, including accessing any passwords, access tokens, and session tokens I have. Maybe even my password manager if it's unlocked.
 
-To exacerbate the problem, I don't trust what I see on the internet. Anyone can publish anything they want and say anything they want. Identities can and have been stolen and used to inject malware into previously safe software. Maintainers can be bought out or get burnt out. I don't think there's anything I can do here that completely mitigates the risks, but I can reduce it. I'll take this opportunity to plug [a responsible, in-depth treatment of package handling over at python.land](https://python.land/virtual-environments/installing-packages-with-pip).
+I don't trust what I see on the internet. Anyone can make up an identity, publish anything they want and say anything they want. Identities can and have been stolen and used to inject malware into previously safe software. Maintainers can be bought out or get burnt out. I don't think there's anything I can do here that completely mitigates the risks, but I can reduce it. I'll take this opportunity to plug [a responsible, in-depth treatment of package handling over at python.land](https://python.land/virtual-environments/installing-packages-with-pip).
 
 ### Is the package popular?
 
@@ -94,13 +101,11 @@ There's so much software out there, a solution for every problem or suboptimal t
 - Do I really need to use `murmurhash`? No, I can use Python's boring old built-in `hash`.
 - Do I really need to use `colorama`? No, I can live with boring old monochrome terminal text.
 
-Remember too that just because you're making boring choices in the name of safety does not mean the packages you do choose to depend on are make safety-over-coolness choices. Every time you avoid a dependency, you're cutting out that dependency, and its dependencies, and their dependencies and so on! That whole subtree of dependencies, and the choices their maintainers make, and their vulnerabilities? Not your problem anymore.
+Just because I'm making boring choices in the name of safety does not mean the packages I depend on are making similar choices. Every time I avoid a dependency, I'm cutting out that dependency, and its dependencies, and their dependencies and so on! That whole subtree of dependencies, and the choices their maintainers make, and their vulnerabilities? Not my problem.
 
 ### Using Common Cross-Project Dependencies
 
-I also try to use the same dependencies everywhere, instead of allowing variation without good reason. That helps me really get to know those dependencies and their maintainers whilst reducing the exposure I have to different supply chains generally.
-
-Want more on this topic? [ZDD (Zero Dependency Development)](https://gist.github.com/sleepyfox/8415e64da732c7fea02f21f1c0314f62) is a well-argued and more detailed case for minimising and eliminating dependencies.
+I also try to use the same dependencies everywhere, instead of allowing variation without good reason. That helps me really get to know those dependencies and their maintainers whilst reducing the exposure I have to different supply chains generally. Want more on this topic? [ZDD (Zero Dependency Development)](https://gist.github.com/sleepyfox/8415e64da732c7fea02f21f1c0314f62) is a well-argued and more detailed case for minimising and eliminating dependencies.
 
 ### Well-Maintained Dependencies
 
@@ -114,15 +119,15 @@ I'm suspicious of packages that:
 - don't have a security policy (eg. security tab in GitHub)
 
 
-I have more *Opinions* on this one, but they're less related directly to malicious software. I'll pop that on my backlog for a future post.
+I have more *Opinions* on this one, but they go broader than the scope of this post. I'll pop that on my backlog for a future post.
 
 ## Updating Dependencies Automatically
 
-I think it's fair to say that keeping your dependencies up to date is not an industry standard practice[^1]. Tools like Pipenv, Poetry and the like default you to locking the exact version of every dependency, and their dependencies, and so on. They instruct you to commit these lockfiles to source control. Unless you go run special commands to update them and then commit those changes, your app will be frozen in time, accumulating vulnerabilities that you won't even know about unless you're [scanning them for vulnerabilities](#scanning-for-vulnerabilities).
+I think it's fair to say that keeping your dependencies up to date is not an industry standard practice[^1]. Tools like Pipenv, Poetry and the like default you to locking the exact version of every dependency, and their dependencies, and so on. They instruct you to commit these lockfiles to source control without mentioning the drawbacks. Unless you go and run special commands to update them and then commit those changes, your app will be frozen in time, accumulating vulnerabilities that you won't even know about unless you're [scanning them for vulnerabilities](#scanning-for-vulnerabilities).
 
-Another checkmark for `pip` which does not lock by default. If you look at any of my more recent Python repositories, you'll find minimum-bound version constraints, along with builds and IDE support for automatically updating versions.
+Another :+1: for `pip` which does not lock by default. If you look at any of my more recent Python repositories, you'll find minimum-bound version constraints, along with builds and IDE support for automatically updating versions.
 
-> If you have to use a tool that creates lockfiles for now, you can add them to your `.gitgnore` file to avoid them getting committed to source control. That reduces the complexity of updating dependencies.
+> If you have to use a tool that creates lockfiles for now, you can [`git rm` them](https://www.git-tower.com/learn/git/commands/git-rm), then add them to your `.gitgnore` file to have Git ignore them going forward. That cuts out the need to commit updates back and so simplifies updating.
 
 ### Example: dbt_bigquery_template
 
@@ -130,11 +135,15 @@ I have exactly one dependency in [dbt_bigquery_template](https://github.com/brab
 
 `dbt-bigquery>=1.7.0`
 
-This translates as "get me the latest **release** of `dbt-bigquery` that's no older than `1.7.0`". The low bound ensures that I know things will blow up if somehow I get an older dependency than I'm expectng. If there's a problem with the latest version, and I can't fix it right now, I can still pin to the previous working version temporarily - but I've found this is a rare exception rather than a fatiguing everyday occurrence.
+This translates as "get me the latest **release** of `dbt-bigquery` that's no older than `1.7.0`". The low bound ensures that I know things will blow up if somehow I get an older dependency than the last one I considered (`1.7.0` in this case). If there's a problem with the latest version, and I can't fix it right now, I can still pin to the previous working version temporarily - but I've found this is a rare exception rather than a fatiguing everyday occurrence.
 
  Unlike some other ecosystems I've had the misfortune of needing to work with, `pip` has a wonderful feature in [requiring an explicit flag `--pre` to include pre-release versions](https://pip.pypa.io/en/stable/cli/pip_install/#pre-release-versions), so you won't get the technically-latest-but-unstable `1.8.0b2` beta. Yay! The latest release is currently [dbt-bigquery 1.7.7](https://libraries.io/pypi/dbt-bigquery/1.7.7).
 
+#### In the IDE
+
 When I open `dbt_bigquery_template` in VSCode, [the init-and-update task](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.vscode/tasks.json#L7) automatically kicks off and runs a series of commands updating different kinds of dependencies including [`pip install -U -r ${PROJECT_DIR}/requirements.txt`](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.dev_scripts/init_and_update.sh#L23). [`-U` means `--upgrade`](https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-U) and updates any dependencies you've already got to their latest versions if newer versions are available.
+
+#### In the Build
 
 The build for `dbt_bigquery_template` does the same thing. [This line in the workflow is basically the same as the line in the VSCode task script](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.github/actions/setup_dbt/action.yml#L18). Assuming you close and re-open VSCode at least once each day, that means your development environment and your build or workflow management system are both within a few hours of latest and one another at any given point in time. You don't need to freeze the world forever to avoid "works-on-my-machine" problems.
 
@@ -150,9 +159,15 @@ I take it as validating that regulators are increasingly calling for timely and 
 
 I've used this approach for several months or so with multiple teams collaborating over multiple repositories and I can't recall any significant problems. The main inconvenience that occurs is those rare occasions when a dependency lets a breaking change through, which you find out about the next day.
 
-I see this as a feature, not a bug. These kinds of breaks aren't subtle. Any sort of automated build process or your orchestration tooling is going to notice when version conflicts can't be resolved, an API change prevents your tests from running or the maintainers change something that your permissions don't let you do. I maybe wouldn't pick the most mission-critical thing you can find to kick off learning how auto-updating works with a new client!
+I see this as a feature, not a bug. These kinds of breaks aren't subtle. Any sort of automated build process or your orchestration tooling is going to notice when version conflicts can't be resolved, an API change prevents your tests from running or the maintainers change something that your permissions don't let you do. I maybe wouldn't pick the most mission-critical thing I could find to try auto-updating for the first time!
 
-### Imcreased Awareness
+Oh - and yes, setting the constraint to allow semantic-versioning-major "breaking changes" through is by design, not accidental. I'd rather find out about a breaking change that actually affects me when it happens, not months later with a critical vulnerability to fix and no update path except through the breaking version. In my experience the ideals of [semver 2.0.0](https://semver.org/spec/v2.0.0.html) and reality don't really line up all that well - yet another post for another day.
+
+### What about renovate and dependabot?
+
+When I talk with someone about automatically updating, automated PR-raisers often come up. I haven't used either tool myself and I avoid them. If I'm keeping up to date and not committing every update back to source control, I don't need a tool raising PRs to help me manage the relentless torrent of vulnerability notices because I don't have that problem. Plus, [they're not immune from expoitation themselves](https://checkmarx.com/blog/surprise-when-dependabot-contributes-malicious-code/). Another supply chain bites the dust :wave:
+
+### Increased Awareness
 
 It's very useful to know when a breaking change just landed on you. You can deal with it while it's fresh before the work has had any chance to pile up. You get to understand how reliable your dependencies **really** are - perhaps a dependency that keeps breaking you isn't so trustworthy after all? Most importantly - you don't find out you've got multiple breaking changes in the way when your scans alert you to a critical must-fix vulnerability in the two-year-old version of that dependency you haven't updated.
 
@@ -160,7 +175,7 @@ Speaking of which...
 
 ## Scanning for Vulnerabilities
 
-Tools like [safetycli](https://safetycli.com/product/safety-cli) and [Snyk](https://snyk.io/) will scan your installed dependencies and tell you whether there are any known vulnerabilities in there. You'll see my use of the safetycli python package to scan dependencies as part of my init-and-update process both [locally](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.dev_scripts/init_and_update.sh#L29) and in [build and workflow infrastructure](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.github/actions/setup_dbt/action.yml#L23).
+Tools like [safetycli](https://safetycli.com/product/safety-cli) and [Snyk](https://snyk.io/) will scan your installed dependencies and tell you whether there are any known vulnerabilities in there. You'll see my use of the safetycli Python package to scan dependencies as part of my init-and-update process both [locally](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.dev_scripts/init_and_update.sh#L29) and in [build and workflow infrastructure](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.github/actions/setup_dbt/action.yml#L23).
 
 They both offer free single-developer plans at the time of writing for your personal and side-projects and paid plans for teams and enterprises. There are other options too - [GitLab, for example, provides some vulnerability scanning tooling](https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#python), so check what your organisation might already be using for a potentially easy option.
 
@@ -186,10 +201,15 @@ $ safety check
   For real-time enhanced vulnerability data, fix recommendations, severity reporting, cybersecurity support, team and project policy management and more sign up at
 https://pyup.io or email sales@pyup.io
 ```
+### Scanning vs. Automatically Updating?
 
-It's been a long read to here, so I'll briefly mention a couple more points and wrap up.
+I scan my dependencies after installing the latest versions. As I mentioned before, auto-updating is not a perfect solution, and I could still have a vulnerability even after updating - for example, a known issue with no fix available. We seem to be getting pretty good at responsible disclosure of late. It seems much more rare that I get a vulnerability notice that's not already fixed - and I'll never get the alert because I'll already have the fix installed.
+
+If I do end up in that situation, my options are limited. Try to fix it myself? Not very safe nor likely to be feasible. Add an ignore? I haven't had to do this for a while but [safety, for example, looks to have better support now for expiring ignores](https://docs.safetycli.com/safety-docs/administration/safety-policy-files) than last time I had to do it. Lastly - shut the thing down until a fix is available. It's worth considering in a pinch, particularly if the software or pipeline isn't all that time- or mission-critical.
 
 ## Using Least-Privilege Credentials
+
+It's been a long read to here, so I'll briefly mention a couple more points and wrap up.
 
 Try to avoid having powerful credentials lying around, or using more powerful credentials than are needed for a job. [Partitioning your development environments](#partitioning-my-work) helps, by letting you reduce the variety of credentials you have in the same place. My experience with Codespaces shines here as I can restrict a repository to exactly the permissions it needs with nothing else lying around.
 
@@ -203,10 +223,10 @@ A lot is going on here, and you'll hit issues as you work with more repositories
 
 ## Wrap
 
-If you got this far - wow, well done. I'd love any feedback - including anything I got wrong or didn't make sense, or I should have covered! There's some information about how to get in touch here.
+I'll wrap up by saying that whilst this post focuses on Python packages, the risks and ideas apply to most if not all of the **other** supply chains I'm exposed to. Off the top of my head - Operating system. Firmare. Application software. IDE plugins. Browser plugins. dbt packages. The list goes on and on. Any of these things might be able to get up to the kind of mischief we've been talking about, so stay vigilant and think before installing. I hope the content here helps with the thinking part!
+
+If you got this far - wow, well done, and best of luck. I'd love any feedback - including anything I got wrong or didn't make sense, or I should have covered! There's some information about how to get in touch here.
 
 --8<-- "blog-feedback.md"
-
-I have tentative plans to use this content as a basis for a well-maintained guide or cheat sheet - will update if and when that happens.
 
 [^1]: This is the one that kickstarted my interest in this area 18 months or so ago. I shared my practice of automatically updating dependencies instead of updating only when I became aware of vulnerabilities in the Equal Experts network and I saw quite the spectrum of opinion! Cue me chewing on it, trying to get to the bottom of why I feel so strongly that it's the least-bad approach of the options available and gather my thoughts and evidence together to argue the case properly.
