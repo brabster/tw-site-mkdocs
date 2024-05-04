@@ -34,7 +34,10 @@ Finally, I have a laptop that I do client work on. Same deal, with even greater 
 
 I have a separate long, strong password for all three (I can reliably hold about four such passwords in my brain at once, if I'm using them regularly and don't have to change them all at once!), and their disks are all encrypted. That's the basic layer of protection - if any one were ever compromised, it's bad enough. But it's better than all three being compromised. There's more about how I manage multiple laptops and additional security measures I use in my posts on [automating my laptop build](../2024-02-27-automated-laptop-build-intro/index.md) and [living with an automated laptop build](../2024-03-01-automated-laptop-build-conclusion/index.md).
 
-> I've recently been having a great experience with even more protective partitioning - a dedicated, isolated, customisable development environment per **repository** with GitHub Codespaces. I think it's the future. If coding in the cloud is an option for you, I'd recommend giving it a try with an open mind. I've even got [a Codespaces walkthrough and video to help](../2024-04-23-codespaces/index.md)!
+!!! warning
+    Like many things I'll talk about in this post, password managers are awesome but ship with unsafe defaults - convenience over security :shrug:. I make an point of setting the delay before my password manager clears the clipboard to 30 seconds (default is never!) and setting the timeout before locking again to five minutes. Note to self - find a way to automate it!
+
+I've recently been having a great experience with even more protective partitioning - a dedicated, isolated, customisable development environment per **repository** with GitHub Codespaces. I think it's the future. If coding in the cloud is an option for you, I'd recommend giving it a try with an open mind. I've even got [a Codespaces walkthrough and video to help](../2024-04-23-codespaces/index.md)!
 
 ### Using Virtualenvs
 
