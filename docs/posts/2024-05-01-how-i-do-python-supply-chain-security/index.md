@@ -5,7 +5,7 @@ date: 2024-05-01
 
 ![A photo taken whilst SCUBA diving of Thresher shark circling off a seamount in the Phillipines. Credit: me](./assets/hero.webp)
 
-We data practitioners - data scientists, data engineers, analytics engineers, et al. - have a hard time when it comes to security. We're exposed to tools that demand we write code and deal with the messy world of programming languages and packages. We often have little choice but to drag insights out of real and sensitive data, exposing us to risks other developers can avoid, because insights don't hide in test data. Training, career paths and dev-experience effort typically overlook data folks, depriving them of knowledge about the risks they're exposed to and how to mitigate them. Read on and I'll share what I do (and why) to protect myself, Equal Experts and my clients from the security risks lurking behind every piece of software.
+We data practitioners - data scientists, data engineers, analytics engineers, et al. - have a hard time when it comes to security. We're exposed to tools that demand we write code and deal with the messy world of programming languages and packages. We often have little choice but to drag insights out of real and sensitive data, exposing us to risks other developers can avoid, because insights don't hide in test data. Training, career paths and dev-experience efforts typically overlook data folks, depriving them of knowledge about the risks they're exposed to and how to mitigate them. Read on and I'll share what I do (and why) to protect myself, Equal Experts and my clients from the security risks lurking behind every piece of software.
 
 --8<-- "ee.md"
 
