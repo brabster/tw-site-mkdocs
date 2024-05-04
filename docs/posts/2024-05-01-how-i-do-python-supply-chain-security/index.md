@@ -57,7 +57,7 @@ There are [several other ways to tell pip not to install in the system Python](h
 
 ## Using pip
 
-For the past 18 months, I've used plain old [pip, the Python Packaging Authority's recommended tooling](https://packaging.python.org/en/latest/guides/tool-recommendations/#installing-packages) and I'm very happy with it and would recommend it to other Python practitioners. My workflow with pip and venv is:
+For the past 18 months, I've used plain old [pip, the Python Packaging Authority's recommended tooling](https://packaging.python.org/en/latest/guides/tool-recommendations/#installing-packages). I'm very happy with it and would recommend it to other Python data practitioners. My workflow with pip and venv is:
 
 ```console
 $ python -m venv venv # create a venv for the current project if needed
