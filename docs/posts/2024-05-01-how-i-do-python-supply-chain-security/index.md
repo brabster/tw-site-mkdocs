@@ -70,6 +70,10 @@ $ pip install -U -r requirements.txt # install and update packages in this venv 
 
 I've used [pipenv](https://pipenv.pypa.io/en/latest/). I've used [Poetry](https://python-poetry.org/). There are several more. In my experience, they don't deliver significant benefits over pip and are more trouble than they're worth. I have a bunch of stories about this that I'll share another day.
 
+!!! note
+    [`pip` got a proper dependency resolver in 20.3 released in 2020](https://github.com/pypa/pip/issues/988). I can't recall using `pip` before that but I imagine it wasn't the most reliable. I haven't had any problems updating on a daily basis since sometime in 2022. Kudos to fellow consultant [João Neves](https://github.com/jneves/) for the feedback :bow:.
+
+
 ### Conda
 
 I haven't used conda. One of the reasons for that is the complexity around commercial use in the [terms of service](https://conda-forge.org/blog/2020/11/20/anaconda-tos/) to warrant a [clarifying blog post](https://legal.anaconda.com/policies/en/). I think the advice here applies equally to conda users but I can't speak from my own experience.
