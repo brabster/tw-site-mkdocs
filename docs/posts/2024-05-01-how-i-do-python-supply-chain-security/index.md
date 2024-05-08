@@ -95,7 +95,7 @@ A heavily-used package is a juicy target for bad actors. On the other hand... he
 Special mention to [libraries.io](https://libraries.io/search?q=colourama&sort=dependents_count), providing a search interface with metrics about how a package is used by others - `Sort: Dependents`.
 
 !!! warning
-    **Copy-paste the package name into requirements.txt from somewhere you trust!** The bad actors love publishing malware-laden packages with similar names to popular legitimate packages. These packages are downloaded thousands of times before they are identified and removed!
+    **Copy-paste the package name into requirements.txt from somewhere you trust!** The bad actors love "typosquatting":publishing malware-laden packages with similar names to popular legitimate packages. These packages are downloaded thousands of times before they are identified and removed!
 
 
 ### Minimising Dependency Use
