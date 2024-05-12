@@ -1,6 +1,10 @@
 ---
 title: How I Do Python Data Supply Chain Security
 date: 2024-05-01
+categories:
+  - security
+  - python
+  - operations
 ---
 
 ![A photo taken whilst SCUBA diving of Thresher shark circling off a seamount in the Phillipines. Credit: me](./assets/hero.webp)

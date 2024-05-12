@@ -1,6 +1,9 @@
 ---
 title: Fine-Grained GitHub Access Tokens with mkdocs-material-insiders
 date: 2024-04-13
+categories:
+  - python
+  - operations
 ---
 
 ![Aiming an arrow at a target as a hero image](./assets/hero.webp)

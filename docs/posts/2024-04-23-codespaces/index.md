@@ -1,6 +1,9 @@
 ---
 title: Why Try Codespaces?
 date: 2024-04-23
+categories:
+  - security
+  - python
 ---
 
 ![A photo of a crab on a night dive in the red sea. Credit: me](./assets/phone.webp)
