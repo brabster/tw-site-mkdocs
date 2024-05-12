@@ -6,7 +6,7 @@ categories:
     - automation
 ---
 
-![hero image](./assets/dbt_1_8_break.webp)
+![Error traceback ending with No module named dbt.adapters.factory](./assets/dbt_1_8_break.webp)
 
 On updating dbt-bigquery to latest 1.8.0: **No module named 'dbt.adapters.factory'**
 
