@@ -67,7 +67,7 @@ As I read the [v1.8 upgrade docs](https://docs.getdbt.com/docs/dbt-versions/core
 
 So, if you're **setting your adapter dependency with an open upper bound (eg. `dbt-bigquery>=1.8.0` as mine will be shortly) then you should also get the latest compatible `dbt-core` version each time you run `pip install -U -r requirements.txt`** on your development environment or your build system.
 
-It looks like the intent is to make users add a dependency like `dbt-core>=1.8.0` explicitly alongside their adapter dependency. I'm not sure what the advantage is, having already solved the need for adapters to release versions in parallel to `dbt-core`. I'll leave it unspecified and it'll tell me if and when the change happens that breaks it.
+It looks like the intent is to make users add a dependency like `dbt-core>=1.8.0` explicitly alongside their adapter dependency. I'm not sure what the advantage is, having already solved the need for adapters to release versions in parallel to `dbt-core`. I'll leave it unspecified for now and my auto update stuff will tell me if and when the change happens that breaks it.
 
 --8<-- "blog-feedback.md"
 
