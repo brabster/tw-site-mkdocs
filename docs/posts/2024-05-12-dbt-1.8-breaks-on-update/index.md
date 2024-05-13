@@ -61,11 +61,13 @@ As I read the [v1.8 upgrade docs](https://docs.getdbt.com/docs/dbt-versions/core
 
 > Beginning in v1.8, dbt-core and adapters are decoupled. Going forward, your installations should explicitly include both dbt-core and the desired adapter.
 
-[Scanning through the related technical docs](https://github.com/dbt-labs/dbt-adapters/discussions/87), I think [the auto-update approach I use](../2024-05-01-how-i-do-python-supply-chain-security/index.md#updating-dependencies-automatically) will still work as intended without explicitly specifying the core dependency.
+[Scanning through the related technical docs](https://github.com/dbt-labs/dbt-adapters/discussions/87), [the auto-update approach I use](../2024-05-01-how-i-do-python-supply-chain-security/index.md#updating-dependencies-automatically) will still work as intended without explicitly specifying the core dependency - for now.
 
 > Up to now adapters have been required release a new minor version to declare compatibility with dbt-core’s minor version. Post dbt-core version 1.8, adapters will not need to do this. Instead maintainers will need to declare their compatibility with dbt-adapters’ versions.
 
-So, if you're **setting your adapter dependency with an open upper bound (eg. `dbt-bigquery>=1.8.0` as mine will be shortly) then you should also get the latest compatible `dbt-core` version each time you run `pip install -U -r requirements.txt`** on your development environment or your build system. I'll post how that shakes out over time.
+So, if you're **setting your adapter dependency with an open upper bound (eg. `dbt-bigquery>=1.8.0` as mine will be shortly) then you should also get the latest compatible `dbt-core` version each time you run `pip install -U -r requirements.txt`** on your development environment or your build system.
+
+It looks like the intent is to make users add a dependency like `dbt-core>=1.8.0` explicitly alongside their adapter dependency. I'm not sure what the advantage is, having already solved the need for adapters to release versions in parallel to `dbt-core`. I'll leave it unspecified and it'll tell me if and when the change happens that breaks it.
 
 --8<-- "blog-feedback.md"
 
