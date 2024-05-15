@@ -8,7 +8,7 @@ categories:
 
 ![Error traceback ending with No module named dbt.adapters.factory](./assets/dbt_1_8_break.webp)
 
-On updating dbt-bigquery to latest 1.8.0: **No module named 'dbt.adapters.factory'**
+On updating dbt-bigquery to latest 1.8.0: **No module named 'dbt.adapters.factory'**. TL;DR - delete your venv and install clean seems to work reliably. [dbt core issue 10135 tracks the problem](https://github.com/dbt-labs/dbt-core/issues/10135).
 
 --8<-- "ee.md"
 
