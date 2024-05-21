@@ -173,7 +173,7 @@ The following "mapping rule" has DMS add a column to the replicated data that ca
 Starting the serverless replication is a click. I lost a couple of hours here on VPC settings and Secrets Manager access because it took a while - on the order of 10-15 minutes to fail if the problem is VPC access. A 15-minute feedback loop sucks up time fast - which is why I gave up and just went with username/password, cutting secrets manager out. Once I'd ironed out the kinks...
 
 <figure markdown="span">
- ![Screenshot of DMS Table Statistics in AWS console, showing load completed and replication ongoing](./assets/rds_query_editor.webp)
+ ![Screenshot of DMS Table Statistics in AWS console, showing load completed and replication ongoing](./assets/dms_stats.webp)
  <figcaption>Screenshot of DMS Table Statistics in AWS console, showing load completed and replication ongoing</figcaption>
 </figure>
 
