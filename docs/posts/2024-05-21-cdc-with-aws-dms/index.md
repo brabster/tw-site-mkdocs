@@ -5,8 +5,7 @@ date: 2024-05-21
 
 ![hero image](./assets/hero-cdc.webp)
 
-Setting up Change Data Capture from Aurora Serverless PostgreSQL to S3 via the AWS DMS service. I'll walk through the setup calling out the problems and solutions on the way. The next post in this series will show the challenges we hit trying to work with this kind of CDC 
-data and how we dealt with them.
+Setting up Change Data Capture from Aurora Serverless PostgreSQL to S3 via the AWS DMS service. I'll walk through the demo setup, using the venerable Northwind dataset, calling out the problems and solutions on the way. The next post in this series will show the challenges we hit trying to work with this kind of CDC data and how we dealt with them.
 
 --8<-- "ee.md"
 
@@ -26,6 +25,9 @@ Specific challenges I'll be talking about:
 
 I have the feeling it'll take more than one post! As always, feedback on improvements or better approaches is much appreciated, how to feedback at the end of the post.
 
+!!! warning
+    I've taken shortcuts here, exposing me to risks that I'm comfortable with as the AWS account is my own, the dataset is public and the whole thing is transient and will be deleted when I'm done. I'll call out where the dangers I can see are, but you must assess risks for yourself. Trying to be a more [responsible expert](../2024-03-23-irresponsible-expertise-install-python-package/index.md).
+
 ## Demo RDS Setup
 
 I needed a simple, standalone setup to replicate the kinds of challenges I've seen in the data. Over in my own AWS account, I spun up an Aurora Serverless (v2) PostgreSQL instance and deployed the Northwind database as a starting point. My [Northwind bootstrap script came from this repository](https://github.com/pthom/northwind_psql/blob/master/northwind.sql) and worked without issue.
@@ -41,6 +43,9 @@ I create it from the console, as it's a one-off demo thing. Here are the highlig
 - Default VPC setup, private access
 - Enable the RDS Data API
 
+!!! warning
+    I would not accept the risk of self-managed credentials shortcut here if confidentiality and robustness of the database mattered.
+
 ## RDS Query Editor
 
 [RDS has a web-based query editor](https://aws.amazon.com/about-aws/whats-new/2020/05/amazon-rds-data-api-and-query-editor-available-additional-regions/), allowing execution of SQL without needing command line access or tools.
@@ -54,9 +59,15 @@ I create it from the console, as it's a one-off demo thing. Here are the highlig
 
 There are a few gotchas though. It needs the RDS Data API, and whilst the API and Query Editor are available in my go-to region of `eu-west-2`, the ability to enable the API on the Aurora instance is not. For this public data, I just burned my EU instance and moved to the `us-east-1` region for simplicity.
 
+!!! warning
+    Most real-world systems, especially those handling sensitive information, are constrained by regulatory compliance requirements and cannot be run in a different legal jurisdiction without careful consideration.
+
 ### Bootstrapping a Database
 
 You also need to specify a database to launch the Query Editor (along with the RDS instance, username and password). That was a roadblock because my RDS instance had no database to use yet, so I couldn't bootstrap from the Query Editor. After a bit of messing about with VPC settings, I ended up just making the instance publicly accessible for a few minutes so I could log in with psql in CloudShell and run the `CREATE DATABASE northwind` command I wanted to run. Once done, I made the RDS instance private again and opened Query Editor to continue.
+
+!!! warning
+    I would not be comfortable making the database public for **any** length of time if the data were sensitive or the service important.
 
 ### Disabling Autocommit
 
