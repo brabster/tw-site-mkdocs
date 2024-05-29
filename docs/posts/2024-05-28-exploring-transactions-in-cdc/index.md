@@ -70,10 +70,10 @@ D,2024-05-28 19:58:56.758486,19998,,...snip...,,20240528195856750000000000000000
 ```
 
 - column 1: operation. `I` = `INSERT`, `U` = `UPDATE`, `D` = `DELETE`
-- column 2: transaction commit timestamp. We added [this `txn_commit_timestamp` column via endpoint configuration](../2024-05-21-cdc-with-aws-dms/index.md#endpoints) in the previous post 
+- column 2: transaction commit timestamp. We added [this `transaction_commit_timestamp` column via endpoint configuration](../2024-05-21-cdc-with-aws-dms/index.md#endpoints) in the previous post 
 - column 3: the first column containing data from the table - in this case the `order_id` column
 - column 4+: more data columns
-- last column: the other column we added, called [`transact_id` via DMS mapping rules](../2024-05-21-cdc-with-aws-dms/index.md#dms-mapping-rules) in the previous post
+- last column: the other column we added, called [`transaction_sequence_number` via DMS mapping rules](../2024-05-21-cdc-with-aws-dms/index.md#dms-mapping-rules) in the previous post
 
 ## Multi-Statement Transactions in CDC
 
@@ -101,7 +101,7 @@ D,2024-05-28 20:21:48.298940,19998,,...snip...,,20240528202148290000000000000000
 ```
 
 - column 2, the transaction commit time, contains identical values
-- the last column, `transact_id`, contains a value with the same prefix but a suffix that increases in value as the transaction proceeds.
+- the last column, `transaction_sequence_number`, contains a value with the same prefix but a suffix that increases in value as the transaction proceeds.
 
 It's not much fun working with these `.csv` files natively, so I'll lay an external table in Amazon Athena over it so that we can work with the data in SQL. Variations on this are basically how I interacted with DMS CDC data in the past. You could point Spark, AWS Redshift, GCP BigQuery or Snowflake at the data in S3 in much the same way, given appropriate permissions.
 
@@ -160,8 +160,8 @@ ORDER BY transaction_sequence_number DESC
 ```
 
 <figure markdown="span">
- ![Athena query editor showing the query results for selecting rows from orders by txn_id](./assets/dms_in_athena.webp)
- <figcaption>Athena query editor showing the query results for selecting rows from orders by txn_id</figcaption>
+ ![Athena query editor showing the query results for selecting rows from orders by transaction_sequence_number](./assets/dms_in_athena.webp)
+ <figcaption>Athena query editor showing the query results for selecting rows from orders by transaction_sequence_number</figcaption>
 </figure>
 
 !!! note
