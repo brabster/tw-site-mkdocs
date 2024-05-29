@@ -140,7 +140,7 @@ CREATE EXTERNAL TABLE northwind_cdc.orders (
  transaction_sequence_number STRING
 )
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
-LOCATION 's3://843328850426-cdc/cdc/public/orders/'
+LOCATION 's3://your-target-bucket/cdc/public/orders/'
 ```
 
 !!! warn
