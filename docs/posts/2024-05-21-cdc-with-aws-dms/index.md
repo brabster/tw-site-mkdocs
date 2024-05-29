@@ -131,7 +131,7 @@ Another is for DMS VPC access to get to the RDS instance. [It must be called `dm
 
 Once these roles are set up, the DMS endpoints can be created. A source endpoint referencing the RDS cluster, credentials and database name, and a target referencing the bucket.
 
-The S3 endpoint has some options around partitioning and transactions. I added `"TimestampColumnName": "txn_commit_timestamp"` to my S3 settings to add a commit timestamp column to each captured row, replicating what I've seen in my real-world use cases.
+The S3 endpoint has some options around partitioning and transactions. I added `"TimestampColumnName": "transaction_commit_timestamp"` to my S3 settings to add a commit timestamp column to each captured row, replicating what I've seen in my real-world use cases.
 
 ### Serverless Replication
 
@@ -144,7 +144,7 @@ In table mappings, I picked `Enter a schema` and entered `public` as that's the 
 
 After some experimentation, I added an element to the serverless replication.
 
-The following "mapping rule" has DMS add a column to the replicated data that captures transaction ID information. That's not something I'd seen in my real-world data, so I'll be checking whether it's available for the sources needed there. [AR_H_CHANGE_SEQ Documentation](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Tasks.CustomizingTasks.TableMapping.SelectionTransformation.Expressions.html).
+The following "mapping rule" has DMS add a column to the replicated data that captures transaction sequence information. That's not something I'd seen in my real-world data, so I'll be checking whether it's available for the sources needed there. [AR_H_CHANGE_SEQ Documentation](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Tasks.CustomizingTasks.TableMapping.SelectionTransformation.Expressions.html).
 
 > A unique incrementing number from the source database that consists of a timestamp and an auto-incrementing number. The value depends on the source database system.
 
@@ -159,7 +159,7 @@ The following "mapping rule" has DMS add a column to the replicated data that ca
         "table-name": "%"
     },
     "rule-action": "add-column",
-    "value": "transact_id",
+    "value": "transaction_sequence_number",
     "expression": "$AR_H_CHANGE_SEQ",
     "data-type": {
         "type": "string",
@@ -190,6 +190,9 @@ Within each directory (feels odd typing that, we used to call them prefixes) is 
  ![Screenshot of orders directory in S3, showing a LOAD csv file and three timestamped transaction files](./assets/cdc-orders-out.webp)
  <figcaption>Screenshot of orders directory in S3, showing a LOAD csv file and three timestamped transaction files</figcaption>
 </figure>
+
+!!! warning
+    CSV files lack a universal standard for writing and parsing - [RFC4180 helps but is not truly strict nor universally used](https://www.ietf.org/rfc/rfc4180.txt). They contain insufficient metadata about their contents to enable automation or validation and are horribly inefficient at any interesting scale. I use them here for ease of demonstration but **they are a terrible way of storing data** - PLEASE use the [DMS Parquet option](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.S3.html#CHAP_Target.S3.Parquet) for real applications.
 
 ## Next Time
 
