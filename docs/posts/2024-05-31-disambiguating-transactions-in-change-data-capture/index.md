@@ -3,7 +3,6 @@ title: Disambiguating Transactions in Change Data Capture
 date: 2024-05-31
 ---
 
-![hero image](./assets/hero.webp)
 
 intro snippet
 
