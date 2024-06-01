@@ -5,3 +5,6 @@ security:
     '67599':
       reason: do not use a private index
       expires: 2024-07-02
+    '70612':
+      reason: dbt Jinja templates do use sandboxing
+      expires: 2024-07-02
