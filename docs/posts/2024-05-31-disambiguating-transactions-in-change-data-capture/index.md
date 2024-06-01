@@ -17,19 +17,26 @@ We've covered enough to illustrate a problem I had to deal with for a usecase I 
 
 ## Example Usecase - Promotions
 
-I think a concrete usecase will help steer away from being too hypothetical. Be aware that I am making this usecase up though, so please be prepared to suspend your disbelief accordingly. There will be cases I don't consider because they don't really tell us anything new or interesting about handling the CDC data.
+An example of the kind of problem we might be able to solve with a bit of SQL that might otherwise need significant changes to software. Be aware that I am making the usecase up, so please be prepared to suspend your disbelief accordingly. I'll only be focusing aspects of the problem that I think show interesting challenges in CDC data.
 
-Marketing had another great idea and the new product we're building is a promotions system. We need to identify orders that qualify for a promotion so that we can send those customers a voucher for a discount off their next order.
+### Problem Statement
 
-> If the customer gave more than 28 days' notice between the order date and the required date at the time it was shipped, then we send one of our vouchers.
+We want to encourage customers to allow us plenty of time to fulfil their orders. We'll incentivise that with a promotion. Each month, we'll enter qualifying orders into a raffle to win some swag. "Qualifying" orders give more than 28 days' notice between order and required dates, measured when the order ships.
 
-We've already got a CDC feed set up, and we'd rather not monkey around with the actual sales system, so can we do it using the CDC feed? Probably - let's have a go. Our Northwind database represents the backed of a sales system, and we'll focus on one table for this post - `orders`. As we saw last time, each row in the `orders` table represents an order. There's about 14 columns, and it seems likely that there's a subset that are interesting for this usecase:
+### Discussion
+
+Can I find the qualifying orders using the CDC feed? I think so - we can run a query at the end of each month to find eligible orders, I could even pick a winner from those (`ORDER BY RANDOM() LIMIT 1`?). Our Northwind database represents the backed of a sales system, and we'll focus on the `orders` table for this post. As we saw last time, each row in the `orders` table represents an order. There's about 14 columns, and it seems likely that there's a subset that are interesting for this usecase:
 
 - `order_id` - a unique identifier for an order
 - `order_date` - the date the order was placed
 - `required_date` - the date the order is required by
+- `shipped_date` - the date the order shipped
 
-I'm going to assert that a non-`NULL` value in `shipped_date` is sufficient to tell us that the order was shipped - we'll ignore the possibility of errors and corrections in that field. A quick query to see if we have any likely qualifying orders in the current dataset.
+I'm going to assert that a non-`NULL` value in `shipped_date` is sufficient to tell us that the order was shipped - we'll ignore the possibility of errors and corrections in that field.
+
+### Exploring Qualification
+
+A quick query to see if we have any likely qualifying orders in the current dataset.
 
 ```sql
 WITH order_urgency AS (
@@ -41,134 +48,146 @@ WITH order_urgency AS (
     FROM orders
 )
 
-SELECT * FROM order_urgency
+SELECT
+    *
+FROM order_urgency
 WHERE notice_period_days > 28
     AND shipped_date IS NOT NULL
 ```
-We get 61 results back, all with 42 `days_between_order_and_required`. Let's come up with some test cases.
+I get 61 results back, all with 42 `days_between_order_and_required`. Now I'll start looking at specific cases, starting simply.
 
-## Simple Case - Shipped by First Load
+## Case: Already Shipped
 
 First, orders that were already shipped when we did our CDC full load, one qualifying, one not. We can pick those out of the existing historical data and build the basic query we need.
-
-|order_id|order_date|required_date|shipped_date|notice_period_days|qualifies|
-|--------|----------|-------------|------------|------------------|---------|
-|10249|1996-07-05|1996-08-16|1996-07-10|42|TRUE|
-|10253|1996-07-10|1996-07-24|1996-07-16|14|FALSE|
-
-A new query based on the original one gives the correct results.
 
 ```sql
 WITH order_urgency AS (
     SELECT
-        order_id,
-        order_date,
-        required_date,
-        shipped_date,
+        *,
         DATE_DIFF('day', DATE(order_date), DATE(required_date)) notice_period_days
     FROM orders
 )
 
 SELECT
-    order_id,
+    *,
     notice_period_days > 28 qualifies_for_promotion
 FROM order_urgency
-WHERE order_id IN (10249, 10253)
+WHERE order_id IN ('10249', '10253')
     AND shipped_date IS NOT NULL
 ```
 
-|order_id|qualifies_for_promotion|
-|--------|-----------------------|
-|10249|true|
-|10253|false|
+|order_id|notice_period_days|qualifies_for_promotion|
+|--------|------------------|-----------------------|
+|10249|42|true|
+|10253|14|false|
 
-### Making a Test Case
+## From Query to View
 
-It's going to be a pain for both of us if I have to keep copy-pasting this query as it evolves, not to mention checking that the results are correct. I'll show how I can turn it into a test case and going forward I'll skip the boilerplate.
+Having this logic in a query is going to be a pain to work with. The case above is an example - my promotions logic and my test case details are mixed up in the same query. To separate them out, I'll put the logic in a view instead - then I can query that view to debug and test my logic.
 
-```sql
--- specify the expected results
-WITH test_set AS (
-    SELECT 10249 AS order_id, TRUE AS expected
-    UNION ALL SELECT 10253, FALSE
-),
+!!! note
+    This is the first step from a query to a data pipeline, and opens up lots of flexibility and power to build up complex, robust solutions from simpler, well-tested pieces. Plain SQL will quickly become problematic, in the same way that trying to build a Java application just using plain text files containing code would. Tooling like `dbt`, `DataForm` et al. help to deal with the emergent complexity and needs in much the same way that `Maven` or `Gradle` do for Java applications.
 
--- base data for the promotions
-order_urgency AS (
-    SELECT
-        order_id,
-        order_date,
-        required_date,
-        shipped_date,
-        DATE_DIFF('day', DATE(order_date), DATE(required_date)) notice_period_days
-    FROM orders
-),
-
--- order promotion qualification information
-promotions AS (
+```sql title="Promotions logic in a view"
+CREATE OR REPLACE VIEW promotions AS
+WITH order_urgency AS (
     SELECT
         *,
-        notice_period_days > 28 qualifies_for_promotion
-    FROM order_urgency
-    WHERE shipped_date IS NOT NULL
+        DATE_DIFF('day', DATE(order_date), DATE(required_date)) notice_period_days
+    FROM orders
 )
 
--- test that each expected row matches the corresponding promotions row
 SELECT
-    *
-FROM test_set
-    LEFT JOIN promotions USING (order_id)
-WHERE test_set.expected IS DISTINCT FROM promotions.qualifies_for_promotion
--- "IS DISTINCT FROM" handles NULL cases correctly with a no match if either side null
+    *,
+    notice_period_days > 28 qualifies_for_promotion
+FROM order_urgency
 ```
 
-This query returns no rows at the moment. As we add cases I'll be adding them to the test set and improving the query.
+Now, my exploratory query is much simpler. The following query gives the same results as before.
 
-## Handling a Multi-Statement Transaction
+```sql title="Exploratory query now just contains the interesting order_ids"
+SELECT
+    *
+FROM promotions
+WHERE order_id IN ('10249', '10253')
+```
 
-I'll take the [multi-statement transaction from the last post](../2024-05-28-exploring-transactions-in-cdc/index.md#multi-statement-transactions-in-cdc) and run it to see how that looks with our logic.
+### Aside on `SELECT *`
 
-Adding `order_id 19998` to the test cases with NULL as expected to make it appear in the results, we get `INVALID_CAST_ARGUMENT: Value cannot be cast to date:`. Our transaction ended with a `DELETE` operation, and as everything else is from the CDC full load, this is the first `DELETE` we've seen.
+`SELECT *` is often a bad idea in queries, usually referenced in the "best practice" advice from the data warehouse vendor, like number 10 in the [Athena top 10 performance tuning tips](https://aws.amazon.com/blogs/big-data/top-10-performance-tuning-tips-for-amazon-athena/). This is great general advice for queries, but there are a couple of important exceptions.
+
+- if the dataset is small, or you can guarantee that you're only scanning a small amount of data with the `SELECT *`, then it can be really helpful for exploratory analysis.
+- if you're working in a view, the backing data is columnar (native tables, Parquet et al. are) and the data warehouse supports predicate pushdown (modern data warehouses do) then `SELECT *` actually has no performance impact. The columns selected in a query against the view will dictate which columns actually get scanned. It's a really handy way of augmenting a table with new, computed columns without having to repeat lists of column names.
+
+This case ticks the first criterion.
+
+## Case: Multi-Statement Transaction
+
+We could look at simpler cases but they're not very interesting and don't tell us anything about transaction disambiguation. I'll take the [multi-statement transaction from the last post](../2024-05-28-exploring-transactions-in-cdc/index.md#multi-statement-transactions-in-cdc) and run it to see how that looks with our logic.
+
+```sql title="Find the three statements involved in the example transaction"
+SELECT
+    *
+FROM promotions
+WHERE order_id = '19998'
+```
+
+Ah. `INVALID_CAST_ARGUMENT: Value cannot be cast to date:`. Our transaction ended with a `DELETE` operation, and as everything else is from the CDC full load, this is the first `DELETE` we've seen.
 
 What does the CDC data look like?
 
+```sql title="Find the three statements involved in the example transaction"
+SELECT
+    *
+FROM orders
+WHERE order_id = '19998'
+```
+
 |cdc_operation|transaction_commit_timestamp|order_id|order_date|required_date|transaction_sequence_number|
 |-------------|----------------------------|--------|----------|-------------|---------------------------|
-|I|2024-05-31 20:09:45.208234|19998|1996-07-01|1996-08-01|20240531200945200000000000000000061|
-|U|2024-05-31 20:09:45.208234|19998|1996-07-01|1996-08-01|20240531200945200000000000000000065|
+|I|2024-05-31 20:09:45.208234|19998|1996-07-04|1996-08-01|20240531200945200000000000000000061|
+|U|2024-05-31 20:09:45.208234|19998|1996-07-04|1996-08-01|20240531200945200000000000000000065|
 |D|2024-05-31 20:09:45.208234|19998|||20240531200945200000000000000000069|
 
-Ah - when `cdc_operation=D` for delete, we get NULL back in the data fields other than the `order_id`. `NULL` can't be parsed to a date so I'll have to handle that. I'll modify the `notice_period_days` calculation to handle the delete case:
+OK, when `cdc_operation=D` for delete, we get `NULL` or the empty string back in the data fields other than the `order_id`. I can't tell the difference in the Athena UI, but `DATE(NULL) = NULL` so it must be the empty string, as we get a parse error.
 
-```sql hl_lines="7-10 17"
-order_urgency AS (
+!!! tip
+    I use the SQL UI to whatever database I'm using to answer questions I have about how functions behave in these kinds of scenarios. `SELECT DATE(NULL)` is a valid SQL statement and returns `NULL`. `SELECT DATE('')` is also a valid statement but returns the parse error, confirming my suspicion. Learning that I don't actually need a `FROM` clause is a superpower, turning the SQL interface into a kind of REPL.
+
+I'll modify the `notice_period_days` calculation to handle the delete case.
+
+```sql hl_lines="8-11 17" title="Handling DELETE operations"
+CREATE OR REPLACE VIEW promotions AS
+WITH order_urgency AS (
     SELECT
-        order_id,
-        order_date,
-        required_date,
-        shipped_date,
+        *,
         CASE
             WHEN cdc_operation = 'D' THEN NULL
             ELSE DATE_DIFF('day', DATE(order_date), DATE(required_date))
         END notice_period_days
     FROM orders
-),
-
-promotions AS (
-    SELECT
-        *,
-        COALESCE(notice_period_days > 28, FALSE) qualifies_for_promotion
-    FROM order_urgency
-    WHERE shipped_date IS NOT NULL
 )
+
+SELECT
+    *,
+    COALESCE(notice_period_days > 28, FALSE) qualifies_for_promotion
+FROM order_urgency
 ```
 
-I get two rows out of my test case, when there should be none. That's because I have three rows of history for this `order_id` - the original insert, an update and then the delete. What I need is a single row representing the state of the database for this order at the end of the transaction.
+As usual, there's other ways to express that logic - I think that's a fairly clear expression of what's going on. I won't just filter the delete operations out yet as I might need them before I'm done.
+
+I get three rows out of the query, one for each statement in the original transaction. Two of those rows represent "work in progress" and aren't useful for this usecase (or any othereven vaguely realistic usecase I can think of, to be honest. If you know of one, please enlighten me via feedback, instructions at bottom of post). What I need is a single row representing the state of the database for this order at the end of the transaction.
 
 ## Simple Disambiguation
 
-It's possible to use `GROUP BY` to do this but it's not pretty. The technique I reach for here uses a simple window function. I think [BigQuery's Window Function docs](https://cloud.google.com/bigquery/docs/reference/standard-sql/window-function-calls) are the most accessible I've seen. I think this logic is all about the order and CDC process so I'll add a view over the orders table to do this work and keep the complexity away from my promotions logic.
+I'm sure it's possible to use `GROUP BY` to do this but it's not pretty. `GROUP BY` summarises groups of rows, column by column. I want to filter out the rows before the last one in each transaction group. I can use a window function to label the last row in each transaction group and then use that label to filter out the other rows.
 
+Building the window function: for each row, the "window" is the other rows in the same transaction: `PARTITION BY order_id, transaction_commit_timestamp`, in reverse chronological order: `ORDER BY transaction_sequence_number DESC`. That ordering puts the most recent row first. I use the `ROW_NUMBER()` function with this window to label each row with its position in the transaction, with the latest row getting the value `1`. It's now easy to filter out the rows that have values other than `1`.
+
+!!! note
+    I don't have a reliable `transaction_id` in the data. `transaction_commit_timestamp` is the nearest thing, but I can't rely on that alone. If transaction for two different orders happened to commit at the exact same time, I'd only get one row out, which means I'd get the correct update for one order but miss the update for the other. Partitioning by `order_id` as well mitigates that risk, now I'd need two transactions for the same order committing at the exact same time to have a problem. I don't see a simple way of getting a unique `transaction_id` out of DMS (`PreserveTransactions` alters the directory structure, so wouldn't be straightforward to use and would constrain other settings), so this seems like the best we can do.
+
+I think this logic is all about the order and CDC process rather than the promotions thing I'm doing. I'll add a view over the orders table to do this work and keep the complexity away from my promotions logic.
 
 ```sql title="Disambiguated order transactions view"
 CREATE OR REPLACE VIEW orders_disambiguated AS
@@ -177,11 +196,11 @@ WITH identify_last_order_statement_in_transactions AS (
         *,
         -- last statement in transaction gets TRUE
         ROW_NUMBER() OVER(
-            statements_in_transaction_reverse_chronological_order
-        ) = 1 is_last_statement_in_transaction
+            transaction_statements_reverse_chronological_order
+        ) AS position_in_transaction
     FROM orders
     -- could be inlined, this way I can give it a meaningful name
-    WINDOW statements_in_transaction_reverse_chronological_order AS (
+    WINDOW transaction_statements_reverse_chronological_order AS (
         -- rows with same order_id and commit timestamp
         -- are in the same transaction
         PARTITION BY order_id, transaction_commit_timestamp
@@ -191,12 +210,10 @@ WITH identify_last_order_statement_in_transactions AS (
 
 SELECT
     *
-FROM identify_last_statement_in_transactions
+FROM identify_last_order_statement_in_transactions
 -- filter in only the last statements in each transaction
-WHERE is_last_statement_in_transaction
+WHERE position_in_transaction = 1
 ```
-
-I can inspect the contents of this view and write test cases independencly for it, too - for example, to ensure that this transaction does resolve to a single row, and it's the delete. The modifications to my promotions logic are now minimal, just swapping `FROM orders_disambiguated` in place of `FROM orders`... and my test passes again.
 
 ## More Complex Disambiguation
 
