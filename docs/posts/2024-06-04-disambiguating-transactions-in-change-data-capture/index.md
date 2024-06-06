@@ -25,14 +25,14 @@ We want to encourage customers to allow us plenty of time to fulfil their orders
 
 Can I find the qualifying orders using the CDC feed? I think so - we can run a query at the end of each month to find eligible orders, I could even pick a winner from those - `ORDER BY RANDOM() LIMIT 1`?
 
-The Northwind database represents the backed of a sales system, and we'll focus on the `orders` table for this post. As we saw last time, each row in the `orders` table represents an order. There's about 14 columns, and it seems likely that there's a subset that are interesting for this usecase:
+The Northwind database represents the backend of a sales system, and we'll focus on the `orders` table for this post. As we saw last time, each row in the `orders` table represents an order. There's about 14 columns, and it seems likely that there's a subset that are interesting for this usecase:
 
 - `order_id` - a unique identifier for an order
 - `order_date` - the date the order was placed
 - `required_date` - the date the order is required by
 - `shipped_date` - the date the order shipped
 
-I'll need to time-travel back to 1996 because those are the dates in the data.
+I'll need to time-travel back to 1996, the year I first went to university, because those are the dates in the data.
 
 ## Case: Initial Load
 
@@ -61,8 +61,7 @@ WHERE (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
     Although I needed to deal with `order_date` and `required_date` as DATE types do perform calendar arithmetic, I didn't parse the `shipped_date` at this point. It's not clear what the benefit is and how to handle error cases, like dates that can't be parsed, at this point. I find in real life it'll become clear what to do when whatever is consuming the output gets involved. The string representations sort correctly (a valuable feature of [ISO8601](https://en.wikipedia.org/wiki/ISO_8601) & the more restrictive [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339)) so I'll leave them as plain strings for now.
 
 ??? note "Inequalities vs. BETWEEN"
-    `BETWEEN` isn't just for dates and times. It'll work on any type, and shipped_date BETWEEN '1996-07-01' AND '1996-08-01' would be valid but incluive of the upper bound too. Using the inequalities is clear, avoids any misunderstandings about inclusivity and avoids unexpected behaviour when datetimes are involved. I only wrap the two date bounds in parentheses to make it clear that they're related.
-
+    `BETWEEN` isn't just for dates and times. It'll work on any type, and shipped_date BETWEEN '1996-07-01' AND '1996-08-01' would be valid but incluive of the upper bound too. Using the inequalities is clear, avoids any misunderstandings about inclusivity and avoids unexpected behaviour when datetimes are involved. I only wrap the two date bounds in parentheses to make it clear that they function as a unit.
 
 |order_id|order_date|required_date|shipped_date|notice_period_days|qualifies_for_promotion|
 |--------|----------|-------------|------------|------------------|-----------------------|
@@ -76,7 +75,7 @@ WHERE (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
 Having this logic in a query is going to be a pain to work with. The case above is an example - my promotions logic and my test case details are mixed up in the same query. To separate them out, I'll put the logic in a view instead - then I can query that view to debug and test my logic.
 
 ??? note "From Query to Data Pipeline"
-    This is the first step from a query to a data pipeline, and opens up lots of flexibility and power to build up complex, robust solutions from simpler, well-tested pieces. Plain SQL will quickly become problematic, in the same way that trying to build a Java application just using plain text files containing code would. Tooling like `dbt`, `DataForm` et al. help to deal with the emergent complexity and needs in much the same way that `Maven` or `Gradle` do for Java applications.
+    This is the first step from a query to a data pipeline, and opens up lots of flexibility and power to build up complex, robust solutions from simpler, well-tested pieces. Plain SQL will quickly become problematic, in the same way that trying to build a Java application just using plain text files containing code would. Tooling like `dbt`, `dataform` et al. help to deal with the emergent complexity and needs in much the same way that `Maven` or `Gradle` do for Java applications.
 
 ```sql title="Promotions logic in a view"
 CREATE OR REPLACE VIEW promotions AS
@@ -140,7 +139,7 @@ WHERE order_id = '19999'
 |U|2024-05-31 20:09:45.208234|19998|1996-07-04|1996-08-01|20240531200945200000000000000000065|
 |D|2024-05-31 20:09:45.208234|19998|||20240531200945200000000000000000069|
 
-OK, when `cdc_operation=D` for delete, we get `NULL` or the empty string back in the data fields other than the `order_id`. I can't tell the difference in the Athena UI, but `DATE(NULL) = NULL` so it must be the empty string, as we get a parse error. Why the empty string? Probably because the source data is `.csv`, so there's no notion of `NULL`-ness distince from the empty string. Using the alternative Parquet format is a better choice, as it would provide a way of expressing `NULL`, as well as mote metadat like column type information.
+OK, when `cdc_operation=D` for delete, we get `NULL` or the empty string back in the data fields other than the `order_id`. I can't tell the difference in the Athena UI, but `DATE(NULL) = NULL` so it must be the empty string, as we get a parse error. Why the empty string? Probably because the source data is `.csv`, so there's no notion of `NULL`-ness distinct from the empty string. Using the alternative Parquet format is a better choice, as it would provide a way of expressing `NULL`, as well as more metadata, like column type information.
 
 ??? note "SQL Interface as REPL"
     I use the SQL UI to whatever database I'm using to answer questions I have about how functions behave in these kinds of scenarios. `SELECT DATE(NULL)` is a valid SQL statement and returns `NULL`. `SELECT DATE('')` is also a valid statement but returns the parse error, confirming my suspicion. Learning that I don't actually need a `FROM` clause is a superpower, turning the SQL interface into a kind of REPL.
@@ -165,7 +164,7 @@ SELECT
 FROM order_urgency
 ```
 
-As usual, there's other ways to express that logic but I think that's a fairly clear expression of what's going on. I won't filter the delete operations out yet as I might need them before I'm done.
+As usual, there's other ways to express that logic but I think it's a fairly clear expression of what's going on. I won't filter the delete operations out yet as I might need them before I'm done.
 
 I get three rows out of the query, one for each statement in the original transaction. Two of those rows represent "work in progress" and aren't useful for this usecase (or any other interesting usecase I can think of, to be honest. If you know of one, please enlighten me via feedback, instructions at bottom of post). What I need is a single row representing the state of the database for this order at the end of the transaction.
 
@@ -179,9 +178,9 @@ That ordering puts the most recent row first. I use the `ROW_NUMBER()` function 
 
 ### Importance of Primary Key
 
-If a transaction for two different orders happened to commit at the exact same time, or a transaction updated multiple rows, I'd only get one row out, which means I'd filter out some orders updates completely!
+If a transaction for two different orders happened to commit at the exact same time, or a transaction updated multiple rows, I'd only get one row out, which means I'd filter out some order updates completely!
 
-Partitioning by the primary key for the table (`order_id` in this case) as well as `transaction_commit_timestamp` mitigates that risk, now I'd need two transactions for the same order committing at the exact same time to have a problem - the kind of edgecase that's unlikely enough that we can probably accept the risk and not try to handle it.
+Partitioning by the primary key for the table (`order_id` in this case) as well as `transaction_commit_timestamp` mitigates that risk, now I'd need two transactions for the same order committing at the exact same time to have a problem - the kind of edge case that's unlikely enough that we can probably accept the risk and not try to handle it.
 
 ### Implementing Disambiguation
 
@@ -256,7 +255,7 @@ Switching my promotions logic back to the source orders table and querying the C
 |20002|1996-07-04|1996-08-25|1996-08-02|52|true|
 |20002|1996-07-04|1996-08-25|1996-08-02|52|true|
 
-As we'd expect, we're seeing a row per transaction. Row number three in the table above has the updated shipping date - that's the row that represents the final state of the transaction. Flipping to `FROM orders_disambiguated`...
+As we'd expect, we're seeing a row per statement, not per transaction. Row number three in the table above has the updated shipping date - that's the row that represents the final state of the transaction. Flipping to `FROM orders_disambiguated`...
 
 |order_id|order_date|required_date|shipped_date|notice_period_days|qualifies_for_promotion|
 |--------|----------|-------------|------------|------------------|-----------------------|
