@@ -123,14 +123,14 @@ Having done that, the next statement creates an "external table" over the CDC `o
 CREATE EXTERNAL TABLE northwind_cdc.orders (
  cdc_operation STRING,
  transaction_commit_timestamp STRING,
- order_id INTEGER,
+ order_id STRING,
  customer_id STRING,
- employee_id INTEGER,
+ employee_id STRING,
  order_date STRING,
  required_date STRING,
  shipped_date STRING,
- ship_via INTEGER,
- freight FLOAT,
+ ship_via STRING,
+ freight STRING,
  ship_name STRING,
  ship_address STRING,
  ship_city STRING,
@@ -142,6 +142,10 @@ CREATE EXTERNAL TABLE northwind_cdc.orders (
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 LOCATION 's3://your-target-bucket/cdc/public/orders/'
 ```
+
+All the columns are `STRING` typed, rather than reflecting the source database types. There's a couple of reasons for that. The fact that we are actually landing CSV files means all these values are really strings. There's also no representation of `NULL` in CSV.
+
+If I apply types other than `STRING` here, **Athena will transparently try to parse the values into the expected types**. When that doesn't work, I'll get an error in that invisible machinery that can only be fixed by dropping and recreating this `orders` table with string types, something that might cause a ripple of breakage and change across multiple people or teams if I'm not careful. I'll talk more about these issues when I discuss how I apply production thinking to data like this.
 
 !!! warn
     The default Athena CSV implementation for Athena doesn't handle quoted CSV fields containing things like commas, so I use the [OpenCSV SerDe here as per the documentation](https://docs.aws.amazon.com/athena/latest/ug/csv-serde.html). Another little tripwire to carefully step over.
