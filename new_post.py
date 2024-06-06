@@ -32,6 +32,12 @@ intro snippet
 
 ## Header 1
 
+<figure markdown="span">
+ ![template figure](./assets/image.webp)
+ <figcaption>template figure</figcaption>
+</figure>
+
+
 --8<-- "blog-feedback.md"
 
 ''')
