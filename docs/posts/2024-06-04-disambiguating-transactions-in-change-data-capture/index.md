@@ -5,11 +5,13 @@ date: 2024-06-04
 
 ![Example query against disambiguated view](./assets/disambiguated_sql.webp)
 
-In the CDC output, I get a row for each statement executing in the transaction. How do I get the final state of a row when a transaction has finished? I call this process "disambiguation", because I don't know which row to use and I eliminate that ambiguity. You could also think of it as a kind of deduplication.
+In the CDC output, I get a row for each statement executing in the transaction. Each row reflects the state of the database when that statement executed.How do I filter out all the transient mid-transactions statements to get the final state of the row when a transaction has finished?
 
 --8<-- "ee.md"
 
 <!-- more -->
+
+I call this process "disambiguation", because I don't know which row to use and I eliminate that ambiguity. You could also think of it as a kind of deduplication.
 
 ## Example Usecase - Promotions
 
@@ -177,13 +179,13 @@ That ordering puts the most recent row first. I use the `ROW_NUMBER()` function 
 
 ### Importance of Primary Key
 
-I don't have a reliable `transaction_id` in the data. `transaction_commit_timestamp` is the nearest thing, but I can't rely on that alone. If transaction for two different orders happened to commit at the exact same time, or a transaction updated multiple rows, I'd only get one row out, which means I'd get the correct update for one order but miss the update for the other.
+If a transaction for two different orders happened to commit at the exact same time, or a transaction updated multiple rows, I'd only get one row out, which means I'd filter out some orders updates completely!
 
-Partitioning by the primary key for the table (`order_id` in this case) - as well mitigates that risk, now I'd need two transactions for the same order committing at the exact same time to have a problem. I don't see a simple way of getting a unique `transaction_id` out of DMS (`PreserveTransactions` alters the directory structure, so wouldn't be straightforward to use and would constrain other settings), so this seems like the best we can do.
+Partitioning by the primary key for the table (`order_id` in this case) as well as `transaction_commit_timestamp` mitigates that risk, now I'd need two transactions for the same order committing at the exact same time to have a problem - the kind of edgecase that's unlikely enough that we can probably accept the risk and not try to handle it.
 
 ### Implementing Disambiguation
 
-I think this logic is all about the order and CDC process rather than the promotions thing I'm doing. I'll add a view over the orders table to do this work and keep the complexity away from my promotions logic.
+I think this logic is all about the application's database interaction logic and the CDC mechanism rather than the promotions usecase I'm working on. I'll add a view over the orders table to do this work and keep the complexity away from my promotions logic.
 
 ```sql title="Disambiguated order transactions view"
 CREATE OR REPLACE VIEW orders_disambiguated AS
