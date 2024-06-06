@@ -302,7 +302,7 @@ This in the tricky scenario my team faced in a recent engagement - and we were w
 - if the ambiguous transaction contained a `DELETE`, then that should have been the last thing that happened and we can ignore everything else
 - for the remaining cases
     - for each column, collect the possible values and if there's more than one, subtract the previous transaction's value from the options
-- after applying those heuristics, take the values that are left for each column, adding a new column that indicates whether there any columns that hadn't resolved down to a single value.
+- after applying those heuristics, take the values that are left for each column, adding a new column that indicates whether there any columns that hadn't resolved down to a single value. This column can be used to find and manually check any remaining ambiguous rows.
 
 It's not satifying or pretty, but after a couple of days work, a lot of tests and a LOT of automated and manual validation, we couldn't find any remaining ambiguous cases. If I get time, I'll recap the specifics of how we did it.
 
