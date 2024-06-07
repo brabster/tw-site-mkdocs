@@ -263,6 +263,33 @@ As we'd expect, we're seeing a row per statement, not per transaction. Row numbe
 
 That's the right row!
 
+## Data Pipeline
+
+I've created a couple of views now, and it might be hard to visualise. I'll recap what the data pipeline looks like. I've indicated domains as I've described them in the narrative.
+
+``` mermaid
+graph TD
+    subgraph promotions_domain
+        promotions
+        consumer
+    end
+
+    subgraph northwind_cdc_domain
+        northwind_db
+        dms
+        orders_s3
+        orders_ext_table
+        orders_disambiguated
+    end
+
+    dms -->|captures_changes| northwind_db;
+    dms -->|publishes| orders_s3;
+    orders_ext_table -->|describes| orders_s3;
+    orders_disambiguated -->|filters| orders_ext_table
+    promotions -->|augments| orders_disambiguated
+    consumer -->|queries| promotions
+```
+
 ## Sense Check
 
 Taking a step back, there's one simple check I can do to find any glaring issues. There should some examples in the `orders` table for the same transaction that have more than one row. There should be none in the `orders_disambiguated` table. Is that the case?
