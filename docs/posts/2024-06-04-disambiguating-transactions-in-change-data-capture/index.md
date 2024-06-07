@@ -61,7 +61,7 @@ WHERE (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
     Although I needed to deal with `order_date` and `required_date` as DATE types do perform calendar arithmetic, I didn't parse the `shipped_date` at this point. It's not clear what the benefit is and how to handle error cases, like dates that can't be parsed, at this point. I find in real life it'll become clear what to do when whatever is consuming the output gets involved. The string representations sort correctly (a valuable feature of [ISO8601](https://en.wikipedia.org/wiki/ISO_8601) & the more restrictive [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339)) so I'll leave them as plain strings for now.
 
 ??? note "Inequalities vs. BETWEEN"
-    `BETWEEN` isn't just for dates and times. It'll work on any type, and shipped_date BETWEEN '1996-07-01' AND '1996-08-01' would be valid but incluive of the upper bound too. Using the inequalities is clear, avoids any misunderstandings about inclusivity and avoids unexpected behaviour when datetimes are involved. I only wrap the two date bounds in parentheses to make it clear that they function as a unit.
+    `BETWEEN` isn't just for dates and times. It'll work on any type, and `shipped_date BETWEEN '1996-07-01' AND '1996-08-01'` would be valid but inclusive of the upper bound too. Using the inequalities is clear about the intent, avoids any misunderstandings about inclusivity and avoids unexpected behaviour when datetimes are involved. I only wrap the two date bounds in parentheses to make it clear that they function as a unit.
 
 |order_id|order_date|required_date|shipped_date|notice_period_days|qualifies_for_promotion|
 |--------|----------|-------------|------------|------------------|-----------------------|
@@ -72,12 +72,12 @@ WHERE (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
 
 ## From Query to View
 
-Having this logic in a query is going to be a pain to work with. The case above is an example - my promotions logic and my test case details are mixed up in the same query. To separate them out, I'll put the logic in a view instead - then I can query that view to debug and test my logic.
+Having this logic in a query is going to be a pain to work with. The case above is an example - my promotions logic and my test case details are mixed up in the same query. To separate them out, I'll [refactor](https://refactoring.com/) to put the logic in a view instead - then I can query that view to debug and test my logic.
 
 ??? note "From Query to Data Pipeline"
     This is the first step from a query to a data pipeline, and opens up lots of flexibility and power to build up complex, robust solutions from simpler, well-tested pieces. Plain SQL will quickly become problematic, in the same way that trying to build a Java application just using plain text files containing code would. Tooling like `dbt`, `dataform` et al. help to deal with the emergent complexity and needs in much the same way that `Maven` or `Gradle` do for Java applications.
 
-```sql title="Promotions logic in a view"
+```sql title="Promotions logic is more general"
 CREATE OR REPLACE VIEW promotions AS
 WITH order_urgency AS (
     SELECT
@@ -92,9 +92,9 @@ SELECT
 FROM order_urgency
 ```
 
-Now, my exploratory query is much simpler. The following query gives the same results as before.
+Now, my exploratory query is much simpler and the important conditions are clearer, and gives the same results as before.
 
-```sql title="Exploratory query now just contains the interesting order_ids"
+```sql title="Query captures specifics of the current question"
 SELECT
     *
 FROM promotions
@@ -103,10 +103,10 @@ WHERE  (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
 ```
 
 ??? note "Is `SELECT *` bad practise?"
-    `SELECT *` is often a bad idea in queries, usually referenced in the "best practice" advice from the data warehouse vendor, like number 10 in the [Athena top 10 performance tuning tips](https://aws.amazon.com/blogs/big-data/top-10-performance-tuning-tips-for-amazon-athena/). This is great general advice for queries, but there are a couple of important exceptions.
+    `SELECT *` is often a bad idea in queries, usually referenced in the "best practice" advice from the data warehouse vendor, like number 10 in the [Athena top 10 performance tuning tips](https://aws.amazon.com/blogs/big-data/top-10-performance-tuning-tips-for-amazon-athena/). This is important general advice, but there are exceptions.
 
     - if the dataset is small, or you can guarantee that you're only scanning a small amount of data with the `SELECT *`, then it can be really helpful for exploratory analysis.
-    - if you're working in a view, the backing data is columnar (native tables, Parquet et al. are) and the data warehouse supports predicate pushdown (modern data warehouses do) then `SELECT *` actually has no performance impact. The columns selected in a query against the view will dictate which columns actually get scanned. It's a really handy way of augmenting a table with new, computed columns without having to repeat lists of column names.
+    - if you're working in a view, the backing data is columnar (native tables, Parquet et al. are) and the data warehouse supports predicate pushdown (modern data warehouses do) then `SELECT *` has no direct performance impact. Only the columns mentioned in a query against the view will be scanned and processed, so I can make more information available to consumers without incurring unnecessary overhead, or having to repeat lists of column names.
 
     This case ticks the first criterion.
 
