@@ -265,7 +265,9 @@ That's the right row!
 
 ## Data Pipeline
 
-I've created a couple of views now, and it might be hard to visualise. I'll recap what the data pipeline looks like. I've indicated domains as I've described them in the narrative.
+I've created a couple of views now, and it might be hard to visualise. I'll recap what the data pipeline looks like. Dashed arrows indicate on-demand pulling of data, whereas solid lines indicate active pushing of data in a more ETL-style.
+
+I've indicated domains as I've described them in the narrative. I've been using ["domain" in the Domain-Driven Design sense](https://www.techtarget.com/whatis/definition/domain-driven-design#:~:text=Domain%2Ddriven%20design%20(DDD)%20is%20a%20software%20development%20philosophy,software%20application%20is%20being%20developed.). `northwind_cdc_domain` requires knowledge of the source data and semantics, the CDC process and the CDC-centric disambiguation method. `promotions_domain` requires detailed knowledge of the promotions concept and the interface exposed by the `northwind_cdc_domain`.
 
 ``` mermaid
 graph TD
@@ -284,10 +286,10 @@ graph TD
 
     dms -->|captures_changes| northwind_db;
     dms -->|publishes| orders_s3;
-    orders_ext_table -->|describes| orders_s3;
-    orders_disambiguated -->|filters| orders_ext_table
-    promotions -->|augments| orders_disambiguated
-    consumer -->|queries| promotions
+    orders_ext_table -.->|describes| orders_s3;
+    orders_disambiguated -.->|filters| orders_ext_table
+    promotions -.->|augments| orders_disambiguated
+    consumer -.->|queries| promotions
 ```
 
 ## Sense Check
