@@ -5,7 +5,7 @@ date: 2024-06-04
 
 ![Example query against disambiguated view](./assets/disambiguated_sql.webp)
 
-In the CDC output, I get a row for each statement executing in the transaction. Each row reflects the state of the database when that statement executed.How do I filter out all the transient mid-transactions statements to get the final state of the row when a transaction has finished?
+In the CDC output, I get a row for each statement executing in the transaction. Each row reflects the state of the database when that statement executed. How do I filter out all the transient statements to get the final state of the row when a transaction has finished?
 
 --8<-- "ee.md"
 
