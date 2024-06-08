@@ -36,7 +36,7 @@ I'll need to time-travel back to 1996, when I first went to university and still
 
 ## Case: Initial Load
 
-I'll take a look at orders that were already shipped when we did our CDC full load, one that qualifies and one not. I'll pick those out of the existing historical data to help get a feel for the basic query I need. I've done a reload so the only records in the data are from the initial load. Here are a couple of example records, from the perspective of a run at the end of August 1996.
+I'll take a look at orders that were already shipped when we did our CDC full load, one that qualifies and one not. I'll pick those out of the existing historical data to help get a feel for the basic query I need. I've done a reload so the only records in the data are from the initial load. Here are a couple of example records, from the perspective of a run in August 1996.
 
 ```sql
 WITH order_urgency AS (
