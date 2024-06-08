@@ -58,7 +58,7 @@ WHERE (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
 ```
 
 ??? note "DATE vs. STRING"
- Although I needed to deal with `order_date` and `required_date` as DATE types do perform calendar arithmetic, I didn't parse the `shipped_date` at this point. It's not clear what the benefit is and how to handle error cases, like dates that can't be parsed, at this point. I find in real life it'll become clear what to do when whatever is consuming the output gets involved. The string representations sort correctly (a valuable feature of [ISO8601](https://en.wikipedia.org/wiki/ISO_8601) & the more restrictive [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339)) so I'll leave them as plain strings for now.
+    Although I needed to deal with `order_date` and `required_date` as DATE types do perform calendar arithmetic, I didn't parse the `shipped_date` at this point. It's not clear what the benefit is and how to handle error cases, like dates that can't be parsed, at this point. I find in real life it'll become clear what to do when whatever is consuming the output gets involved. The string representations sort correctly (a valuable feature of [ISO8601](https://en.wikipedia.org/wiki/ISO_8601) & the more restrictive [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339)) so I'll leave them as plain strings for now.
 
 ??? note "Inequalities vs. BETWEEN"
     `BETWEEN` isn't just for dates and times. It'll work on any type, and `shipped_date BETWEEN '1996-07-01' AND '1996-08-01'` would be valid but inclusive of the upper bound too. Using the inequalities is clear about the intent, avoids any misunderstandings about inclusivity and avoids unexpected behaviour when datetimes are involved. I only wrap the two date bounds in parentheses to make it clear that they function as a unit.
@@ -75,7 +75,7 @@ WHERE (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
 Having this logic in a query is going to be a pain to work with. The case above is an example - my promotions logic and my test case details are mixed up in the same query. To separate them, I'll [refactor](https://refactoring.com/) to put the logic in a view instead - then I can query that view to debug and test my logic.
 
 ??? note "From Query to Data Pipeline"
- This is the first step from a query to a data pipeline and opens up lots of flexibility and power to build up complex, robust solutions from simpler, well-tested pieces. Plain SQL will quickly become problematic, in the same way that trying to build a Java application just using plain text files containing code would. Tooling like `dbt`, `dataform` et al. help to deal with the emergent complexity and needs in much the same way that `Maven` or `Gradle` do for Java applications.
+    This is the first step from a query to a data pipeline and opens up lots of flexibility and power to build up complex, robust solutions from simpler, well-tested pieces. Plain SQL will quickly become problematic, in the same way that trying to build a Java application just using plain text files containing code would. Tooling like `dbt`, `dataform` et al. help to deal with the emergent complexity and needs in much the same way that `Maven` or `Gradle` do for Java applications.
 
 ```sql title="Promotions logic is more general"
 CREATE OR REPLACE VIEW promotions AS
@@ -105,10 +105,10 @@ WHERE (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
 ??? note "Is `SELECT *` bad practise?"
     `SELECT *` is often a bad idea in queries, usually referenced in the "best practice" advice from the data warehouse vendor, like number 10 in the [Athena top 10 performance tuning tips](https://aws.amazon.com/blogs/big-data/top-10-performance-tuning-tips-for-amazon-athena/). This is important general advice, but there are exceptions.
 
- - if the dataset is small, or you can guarantee that you're only scanning a small amount of data with the `SELECT *`, then it can be really helpful for exploratory analysis.
- - if you're working in a view, the backing data is columnar (native tables, Parquet et al. are) and the data warehouse supports predicate pushdown (modern data warehouses do) then `SELECT *` has no direct performance impact. Only the columns mentioned in a query against the view will be scanned and processed, so I can make more information available to consumers without incurring unnecessary overhead, or having to repeat lists of column names.
+    - if the dataset is small, or you can guarantee that you're only scanning a small amount of data with the `SELECT *`, then it can be really helpful for exploratory analysis.
+    - if you're working in a view, the backing data is columnar (native tables, Parquet et al. are) and the data warehouse supports predicate pushdown (modern data warehouses do) then `SELECT *` has no direct performance impact. Only the columns mentioned in a query against the view will be scanned and processed, so I can make more information available to consumers without incurring unnecessary overhead, or having to repeat lists of column names.
 
- This case ticks the first criterion.
+    This case ticks the first criterion.
 
 ## Case: Multi-Statement Transaction
 
@@ -142,7 +142,7 @@ WHERE order_id = '19999'
 OK, when `cdc_operation=D` for delete, we get `NULL` or the empty string back in the data fields other than the `order_id`. I can't tell the difference in the Athena UI, but `DATE(NULL) = NULL` so it must be the empty string, as we get a parse error. Why the empty string? Probably because the source data is `.csv`, so there's no notion of `NULL`-ness distinct from the empty string. Using the alternative Parquet format is a better choice, as it would provide a way of expressing `NULL`, as well as more metadata, like column type information.
 
 ??? note "SQL Interface as REPL"
- I use the SQL UI in whatever database I'm using to answer questions I have about how functions behave in these kinds of scenarios. `SELECT DATE(NULL)` is a valid SQL statement and returns `NULL`. `SELECT DATE('')` is also a valid statement but returns the parse error, confirming my suspicion. When I learned that I don't need a `FROM` clause I gained a superpower, turning the SQL interface into a kind of REPL!
+    I use the SQL UI in whatever database I'm using to answer questions I have about how functions behave in these kinds of scenarios. `SELECT DATE(NULL)` is a valid SQL statement and returns `NULL`. `SELECT DATE('')` is also a valid statement but returns the parse error, confirming my suspicion. When I learned that I don't need a `FROM` clause I gained a superpower, turning the SQL interface into a kind of REPL!
 
 I'll modify the `notice_period_days` calculation to handle the delete case.
 
@@ -220,7 +220,7 @@ Running the same query from the `orders_disambiguated` view instead of the `orde
 </figure>
 
 ??? note "Simplifying with QUALIFY"
- Many data warehouse systems, like [BigQuery, have a `QUALIFY` clause](https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#qualify_clause). That allows you to add the clause `QUALIFY position_in_transaction = 1` to the CTE instead of needing a separate query to do that filtering. Athena/Trino does not support the `QUALIFY` clause.
+    Many data warehouse systems, like [BigQuery, have a `QUALIFY` clause](https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#qualify_clause). That allows you to add the clause `QUALIFY position_in_transaction = 1` to the CTE instead of needing a separate query to do that filtering. Athena/Trino does not support the `QUALIFY` clause.
 
 I can update the promotions logic now to take advantage of the disambiguated view.
 
@@ -324,8 +324,8 @@ Taking a step back, there's one simple check I can do to find any glaring issues
 
 ```sql title="Find multi-row transactions in the orders table"
 SELECT
- order_id,
- transaction_commit_timestamp,
+    order_id,
+    transaction_commit_timestamp,
     COUNT(1) record_count
 FROM orders
 GROUP BY order_id, transaction_commit_timestamp
