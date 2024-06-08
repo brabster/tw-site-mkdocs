@@ -41,17 +41,17 @@ I'll take a look at orders that were already shipped when we did our CDC full lo
 ```sql
 WITH order_urgency AS (
     SELECT
- order_id,
- order_date,
- required_date,
- shipped_date,
- DATE_DIFF('day', DATE(order_date), DATE(required_date)) notice_period_days
+        order_id,
+        order_date,
+        required_date,
+        shipped_date,
+        DATE_DIFF('day', DATE(order_date), DATE(required_date)) notice_period_days
     FROM orders
 )
 
 SELECT
- *,
- notice_period_days > 28 qualifies_for_promotion
+    *,
+    notice_period_days > 28 qualifies_for_promotion
 FROM order_urgency
 WHERE (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
     AND order_id IN ('10249', '10253')
@@ -81,14 +81,14 @@ Having this logic in a query is going to be a pain to work with. The case above 
 CREATE OR REPLACE VIEW promotions AS
 WITH order_urgency AS (
     SELECT
- *,
- DATE_DIFF('day', DATE(order_date), DATE(required_date)) notice_period_days
+        *,
+        DATE_DIFF('day', DATE(order_date), DATE(required_date)) notice_period_days
     FROM orders
 )
 
 SELECT
- *,
- notice_period_days > 28 qualifies_for_promotion
+    *,
+    notice_period_days > 28 qualifies_for_promotion
 FROM order_urgency
 ```
 
@@ -96,7 +96,7 @@ Now, my exploratory query is much simpler, the important conditions are clearer 
 
 ```sql title="Query captures specifics of the current question"
 SELECT
- *
+    *
 FROM promotions
 WHERE (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
      AND order_id IN ('10249', '10253')
@@ -117,7 +117,7 @@ It gets more interesting when we start running transactions through the system. 
 
 ```sql title="Find the three statements involved in the example transaction"
 SELECT
- *
+    *
 FROM promotions
 WHERE order_id = '19999'
 ```
@@ -128,7 +128,7 @@ What does the CDC data look like?
 
 ```sql title="Find the three statements involved in the example transaction"
 SELECT
- *
+    *
 FROM orders
 WHERE order_id = '19999'
 ```
@@ -150,7 +150,7 @@ I'll modify the `notice_period_days` calculation to handle the delete case.
 CREATE OR REPLACE VIEW promotions AS
 WITH order_urgency AS (
     SELECT
- *,
+    *,
         CASE
             WHEN cdc_operation = 'D' THEN NULL
             ELSE DATE_DIFF('day', DATE(order_date), DATE(required_date))
@@ -159,7 +159,7 @@ WITH order_urgency AS (
 )
 
 SELECT
- *,
+    *,
     COALESCE(notice_period_days > 28, FALSE) qualifies_for_promotion
 FROM order_urgency
 ```
@@ -190,11 +190,11 @@ I think this logic is all about the application's database interaction logic and
 CREATE OR REPLACE VIEW orders_disambiguated AS
 WITH identify_last_order_statement_in_transactions AS (
     SELECT
- *,
+        *,
         -- last statement in transaction gets TRUE
         ROW_NUMBER() OVER(
- transaction_statements_reverse_chronological_order
- ) AS position_in_transaction
+            transaction_statements_reverse_chronological_order
+        ) AS position_in_transaction
     FROM orders
     -- could be inlined, this way I can give it a meaningful name
     WINDOW transaction_statements_reverse_chronological_order AS (
@@ -228,7 +228,7 @@ I can update the promotions logic now to take advantage of the disambiguated vie
 CREATE OR REPLACE VIEW promotions AS
 WITH order_urgency AS (
     SELECT
- *,
+    *,
         CASE
             WHEN cdc_operation = 'D' THEN NULL
             ELSE DATE_DIFF('day', DATE(order_date), DATE(required_date))
@@ -237,7 +237,7 @@ WITH order_urgency AS (
 )
 
 SELECT
- *,
+    *,
     COALESCE(notice_period_days > 28, FALSE) qualifies_for_promotion
 FROM order_urgency
 ```
@@ -297,25 +297,25 @@ I've indicated domains as I've described them in the narrative. I've been using 
 
 ``` mermaid
 graph TD
- subgraph promotions_domain
- promotions
- consumer
- end
+    subgraph promotions_domain
+    promotions
+    consumer
+    end
 
- subgraph northwind_cdc_domain
- northwind_db
- dms
- orders_s3
- orders_ext_table
- orders_disambiguated
- end
+    subgraph northwind_cdc_domain
+    northwind_db
+    dms
+    orders_s3
+    orders_ext_table
+    orders_disambiguated
+    end
 
- dms -->|captures_changes| northwind_db;
- dms -->|publishes| orders_s3;
- orders_ext_table -.->|describes| orders_s3;
- orders_disambiguated -.->|filters| orders_ext_table
- promotions -.->|augments| orders_disambiguated
- consumer -.->|queries| promotions
+    dms -->|captures_changes| northwind_db;
+    dms -->|publishes| orders_s3;
+    orders_ext_table -.->|describes| orders_s3;
+    orders_disambiguated -.->|filters| orders_ext_table
+    promotions -.->|augments| orders_disambiguated
+    consumer -.->|queries| promotions
 ```
 
 ## Sense Check
