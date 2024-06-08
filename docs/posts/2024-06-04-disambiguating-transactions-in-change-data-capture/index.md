@@ -298,16 +298,16 @@ I've indicated domains as I've described them in the narrative. I've been using 
 ``` mermaid
 graph TD
     subgraph promotions_domain
-    promotions
-    consumer
+        promotions
+        consumer
     end
 
     subgraph northwind_cdc_domain
-    northwind_db
-    dms
-    orders_s3
-    orders_ext_table
-    orders_disambiguated
+        northwind_db
+        dms
+        orders_s3
+        orders_ext_table
+        orders_disambiguated
     end
 
     dms -->|captures_changes| northwind_db;
