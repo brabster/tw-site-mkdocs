@@ -5,38 +5,38 @@ date: 2024-06-04
 
 ![Example query against disambiguated view](./assets/disambiguated_sql.webp)
 
-In the CDC output, I get a row for each statement executing in the transaction. Each row reflects the state of the database when that statement executed. How do I filter out all the transient statements to get the final state of the row when a transaction has finished?
+In the CDC output, I get a row for each statement executing in the transaction. Each row reflects the state of the database when that statement is executed. How do I filter out all the transient statements to get the final state of the row when a transaction has finished?
 
 --8<-- "ee.md"
 
 <!-- more -->
 
-I call this process "disambiguation", because I don't know which row to use and I eliminate that ambiguity. You could also think of it as a kind of deduplication.
+I call this process "disambiguation" because I don't initially know which row to use and I eliminate that ambiguity. You could also think of it as a kind of deduplication.
 
 ## Example Usecase - Promotions
 
-Here's an example of the kind of problem we might be able to solve with a bit of SQL that might otherwise need significant changes to software. Be aware that I am making the usecase up, so please be prepared to suspend your disbelief accordingly. I'll only be focusing aspects of the problem that I think show interesting challenges in CDC data.
+Here's an example of the kind of problem we might be able to solve with a bit of SQL that might otherwise need significant changes to software. Be aware that I am making the use case up, so please be prepared to suspend your disbelief accordingly. I'll only be focusing on aspects of the problem that I think show interesting challenges in CDC data.
 
 ### Problem Statement
 
-We want to encourage customers to allow us plenty of time to fulfil their orders. We'll incentivise that with a promotion. Each month, we'll enter qualifying orders into a raffle to win some swag. "Qualifying" orders give more than 28 days' notice between order and required dates when the order ships.
+We want to encourage customers to allow us plenty of time to fulfil their orders. We'll incentivise that with a promotion. Each month, we'll enter qualifying orders into a raffle to win some swag. "Qualifying" orders give more than 28 days notice between `order_date` and `required_date` when the order ships.
 
 ### Discussion
 
 Can I find the qualifying orders using the CDC feed? I think so - we can run a query at the end of each month to find eligible orders, I could even pick a winner from those - `ORDER BY RANDOM() LIMIT 1`?
 
-The Northwind database represents the backend of a sales system, and we'll focus on the `orders` table for this post. As we saw last time, each row in the `orders` table represents an order. There's about 14 columns, and it seems likely that there's a subset that are interesting for this usecase:
+The Northwind database represents the backend of a sales system, and we'll focus on the `orders` table for this post. As we saw last time, each row in the `orders` table represents an order. There are about 14 columns, and it seems likely that there's a subset that is interesting for this use case:
 
 - `order_id` - a unique identifier for an order
 - `order_date` - the date the order was placed
 - `required_date` - the date the order is required by
 - `shipped_date` - the date the order shipped
 
-I'll need to time-travel back to 1996, the year I first went to university, because those are the dates in the data.
+I'll need to time-travel back to 1996, when I first went to university and still had hair because those are the dates in the data.
 
 ## Case: Initial Load
 
-I'll take a look at orders that were already shipped when we did our CDC full load, one that qualifies and one not. I'll pick those out of the existing historical data to help get a feel for the basic query I need. I've done a reload so the only records in the data are from the initial load. Here's a couple of example records, from the perspective of a run at the end of August 1996.
+I'll take a look at orders that were already shipped when we did our CDC full load, one that qualifies and one not. I'll pick those out of the existing historical data to help get a feel for the basic query I need. I've done a reload so the only records in the data are from the initial load. Here are a couple of example records, from the perspective of a run in August 1996.
 
 ```sql
 WITH order_urgency AS (
@@ -72,10 +72,10 @@ WHERE (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
 
 ## From Query to View
 
-Having this logic in a query is going to be a pain to work with. The case above is an example - my promotions logic and my test case details are mixed up in the same query. To separate them out, I'll [refactor](https://refactoring.com/) to put the logic in a view instead - then I can query that view to debug and test my logic.
+Having this logic in a query is going to be a pain to work with. The case above is an example - my promotions logic and my test case details are mixed up in the same query. To separate them, I'll [refactor](https://refactoring.com/) to put the logic in a view instead - then I can query that view to debug and test my logic.
 
 ??? note "From Query to Data Pipeline"
-    This is the first step from a query to a data pipeline, and opens up lots of flexibility and power to build up complex, robust solutions from simpler, well-tested pieces. Plain SQL will quickly become problematic, in the same way that trying to build a Java application just using plain text files containing code would. Tooling like `dbt`, `dataform` et al. help to deal with the emergent complexity and needs in much the same way that `Maven` or `Gradle` do for Java applications.
+    This is the first step from a query to a data pipeline and opens up lots of flexibility and power to build up complex, robust solutions from simpler, well-tested pieces. Plain SQL will quickly become problematic, in the same way that trying to build a Java application just using plain text files containing code would. Tooling like `dbt`, `dataform` et al. help to deal with the emergent complexity and needs in much the same way that `Maven` or `Gradle` do for Java applications.
 
 ```sql title="Promotions logic is more general"
 CREATE OR REPLACE VIEW promotions AS
@@ -92,13 +92,13 @@ SELECT
 FROM order_urgency
 ```
 
-Now, my exploratory query is much simpler and the important conditions are clearer, and gives the same results as before.
+Now, my exploratory query is much simpler, the important conditions are clearer and it gives the same results as before.
 
 ```sql title="Query captures specifics of the current question"
 SELECT
     *
 FROM promotions
-WHERE  (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
+WHERE (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
      AND order_id IN ('10249', '10253')
 ```
 
@@ -112,7 +112,7 @@ WHERE  (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
 
 ## Case: Multi-Statement Transaction
 
-We've had a look at the single-row case from initial load. This is the simplest case, where we just have a single CDC output row involved in determining eligibility. 
+We've had a look at the single-row case from the initial load. This is the simplest case, where we just have a single CDC output row involved in determining eligibility. 
 It gets more interesting when we start running transactions through the system. I'll take the [multi-statement transaction from the last post](../2024-05-28-exploring-transactions-in-cdc/index.md#multi-statement-transactions-in-cdc) and run it to see how that looks with our logic.
 
 ```sql title="Find the three statements involved in the example transaction"
@@ -142,7 +142,7 @@ WHERE order_id = '19999'
 OK, when `cdc_operation=D` for delete, we get `NULL` or the empty string back in the data fields other than the `order_id`. I can't tell the difference in the Athena UI, but `DATE(NULL) = NULL` so it must be the empty string, as we get a parse error. Why the empty string? Probably because the source data is `.csv`, so there's no notion of `NULL`-ness distinct from the empty string. Using the alternative Parquet format is a better choice, as it would provide a way of expressing `NULL`, as well as more metadata, like column type information.
 
 ??? note "SQL Interface as REPL"
-    I use the SQL UI to whatever database I'm using to answer questions I have about how functions behave in these kinds of scenarios. `SELECT DATE(NULL)` is a valid SQL statement and returns `NULL`. `SELECT DATE('')` is also a valid statement but returns the parse error, confirming my suspicion. Learning that I don't actually need a `FROM` clause is a superpower, turning the SQL interface into a kind of REPL.
+    I use the SQL UI in whatever database I'm using to answer questions I have about how functions behave in these kinds of scenarios. `SELECT DATE(NULL)` is a valid SQL statement and returns `NULL`. `SELECT DATE('')` is also a valid statement but returns the parse error, confirming my suspicion. When I learned that I don't need a `FROM` clause I gained a superpower, turning the SQL interface into a kind of REPL!
 
 I'll modify the `notice_period_days` calculation to handle the delete case.
 
@@ -164,9 +164,9 @@ SELECT
 FROM order_urgency
 ```
 
-As usual, there's other ways to express that logic but I think it's a fairly clear expression of what's going on. I won't filter the delete operations out yet as I might need them before I'm done.
+As usual, there are other ways to express that logic but I think it's a fairly clear expression of what's going on. I won't filter the delete operations out yet as I might need them before I'm done.
 
-I get three rows out of the query, one for each statement in the original transaction. Two of those rows represent "work in progress" and aren't useful for this usecase (or any other interesting usecase I can think of, to be honest. If you know of one, please enlighten me via feedback, instructions at bottom of post). What I need is a single row representing the state of the database for this order at the end of the transaction.
+I get three rows out of the query, one for each statement in the original transaction. Two of those rows represent "work in progress" and aren't useful for this use case (or any other interesting use case I can think of, to be honest. If you know of one, please enlighten me via feedback via instructions at the bottom of the post). What I need is a single row representing the state of the database for this order at the end of the transaction.
 
 ## Simple Disambiguation
 
@@ -174,17 +174,17 @@ I'm sure it's possible to use `GROUP BY` to do this but it's not going to be cle
 
 Building the window function: for each row, the "window" is the other rows in the same transaction: `PARTITION BY order_id, transaction_commit_timestamp`, in reverse chronological order: `ORDER BY transaction_sequence_number DESC`.
 
-That ordering puts the most recent row first. I use the `ROW_NUMBER()` function with this window to label each row with its position in the transaction, so that the latest row getting the value `1`. It's now easy to filter out the rows that have values other than `1`.
+That ordering puts the most recent row first. I use the `ROW_NUMBER()` function with this window to label each row with its position in the transaction so that the latest row gets the value `1`. It's now easy to filter out the rows that have values other than `1`.
 
 ### Importance of Primary Key
 
 If a transaction for two different orders happened to commit at the exact same time, or a transaction updated multiple rows, I'd only get one row out, which means I'd filter out some order updates completely!
 
-Partitioning by the primary key for the table (`order_id` in this case) as well as `transaction_commit_timestamp` mitigates that risk, now I'd need two transactions for the same order committing at the exact same time to have a problem - the kind of edge case that's unlikely enough that we can probably accept the risk and not try to handle it.
+Partitioning by the primary key for the table (`order_id` in this case) as well as `transaction_commit_timestamp` mitigates that risk, now I'd need two transactions for the same order committing at the same time to have a problem - the kind of edge case that's unlikely enough that we can probably accept the risk and not try to handle it.
 
 ### Implementing Disambiguation
 
-I think this logic is all about the application's database interaction logic and the CDC mechanism rather than the promotions usecase I'm working on. I'll add a view over the orders table to do this work and keep the complexity away from my promotions logic.
+I think this logic is all about the application's database interaction logic and the CDC mechanism rather than the promotions use case I'm working on. I'll add a view over the orders table to do this work and keep the complexity away from my promotions logic.
 
 ```sql title="Disambiguated order transactions view"
 CREATE OR REPLACE VIEW orders_disambiguated AS
@@ -222,12 +222,38 @@ Running the same query from the `orders_disambiguated` view instead of the `orde
 ??? note "Simplifying with QUALIFY"
     Many data warehouse systems, like [BigQuery, have a `QUALIFY` clause](https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#qualify_clause). That allows you to add the clause `QUALIFY position_in_transaction = 1` to the CTE instead of needing a separate query to do that filtering. Athena/Trino does not support the `QUALIFY` clause.
 
+I can update the promotions logic now to take advantage of the disambiguated view.
+
+```sql hl_lines="9" title="Promotions logic from disambiguated orders data"
+CREATE OR REPLACE VIEW promotions AS
+WITH order_urgency AS (
+    SELECT
+        *,
+        CASE
+            WHEN cdc_operation = 'D' THEN NULL
+            ELSE DATE_DIFF('day', DATE(order_date), DATE(required_date))
+        END notice_period_days
+    FROM orders_disambiguated
+)
+
+SELECT
+    *,
+    COALESCE(notice_period_days > 28, FALSE) qualifies_for_promotion
+FROM order_urgency
+```
+
+Checking that previously troublesome transaction `19999` shows a single row reflecting the final deleted state of the transaction. That's correct and we see that this deleted order now does not qualify for the promotion.
+
+|cdc_operation|transaction_commit_timestamp|order_id|qualifies_for_promotion|
+|-------------|----------------------------|--------|-----------------------|
+|D|2024-06-01 08:47:39.336187|19999|false|
+
 ## Case: Complex Multi-Statement Transaction
 
 Based on my experience, a common design pattern that's used in user interfaces is to queue up a series of `ALTER` statements as a user navigates an interface making multiple changes. That makes the transactions larger and more complex, so I'll simulate that to check the disambiguation logic still works.
 
 ```sql title="Simulating an interactive session queuing statements and commiting on save"
--- simulates queuing of statements in a transaction as user makes edits
+-- simulates queuing of statements in a transaction as the user makes edits
 BEGIN;
 -- create record
 INSERT INTO orders VALUES(20002,'VINET', 5, '1996-07-04', '1996-07-05', '1996-08-02', 3, 32.3800011, 'Vins et alcools Chevalier', '59 rue de l''Abbaye', 'Reims', NULL, '51100', 'France');
@@ -245,7 +271,7 @@ COMMIT;
 
 ### Before/After Disambiguation
 
-Switching my promotions logic back to the source orders table and querying the CDC records for this more complex transaction:
+Before disambiguation, I see each statement in the transaction.
 
 |order_id|order_date|required_date|shipped_date|notice_period_days|qualifies_for_promotion|
 |--------|----------|-------------|------------|------------------|-----------------------|
@@ -255,7 +281,7 @@ Switching my promotions logic back to the source orders table and querying the C
 |20002|1996-07-04|1996-08-25|1996-08-02|52|true|
 |20002|1996-07-04|1996-08-25|1996-08-02|52|true|
 
-As we'd expect, we're seeing a row per statement, not per transaction. Row number three in the table above has the updated shipping date - that's the row that represents the final state of the transaction. Flipping to `FROM orders_disambiguated`...
+Row number three in the table above has the updated shipping date - that's the row that represents the final state of the transaction. Querying the `promotions` view to take advantage of the transaction disambiguation:
 
 |order_id|order_date|required_date|shipped_date|notice_period_days|qualifies_for_promotion|
 |--------|----------|-------------|------------|------------------|-----------------------|
@@ -265,14 +291,14 @@ That's the right row!
 
 ## Data Pipeline
 
-I've created a couple of views now, and it might be hard to visualise. I'll recap what the data pipeline looks like. Dashed arrows indicate on-demand pulling of data, whereas solid lines indicate active pushing of data in a more ETL-style.
+I've created a couple of views now, and it might be hard to visualise. I'll recap what the data pipeline looks like. The arrows indicate the flow of data, labelled for whether the underlying mechanism is actively pushing or passively pulling.
 
 I've indicated domains as I've described them in the narrative. I've been using ["domain" in the Domain-Driven Design sense](https://www.techtarget.com/whatis/definition/domain-driven-design#:~:text=Domain%2Ddriven%20design%20(DDD)%20is%20a%20software%20development%20philosophy,software%20application%20is%20being%20developed.). `northwind_cdc_domain` requires knowledge of the source data and semantics, the CDC process and the CDC-centric disambiguation method. `promotions_domain` requires detailed knowledge of the promotions concept and the interface exposed by the `northwind_cdc_domain`.
 
-``` mermaid
-graph TD
+```mermaid
+graph BT 
     subgraph promotions_domain
-        promotions
+        promotions_view
         consumer
     end
 
@@ -281,20 +307,20 @@ graph TD
         dms
         orders_s3
         orders_ext_table
-        orders_disambiguated
+        orders_disambiguated_view
     end
 
-    dms -->|captures_changes| northwind_db;
-    dms -->|publishes| orders_s3;
-    orders_ext_table -.->|describes| orders_s3;
-    orders_disambiguated -.->|filters| orders_ext_table
-    promotions -.->|augments| orders_disambiguated
-    consumer -.->|queries| promotions
+    northwind_db -->|push| dms
+    dms -->|push| orders_s3
+    orders_s3 -->|pull| orders_ext_table
+    orders_ext_table -->|pull| orders_disambiguated_view
+    orders_disambiguated_view -->|pull| promotions_view
+    promotions_view -->|pull| consumer
 ```
 
 ## Sense Check
 
-Taking a step back, there's one simple check I can do to find any glaring issues. There should some examples in the `orders` table for the same transaction that have more than one row. There should be none in the `orders_disambiguated` table. Is that the case?
+Taking a step back, there's one simple check I can do to find any glaring issues. There should be some examples in the `orders` table for the same transaction that have more than one row. There should be none in the `orders_disambiguated` table. Is that the case?
 
 ```sql title="Find multi-row transactions in the orders table"
 SELECT
@@ -318,21 +344,21 @@ Same query, but `FROM orders_disambiguated`?
 
 ### CSV Line Number Order
 
-[AWS documentation indicates that DMS writes lines to these `.csv` files in transaction order](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.S3.html) - and it looks like the rows come out in the right order when we query, so why bother with `transaction_sequence_number`? We could talk about the drawbacks of depending implicitly on the line ordering in the source files, but in the same docs, AWS tell us that the row order is not meaningful in Parquet. As Parquet is much more likely and advisable in real-world scenarios, depending on line order isn't really an option anyway.
+[AWS documentation indicates that DMS writes lines to these `.csv` files in transaction order](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.S3.html) - and it looks like the rows come out in the right order when we query, so why bother with `transaction_sequence_number`? We could talk about the drawbacks of depending implicitly on the line ordering in the source files, but in the same docs, AWS tell us that the row order is not meaningful in Parquet. As Parquet is much more likely and advisable in real-world scenarios, depending on line order isn't an option anyway.
 
 ### No `transaction_sequence_number`?
 
-That `transaction_sequence_number` is pretty important, and it wasn't there by default. I had to explictly [add that column to the defaults as part of the setup](../2024-05-21-cdc-with-aws-dms/index.md#dms-mapping-rules). Can you still disambiguate transactions reliably if you **don't** have that column available?
+That `transaction_sequence_number` is pretty important, and it wasn't there by default. I had to explicitly [add that column to the defaults as part of the setup](../2024-05-21-cdc-with-aws-dms/index.md#dms-mapping-rules). Can you still disambiguate transactions reliably if you **don't** have that column available?
 
-This in the tricky scenario my team faced in a recent engagement - and we were working with Parquet, so depending on source file line order wasn't an option even if we'd wanted to. After picking the problem apart with other experts in the team, we came up with a plan. We implemented some heuristics, based on how CDC worked and what we knew about the source application and database.
+This is the tricky scenario my team faced in a recent engagement - and we were working with Parquet, so depending on source file line order wasn't an option even if we'd wanted to. After picking the problem apart with other experts in the team, we came up with a plan. We implemented some heuristics, based on how CDC worked and what we knew about the source application and database.
 
 - if the ambiguous transaction contained an `INSERT`, then anything else should have happened afterwards and we can ignore the insert
 - if the ambiguous transaction contained a `DELETE`, then that should have been the last thing that happened and we can ignore everything else
 - for the remaining cases
     - for each column, collect the possible values and if there's more than one, subtract the previous transaction's value from the options
-- after applying those heuristics, take the values that are left for each column, adding a new column that indicates whether there any columns that hadn't resolved down to a single value. This column can be used to find and manually check any remaining ambiguous rows.
+- after applying those heuristics, take the values that are left for each column, adding a new column that indicates whether any columns haven't resolved down to a single value. This column can be used to find and manually check any remaining ambiguous rows.
 
-It's not satifying or pretty, but after a couple of days work, a lot of tests and a LOT of automated and manual validation, we couldn't find any remaining ambiguous cases. If I get time, I'll recap the specifics of how we did it.
+It's not satisfying or pretty, but after a couple of days of work, a lot of tests and a LOT of automated and manual validation, we couldn't find any remaining ambiguous cases. If I get time, I'll recap the specifics of how we did it.
 
 ## Next Time
 
@@ -351,7 +377,7 @@ COMMIT;
 |20002|1996-07-04|1996-08-25|1996-08-01|52|true|
 |20002|1996-07-04|1996-07-10|1996-08-01|6|false|
 
-You guessed it. There's a second row, because we have a separate transaction now. Next time, I'll show how we can assemble a chronology across transactions, tables and systems to solve the usecase.
+You guessed it. There's a second row, because we have a separate transaction now. Next time, I'll show how we can assemble a chronology across transactions, tables and systems to solve the use case.
 
 
 --8<-- "blog-feedback.md"
