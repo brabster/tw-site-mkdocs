@@ -150,7 +150,7 @@ I'll modify the `notice_period_days` calculation to handle the delete case.
 CREATE OR REPLACE VIEW promotions AS
 WITH order_urgency AS (
     SELECT
-    *,
+        *,
         CASE
             WHEN cdc_operation = 'D' THEN NULL
             ELSE DATE_DIFF('day', DATE(order_date), DATE(required_date))
