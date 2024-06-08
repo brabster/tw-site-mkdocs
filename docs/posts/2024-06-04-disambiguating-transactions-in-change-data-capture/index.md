@@ -222,6 +222,32 @@ Running the same query from the `orders_disambiguated` view instead of the `orde
 ??? note "Simplifying with QUALIFY"
     Many data warehouse systems, like [BigQuery, have a `QUALIFY` clause](https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#qualify_clause). That allows you to add the clause `QUALIFY position_in_transaction = 1` to the CTE instead of needing a separate query to do that filtering. Athena/Trino does not support the `QUALIFY` clause.
 
+I can update the promotions logic now to take advantage of the disambiguated view.
+
+```sql hl_lines="9" title="Promotions logic from disambiguated orders data"
+CREATE OR REPLACE VIEW promotions AS
+WITH order_urgency AS (
+    SELECT
+        *,
+        CASE
+            WHEN cdc_operation = 'D' THEN NULL
+            ELSE DATE_DIFF('day', DATE(order_date), DATE(required_date))
+        END notice_period_days
+    FROM orders_disambiguated
+)
+
+SELECT
+    *,
+    COALESCE(notice_period_days > 28, FALSE) qualifies_for_promotion
+FROM order_urgency
+```
+
+Checking that previously troublesome transaction `19999` shows a single row reflecting the final deleted state of the transaction. That's correct and we see that this deleted order now does not qualify for the promotion.
+
+|cdc_operation|transaction_commit_timestamp|order_id|qualifies_for_promotion|
+|-------------|----------------------------|--------|-----------------------|
+|D|2024-06-01 08:47:39.336187|19999|false
+
 ## Case: Complex Multi-Statement Transaction
 
 Based on my experience, a common design pattern that's used in user interfaces is to queue up a series of `ALTER` statements as a user navigates an interface making multiple changes. That makes the transactions larger and more complex, so I'll simulate that to check the disambiguation logic still works.
@@ -245,7 +271,7 @@ COMMIT;
 
 ### Before/After Disambiguation
 
-Switching my promotions logic back to the source orders table and querying the CDC records for this more complex transaction:
+Before disambiguation, I see each statement in the transaction.
 
 |order_id|order_date|required_date|shipped_date|notice_period_days|qualifies_for_promotion|
 |--------|----------|-------------|------------|------------------|-----------------------|
@@ -255,7 +281,7 @@ Switching my promotions logic back to the source orders table and querying the C
 |20002|1996-07-04|1996-08-25|1996-08-02|52|true|
 |20002|1996-07-04|1996-08-25|1996-08-02|52|true|
 
-As we'd expect, we're seeing a row per statement, not per transaction. Row number three in the table above has the updated shipping date - that's the row that represents the final state of the transaction. Flipping to `FROM orders_disambiguated`...
+Row number three in the table above has the updated shipping date - that's the row that represents the final state of the transaction. Querying the `promotions` view to take advantage of the transaction disambiguation:
 
 |order_id|order_date|required_date|shipped_date|notice_period_days|qualifies_for_promotion|
 |--------|----------|-------------|------------|------------------|-----------------------|
