@@ -202,11 +202,11 @@ WITH identify_last_order_statement_in_transactions AS (
         -- are in the same transaction
         PARTITION BY order_id, transaction_commit_timestamp
         ORDER BY transaction_sequence_number DESC
- )
+    )
 )
 
 SELECT
- *
+    *
 FROM identify_last_order_statement_in_transactions
 -- filter in only the last statements in each transaction
 WHERE position_in_transaction = 1
@@ -228,7 +228,7 @@ I can update the promotions logic now to take advantage of the disambiguated vie
 CREATE OR REPLACE VIEW promotions AS
 WITH order_urgency AS (
     SELECT
-    *,
+        *,
         CASE
             WHEN cdc_operation = 'D' THEN NULL
             ELSE DATE_DIFF('day', DATE(order_date), DATE(required_date))
