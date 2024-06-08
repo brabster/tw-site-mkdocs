@@ -246,7 +246,7 @@ Checking that previously troublesome transaction `19999` shows a single row refl
 
 |cdc_operation|transaction_commit_timestamp|order_id|qualifies_for_promotion|
 |-------------|----------------------------|--------|-----------------------|
-|D|2024-06-01 08:47:39.336187|19999|false
+|D|2024-06-01 08:47:39.336187|19999|false|
 
 ## Case: Complex Multi-Statement Transaction
 
