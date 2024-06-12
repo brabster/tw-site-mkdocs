@@ -4,7 +4,7 @@ date: 2024-06-08
 draft: true
 ---
 
-![hero image](./assets/hero.webp)
+`![hero image](./assets/hero.webp)`
 
 The next steps in making my Change Data Capture data useful for solving my usecase are handling multiple transactions and handling changes across multiple tables. The solutions I'll outline here evolved quickly from initial solutions based on traditional methods like Slowly Changing Dimensions, and worked well from multiple perspectives, in particular performance and controlling complexity.
 
@@ -265,12 +265,12 @@ WHERE (position_in_chronology = 1)
 
 
 
-
+```
 <figure markdown="span">
  ![template figure](./assets/image.webp)
  <figcaption>template figure</figcaption>
 </figure>
-
+```
 
 --8<-- "blog-feedback.md"
 

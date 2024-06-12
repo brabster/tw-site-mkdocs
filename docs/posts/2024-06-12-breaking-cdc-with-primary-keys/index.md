@@ -3,9 +3,9 @@ title: Breaking CDC With Primary Keys
 date: 2024-06-12
 ---
 
-![hero image](./assets/hero.webp)
+![A SQL statement that updates a row's primary key](./assets/break_pk.webp)
 
-intro snippet
+My work on dealing with multiple tables was interrupted when I discovered a subtle scenario that leads to DMS CDC output that cannot be correctly interpreted. I was unable to find a solution, but I will update this post if new information emerges.
 
 --8<-- "ee.md"
 
