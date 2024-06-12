@@ -7,6 +7,8 @@ copyright: |
   Copyright &copy; 2018 - 2024 Paul Brabban.
   Views expressed are my own and may not represent those of my employer or other associated entity.
 
+draft_docs: |
+  2024-06-08-cdc-4-timeline/
 
 theme:
   name: material
@@ -72,6 +74,8 @@ markdown_extensions:
   - attr_list
   - footnotes
   - admonition
+  - pymdownx.tasklist:
+      custom_checkbox: true
 
 extra_css:
   - stylesheets/extra.css
