@@ -13,7 +13,9 @@ My work on dealing with multiple tables was interrupted when I discovered a subt
 
 ## Fortunately Thoughtless
 
-A later post in this series tackles changes across multiple tables. One of the examples I fired as the database was this innocent-looking set of transactions - and without it I might have happily finished off the series without noticing this. Bonus points if you can tell what the problem will be.
+A later post in this series tackles changes across multiple tables. One of the examples I fired at the database was this innocent-looking set of transactions - and without it I might have happily finished off the series without noticing this problem!
+
+Bonus points if you can tell what the problem will be.
 
 ```sql title="Just another transaction..."
 BEGIN;
