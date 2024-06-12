@@ -7,7 +7,6 @@ copyright: |
   Copyright &copy; 2018 - 2024 Paul Brabban.
   Views expressed are my own and may not represent those of my employer or other associated entity.
 
-
 theme:
   name: material
   language: en
@@ -72,6 +71,8 @@ markdown_extensions:
   - attr_list
   - footnotes
   - admonition
+  - pymdownx.tasklist:
+      custom_checkbox: true
 
 extra_css:
   - stylesheets/extra.css
