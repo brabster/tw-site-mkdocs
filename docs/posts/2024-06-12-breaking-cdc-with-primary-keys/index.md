@@ -13,7 +13,7 @@ My work on dealing with multiple tables was interrupted when I discovered a subt
 
 ## Fortunately Thoughtless
 
-A later post in this series tackles changes across multiple tables. One of the examples I fired at the database was this innocent-looking set of transactions - and without it I might have happily finished off the series without noticing this problem!
+A later post in this series tackles changes across multiple tables. As I was writing it, one of the examples I fired at the database was this innocent-looking set of transactions - and without it I might have happily finished off the series without noticing this problem!
 
 Bonus points if you can tell what the problem will be.
 
@@ -28,7 +28,7 @@ COMMIT;
 
 ## `order_details`
 
-The `order_details` table connects `orders` and `products`. Rows represent the presence of a particular product in a particular order.
+The `order_details` table connects `orders` and `products`. Rows represent the presence of a particular product in a particular order and record properties like quantity of the product.
 
 ```mermaid
 graph LR
@@ -79,7 +79,7 @@ LOCATION 's3://your-target-bucket/cdc/public/order_details'
 
 ## Clearer Example
 
-That exact transaction is quite tricky to work with in CDC without disambiguation logic, and I'll avoid complicating things with that just yet. Here's a clearer illustration.
+That exact transaction that led to discovery is quite tricky to work with in CDC without disambiguation logic, and I'll defer that complication for the next post. Here's a clearer illustration.
 
 ```sql title="Clearer example of the problem" linenums="1"
 BEGIN;
@@ -138,31 +138,33 @@ ORDER BY transaction_commit_timestamp
 |I|30004|3|12|
 |U|30004|77|12|
 
-See it yet? How do I get to that final state?
+Do you see it yet? How do I get to that final state?
 
 I can't see any way to know that the row with `product_id=66` actually replaced the row with `product_id=1`, and that there is no longer a row with `product_id=1`!
 
-It looks like there are five products in `order_id=30004`, instead of the correct three, and the rows that are there don't make a lot of sense. They only include row values at the end of the transaction, and so look like independent (`order_id`, `product_id`) pairs, that is, five unique order-product connections. The CDC `U` update records give a clue - there's no corresponding insert for those.
+It looks like there are five products in `order_id=30004`, instead of the correct three, and the rows that are there don't make a lot of sense. They only include row values at the end of the transaction, and so look like independent (`order_id`, `product_id`) pairs, that is, five unique order-product connections.
+
+The CDC `U` update records have no corresponding insert for those. Querying for `UPDATE`s without corresponding `INSERT` records looks like a good way of detecting and quantifying the problem.
 
 ## Deletions
 
-I've run transactions through that end in the deletion of the `order_details` row and they are fine. You do see the primary key columns in the deleted record, so you can still tie it back to the row that was deleted.
+I've run transactions through where an `order_details` row is deleted after an update. You do see the primary key columns in the deleted record, so you can still tie it back to the row that was deleted, but it doesn't help with the original update. If I deleted the `order_details` row with `order_id=66` in the example above, I'd be able to tidy up the corresponding `UPDATE`, but as you'd expect there's still no way to associate the `DELETE` with the `INSERT` with `order_id=1` is left behind.
 
 ## Singular Primary Keys
 
 I've just shut down my RDS instance as it was running me up a bill - more on that in the last part of this series. I've not run a transaction through that updated a singular primary key column - for example, `UPDATE orders SET order_id = 2 WHERE order_id = 1;`. I see no reason that an update operation like that would behave any differently to the compound key in `order_details`.
 
-I'd expect it to commit successfully if `2` was unique in the table, and then see an `UPDATE` CDC record for `order_id=2` with no way of telling it was an update on `order_id=1`.
+I'd expect it to commit successfully if a row with (`order_id=30004`, `product_id=2`) did not already exist in the table. Then I'd expect to see an `UPDATE` CDC record for `order_id=2` with no way of telling it was an update on `order_id=1`.
 
 ## Solutions
 
-You got me on a good solution to this one. There's always a full load to get things back in sync :shrug:
+You got me on a good solution to this one. Maybe a full load will get things back in sync, but then what's the point in the interim CDC updates if they can't be trusted? :shrug:
 
-I don't see anything useful in the CDC data I have. Nothing in the [AWS DMS S3 target settings](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.S3.html) that I can turn on to get more information. Nor can I see any mention of the problem in the [AWS DMS Best Practices documentation](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_BestPractices.html).
+I don't see any further useful metadata in the CDC data I have. Nothing in the [AWS DMS S3 target settings](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.S3.html) that I can turn on to get more information. Nor can I see any mention of the problem in the [AWS DMS Best Practices documentation](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_BestPractices.html).
 
 Presumably, the information needed to correctly apply the changes is present in the commit logs, or things like read replicas wouldn't work. For whatever reason that information is not present or available in the CDC output. [I've asked on AWS re:Post to see if I've missed anything](https://repost.aws/questions/QUfXtCkhI9SGepdNLbsqTzjQ/how-to-determine-which-record-was-updated-when-primary-key-is-updated).
 
-If whatever source application is writing to the database never updates primary key values anywhere then I guess you wouldn't see this problem. I don't recall seeing a best practice called out to never update primary key values, and database-level constraints don't typically make primary key columns immutable. Even if the application doesn't make these kinds of updates, there's the possibility that manual troubleshooting or automation outside the application might.
+If whatever source application is writing to the database never updates primary key values anywhere then I guess you wouldn't see this problem. I don't recall seeing a best practice called out to never update primary key values, and I don't know of database-level constraints that would prevent updates to primary key columns. Even if the source application doesn't make these kinds of updates as part of its normal operations, there's the possibility that manual troubleshooting or automation outside the application might.
 
 ## Post-Script
 
