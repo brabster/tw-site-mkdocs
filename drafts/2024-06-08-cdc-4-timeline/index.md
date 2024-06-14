@@ -1,5 +1,5 @@
 ---
-title: Latest State from Change Data Capture
+title: Latest state from change data capture
 date: 2024-06-08
 draft: true
 ---
@@ -12,7 +12,7 @@ The next steps in making my Change Data Capture data useful for solving my useca
 
 <!-- more -->
 
-## Previous Example
+## Previous example
 
 In the last post, I had successfully disambiguated the operations in transactions, but ended up with two records in my promotions view - the result of two separate transaction. Having worked through an example of a simplified real-world usecase, I'll generalise problem statements now.
 
@@ -20,7 +20,7 @@ In the last post, I had successfully disambiguated the operations in transaction
 
 I've used the word "entity" there to cover the idea of something that the source database might represent. I'll look at single-table case first, where the state we're interested in is fully contained within one table. Then I'll cover the more general case where the interesting state is spread across multiple tables.
 
-## Single-Table History
+## Single-table history
 
 When I ended the last post, we had two transactions appearing in the promotions output for order `20002`.
 
@@ -116,11 +116,11 @@ Looking back at the source database operations, these are all correct. `19998`, 
 
 I can't use this view to look back in time for the latest state of a row before the last one, as the window functions look over the whole dataset. Adding a condition based on `transaction_commit_timestamp` will return no rows for which there has been a subsequent transaction.
 
-## Slowly Changing Dimensions
+## Slowly changing dimensions
 
 
 
-## Different Kinds of Time
+## Different kinds of time
 
 This seems like a a good time to mention the fact that we're dealing with multiple kinds of "time" here. 
 
@@ -150,7 +150,7 @@ I've snipped a few uninteresting rows out. You can see we're looking at about a 
 |2024-06-12 10:30:30.412977|2024-06-12 10:31:26.000 UTC|20002|1996-07-04|1996-07-10|
 
 
-## Chonology Over Multiple Tables
+## Chonology over multiple tables
 
 ```sql
 -- 29999 single-table

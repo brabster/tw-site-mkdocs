@@ -1,5 +1,5 @@
 ---
-title: Change Data Capture with AWS DMS
+title: Change data capture with AWS DMS
 date: 2024-05-21
 ---
 
@@ -11,7 +11,7 @@ Setting up Change Data Capture from Aurora Serverless PostgreSQL to S3 via the A
 
 <!-- more -->
 
-## Change Data Capture
+## Change data capture
 
 [Change Data Capture (CDC)](https://en.wikipedia.org/wiki/Change_data_capture), is the process of replicating changes in a database to somewhere else. I've recently been working with the data produced by [AWS Database Migration Service (DMS)](https://aws.amazon.com/dms/), a managed service in the AWS Cloud to perform this replication. This process replicated changes from source databases like Oracle and DB2 to AWS S3, where I was processing the data with SQL in [AWS Athena](https://aws.amazon.com/athena/) to perform analytics.
 
@@ -28,7 +28,7 @@ I have the feeling it'll take more than one post! As always, feedback on improve
 !!! warning
     I've taken shortcuts here, exposing me to risks that I'm comfortable with as the AWS account is my own, the dataset is public and the whole thing is transient and will be deleted when I'm done. I'll call out where the dangers I can see are, but you must assess risks for yourself. Trying to be a more [responsible expert](../2024-03-23-irresponsible-expertise-install-python-package/index.md).
 
-## Demo RDS Setup
+## Demo RDS setup
 
 I needed a simple, standalone setup to replicate the kinds of challenges I've seen in the data. Over in my own AWS account, I spun up an Aurora Serverless (v2) PostgreSQL instance and deployed the Northwind database as a starting point. My [Northwind bootstrap script came from this repository](https://github.com/pthom/northwind_psql/blob/master/northwind.sql) and worked without issue.
 
@@ -46,7 +46,7 @@ I create it from the console, as it's a one-off demo thing. Here are the highlig
 !!! warning
     I would not accept the risk of self-managed credentials shortcut here if confidentiality and robustness of the database mattered.
 
-## RDS Query Editor
+## RDS query editor
 
 [RDS has a web-based query editor](https://aws.amazon.com/about-aws/whats-new/2020/05/amazon-rds-data-api-and-query-editor-available-additional-regions/), allowing execution of SQL without needing command line access or tools.
 
@@ -55,26 +55,26 @@ I create it from the console, as it's a one-off demo thing. Here are the highlig
  <figcaption>Screenshot of RDS Query Editor, showing an information schema query and results</figcaption>
 </figure>
 
-### Aurora Data API Limitations
+### Aurora data API limitations
 
 There are a few gotchas though. It needs the RDS Data API, and whilst the API and Query Editor are available in my go-to region of `eu-west-2`, the ability to enable the API on the Aurora instance is not. For this public data, I just burned my EU instance and moved to the `us-east-1` region for simplicity.
 
 !!! warning
     Most real-world systems, especially those handling sensitive information, are constrained by regulatory compliance requirements and cannot be run in a different legal jurisdiction without careful consideration.
 
-### Bootstrapping a Database
+### Bootstrapping a database
 
 You also need to specify a database to launch the Query Editor (along with the RDS instance, username and password). That was a roadblock because my RDS instance had no database to use yet, so I couldn't bootstrap from the Query Editor. After a bit of messing about with VPC settings, I ended up just making the instance publicly accessible for a few minutes so I could log in with psql in CloudShell and run the `CREATE DATABASE northwind` command I wanted to run. Once done, I made the RDS instance private again and opened Query Editor to continue.
 
 !!! warning
     I would not be comfortable making the database public for **any** length of time if the data were sensitive or the service important.
 
-### Disabling Autocommit
+### Disabling autocommit
 
 Lastly, there is an autocommit setting in the Query Editor, hiding in the settings cogwheel top-right of that screenshot.
 I specifically wanted to simulate multi-statement transactions and it did confuse me for a while why `BEGIN TRANSACTION;` didn't seem to have any effect! Turn off autocommit in the UI for the win.
 
-## RDS Setup for DMS
+## RDS setup for DMS
 
 Lastly, there were some customisations I needed to make to get DMS up and running in Full Load and then CDC mode.
 I needed a custom Parameter Group based on the default 15.4 parameter group and [AWS DMS documentation for Aurora as source](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Source.PostgreSQL.html#CHAP_Source.PostgreSQL.RDSPostgreSQL):
@@ -85,11 +85,11 @@ I needed a custom Parameter Group based on the default 15.4 parameter group and 
 
 After rebooting, I needed to run `create extension pglogical;` in the Query Editor.
 
-## DMS Setup
+## DMS setup
 
 Now on to the DMS setup. I'll need some IAM roles so I'll start there.
 
-### IAM Roles
+### IAM roles
 
 A role with access to the target S3 bucket that trusts the appropriate DMS service. For me, that was:
 
@@ -133,14 +133,14 @@ Once these roles are set up, the DMS endpoints can be created. A source endpoint
 
 The S3 endpoint has some options around partitioning and transactions. I added `"TimestampColumnName": "transaction_commit_timestamp"` to my S3 settings to add a commit timestamp column to each captured row, replicating what I've seen in my real-world use cases.
 
-### Serverless Replication
+### Serverless replication
 
 Finally, we can create a "serverless replication".
 This references the two endpoints. I set the replication type to "Full load and change data capture" to capture up new transactions as they happen.
 
 In table mappings, I picked `Enter a schema` and entered `public` as that's the default schema in the `northwind` database that I used. Defaults for other settings, apart from `Single-AZ` as I don't need any failover capability for this demo.
 
-## DMS Mapping Rules
+## DMS mapping rules
 
 After some experimentation, I added an element to the serverless replication.
 
@@ -194,7 +194,7 @@ Within each directory (feels odd typing that, we used to call them prefixes) is 
 !!! warning
     CSV files lack a universal standard for writing and parsing - [RFC4180 helps but is not truly strict nor universally used](https://www.ietf.org/rfc/rfc4180.txt). They contain insufficient metadata about their contents to enable automation or validation and are horribly inefficient at any interesting scale. I use them here for ease of demonstration but **they are a terrible way of storing data** - PLEASE use the [DMS Parquet option](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.S3.html#CHAP_Target.S3.Parquet) for real applications.
 
-## Next Time
+## Next time
 
 Running some transactions through the system to capture the DMS output. Then we can talk about the challenges it presents and the solutions my team and I came up with.
 

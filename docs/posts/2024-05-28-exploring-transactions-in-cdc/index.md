@@ -1,5 +1,5 @@
 ---
-title: Exploring Transactions in Change Data Capture
+title: Exploring transactions in change data capture
 date: 2024-05-28
 ---
 
@@ -11,12 +11,12 @@ Last time, I set up a CDC system using AWS RDS and DMS services. Now, I'll run s
 
 <!-- more -->
 
-## Transactions in a Database
+## Transactions in a database
 
 Database systems typically support [transactions](https://en.wikipedia.org/wiki/Database_transaction).
 That Wikipedia article covers the broader ideas behind transactions, but I think the important aspect for Change Data Capture (CDC) is that they allow a developer to queue up a sequence of operations - inserts, deletes, updates - and then commit them as a single atomic unit. If something goes wrong, everything in the transaction "rolls back" as if nothing had happened at all. What does that look like in CDC output? Let's take a look.
 
-## Single-Statement Transactions
+## Single-statement transactions
 
 Transactions that contain a single statement are the simplest place to start. This is the default for working at the AWS Query Editor console and is common in interactive tooling, so if you're trying to reproduce this stuff yourself you'll need to turn off any autocommit in your tooling. I covered [how to turn off forced autocommit in the AWS Query Editor](../2024-05-21-cdc-with-aws-dms/index.md#disabling-autocommit) last time.
 
@@ -52,7 +52,7 @@ DELETE FROM orders WHERE order_id = 19998;
 COMMIT;
 ```
 
-## Single-Statement Transactions in CDC
+## Single-statement transactions in CDC
 
 Time to take a look at what was produced by the CDC process that was monitoring the database while those transactions were executed. Updates in the `orders` table are replicated to files under `cdc/public/orders/` in my target S3 bucket. That's the schema `public` and the table `orders`.
 
@@ -75,7 +75,7 @@ D,2024-05-28 19:58:56.758486,19998,,...snip...,,20240528195856750000000000000000
 - column 4+: more data columns
 - last column: the other column we added, called [`transaction_sequence_number` via DMS mapping rules](../2024-05-21-cdc-with-aws-dms/index.md#dms-mapping-rules) in the previous post
 
-## Multi-Statement Transactions in CDC
+## Multi-statement transactions in CDC
 
 I can compare the previous output with what happens when I pack all those changes into a single transaction.
 
@@ -105,7 +105,7 @@ D,2024-05-28 20:21:48.298940,19998,,...snip...,,20240528202148290000000000000000
 
 It's not much fun working with these `.csv` files natively, so I'll lay an external table in Amazon Athena over it so that we can work with the data in SQL. Variations on this are basically how I interacted with DMS CDC data in the past. You could point Spark, AWS Redshift, GCP BigQuery or Snowflake at the data in S3 in much the same way, given appropriate permissions.
 
-## Querying CDC Data with Amazon Athena
+## Querying CDC data with Amazon Athena
 
 If you've not used Amazon Athena before, there's a [Getting Started guide in the AWS documentation](https://docs.aws.amazon.com/athena/latest/ug/getting-started.html). It will help set up S3 and a workgroup to run queries. I'll take over back here when it gets to the `CREATE DATABASE` command. One of Athena's many (in my opinion) faults is that it uses the terms "database" and "schema" interchangeably. More on Athena's problems another day, but it is useful, effective and cheap if nothing better is available. Let's create a database/schema in the Athena query editor. It behaves much like the RDS editor.
 
@@ -173,7 +173,7 @@ ORDER BY transaction_sequence_number DESC
 
 Ordering by `transaction_sequence_number DESC` I get the most recent statements executed in the database first. As I'd expect, the most recent three share the same `transaction_commit_timestamp` as they executed in the same transaction - but they have different and ordered `transaction_sequence_number`s, so we get them in the right order - `INSERT` first, `DELETE` last. The preceding three rows are the same statements executed in separate transactions - so `transaction_commit_timestamp` varies as well as `transaction_sequence_number`. Before that, we see `INSERT` for different `order_id`s, which is the end of the initial full load operation.
 
-## Next Time
+## Next time
 
 I've set up a CDC system, run some transactions through it, and set up Athena to query the raw data. I've seen how some metadata fields `cdc_operation`, `transaction_commit_timestamp` and `transaction_sequence_number` work with source database statements and transactions. Next time, I'll get on with sharing the kinds of challenges, along with my solutions, that come up with using this data to solve real problems.
 

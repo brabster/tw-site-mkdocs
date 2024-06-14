@@ -1,5 +1,5 @@
 ---
-title: How I Do Python Data Supply Chain Security
+title: How I do Python data supply chain security
 date: 2024-05-01
 categories:
   - security
@@ -28,7 +28,7 @@ This story covers the things I've learned to do in my day-to-day over the past d
 - [Cloud Controls](#cloud-controls)
 - [Templating](#templating)
 
-## Partitioning My Work
+## Partitioning my work
 
 I have at least three different, isolated working environments that I use locally. One laptop is for my personal stuff. At any given time it may have access to credentials for my AWS accounts, my GCP account, my password manager and GMail. If someone bad got into the first two they could run me up a painful bill, despite having billing alarms set up (I talk about that in [$1,370 Gone in Sixty Seconds](../2024-02-08-pypi-downloads-danger/index.md)). If they got into either of the last two they can steal my identity and do untold harm to me and my family. I really need to minimise the risk on that computer!
 
@@ -43,7 +43,7 @@ I have a separate long, strong password for all three (I can reliably hold about
 
 I've recently been having a great experience with even more protective partitioning - a dedicated, isolated, customisable development environment per **repository** with GitHub Codespaces. I think it's the future. If coding in the cloud is an option for you, I'd recommend giving it a try with an open mind. I've even got [a Codespaces walkthrough and video to help](../2024-04-23-codespaces/index.md)!
 
-### Using Virtualenvs
+### Using virtualenvs
 
 It's really easy to install into your system Python by mistake - you forget to activate the venv, or you think it's active when it's not. Ideally, your system permissions are set up so that you can't write to your system Python installation, but I find that's quite rare. It's certainly not the case on the current Ubuntu OS on the laptop I'm sitting in front of right now.
 
@@ -83,7 +83,7 @@ I've used [pipenv](https://pipenv.pypa.io/en/latest/). I've used [Poetry](https:
 I haven't used conda. One of the reasons for that is the complexity around commercial use in the [terms of service](https://conda-forge.org/blog/2020/11/20/anaconda-tos/) to warrant a [clarifying blog post](https://legal.anaconda.com/policies/en/). I think the advice here applies equally to conda users but I can't speak from my own experience.
 
 
-## Assessing Dependency Risk
+## Assessing dependency risk
 
 Any software you bring onto your computer has the potential to hurt you. In the case of Python, just installing a package can let bad actors loose on your computer. My working assumption is that any software running on the computer I'm using can do anything I can do, including accessing any passwords, access tokens, and session tokens I have. Maybe even my password manager if it's unlocked.
 
@@ -102,7 +102,7 @@ Special mention to [libraries.io](https://libraries.io/search?q=colourama&sort=d
     **Copy-paste the package name into requirements.txt from somewhere you trust!** The bad actors love "typosquatting":publishing malware-laden packages with similar names to popular legitimate packages. These packages are downloaded thousands of times before they are identified and removed!
 
 
-### Minimising Dependency Use
+### Minimising dependency use
 
 There's so much software out there, a solution for every problem or suboptimal thing you could imagine. I save myself the time of more in-depth thinking by just trying to be honest with myself about whether I really need something or not.
 
@@ -114,11 +114,11 @@ There's so much software out there, a solution for every problem or suboptimal t
 
 Just because I'm making boring choices in the name of safety does not mean the packages I depend on are making similar choices. Every time I avoid a dependency, I'm cutting out that dependency, and its dependencies, and their dependencies and so on! That whole subtree of dependencies, and the choices their maintainers make, and their vulnerabilities? Not my problem.
 
-### Using Common Cross-Project Dependencies
+### Using common cross-project dependencies
 
 I also try to use the same dependencies everywhere, instead of allowing variation without good reason. That helps me really get to know those dependencies and their maintainers whilst reducing the exposure I have to different supply chains generally. Want more on this topic? [ZDD (Zero Dependency Development)](https://gist.github.com/sleepyfox/8415e64da732c7fea02f21f1c0314f62) is a well-argued and more detailed case for minimising and eliminating dependencies.
 
-### Well-Maintained Dependencies
+### Well-maintained dependencies
 
 I'm suspicious of packages that:
 
@@ -132,7 +132,7 @@ I'm suspicious of packages that:
 
 I have more *Opinions* on this one, but they go broader than the scope of this post. I'll pop that on my backlog for a future post.
 
-## Updating Dependencies Automatically
+## Updating dependencies automatically
 
 I think it's fair to say that keeping your dependencies up to date is not an industry standard practice[^1]. Tools like Pipenv, Poetry and the like default you to locking the exact version of every dependency, and their dependencies, and so on. They instruct you to commit these lockfiles to source control without mentioning the drawbacks. Unless you go and run special commands to update them and then commit those changes, your app will be frozen in time, accumulating vulnerabilities that you won't even know about unless you're [scanning them for vulnerabilities](#scanning-for-vulnerabilities).
 
@@ -154,19 +154,19 @@ This translates as "get me the latest **release** of `dbt-bigquery` that's no ol
 
 When I open `dbt_bigquery_template` in VSCode, [the init-and-update task](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.vscode/tasks.json#L7) automatically kicks off and runs a series of commands updating different kinds of dependencies including [`pip install -U -r ${PROJECT_DIR}/requirements.txt`](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.dev_scripts/init_and_update.sh#L23). [`-U` means `--upgrade`](https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-U) and updates any dependencies you've already got to their latest versions if newer versions are available.
 
-#### In the Build
+#### In the build
 
 The build for `dbt_bigquery_template` does the same thing. [This line in the workflow is basically the same as the line in the VSCode task script](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.github/actions/setup_dbt/action.yml#L18). Assuming you close and re-open VSCode at least once each day, that means your development environment and your build or workflow management system are both within a few hours of latest and one another at any given point in time. You don't need to freeze the world forever to avoid "works-on-my-machine" problems.
 
 There's a lot more to say about automatically updating dependencies, but I'll keep things minimal for this post.
 
-### The Least-Bad Solution
+### The least-bad solution
 
 First - in my opinion, this is the least bad approach, not a perfect solution. The big risk - if something you're depending on **becomes** bad, you'll pick it up automatically. I think vulnerabilities that we do and do not know about in old software are a much bigger risk. Updating automatically you get all the security fixes straight away, at no time cost to your team, before the manual updaters have had a chance to realise there's a problem, prioritise the work to update, decide whether it needs fixing, and get around to dealing with it.
 
 I take it as validating that regulators are increasingly calling for timely and automatic updates everywhere from IoT devices to phones, servers and so on - so staying up to date seems to be generally accepted as the better position to be in.
 
-### Works In Practice
+### Works in practice
 
 I've used this approach for several months or so with multiple teams collaborating over multiple repositories and I can't recall any significant problems. The main inconvenience that occurs is those rare occasions when a dependency lets a breaking change through, which you find out about the next day.
 
@@ -178,13 +178,13 @@ Oh - and yes, setting the constraint to allow semantic-versioning-major "breakin
 
 When I talk with someone about automatically updating, automated PR-raisers often come up. I haven't used either tool myself and I avoid them. If I'm keeping up to date and not committing every update back to source control, I don't need a tool raising PRs to help me manage the relentless torrent of vulnerability notices because I don't have that problem. Plus, [they're not immune from expoitation themselves](https://checkmarx.com/blog/surprise-when-dependabot-contributes-malicious-code/). Another supply chain bites the dust :wave:
 
-### Increased Awareness
+### Increased awareness
 
 It's very useful to know when a breaking change just landed on you. You can deal with it while it's fresh before the work has had any chance to pile up. You get to understand how reliable your dependencies **really** are - perhaps a dependency that keeps breaking you isn't so trustworthy after all? Most importantly - you don't find out you've got multiple breaking changes in the way when your scans alert you to a critical must-fix vulnerability in the two-year-old version of that dependency you haven't updated.
 
 Speaking of which...
 
-## Scanning for Vulnerabilities
+## Scanning for vulnerabilities
 
 Tools like [safetycli](https://safetycli.com/product/safety-cli) and [Snyk](https://snyk.io/) will scan your installed dependencies and tell you whether there are any known vulnerabilities in there. You'll see my use of the safetycli Python package to scan dependencies as part of my init-and-update process both [locally](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.dev_scripts/init_and_update.sh#L29) and in [build and workflow infrastructure](https://github.com/brabster/dbt_bigquery_template/blob/2af5ffd769ec698757847e0366aa00aea984b94e/.github/actions/setup_dbt/action.yml#L23).
 
@@ -192,7 +192,7 @@ They both offer free single-developer plans at the time of writing for your pers
 
 I wrote a little about how and when to check your dependencies back in [Checking your Depenedencies](../2020-12-03-dependency-checking/index.md).
 
-### Safety Usage Example
+### Safety usage example
 
 ```console
 $ safety check
@@ -212,19 +212,19 @@ $ safety check
   For real-time enhanced vulnerability data, fix recommendations, severity reporting, cybersecurity support, team and project policy management and more sign up at
 https://pyup.io or email sales@pyup.io
 ```
-### Scanning vs. Automatically Updating?
+### Scanning vs. automatically updating?
 
 I scan my dependencies after installing the latest versions. As I mentioned before, auto-updating is not a perfect solution, and I could still have a vulnerability even after updating - for example, a known issue with no fix available. We seem to be getting pretty good at responsible disclosure of late. It seems much more rare that I get a vulnerability notice that's not already fixed - auto-updating means I'll already have the fix installed by the time the alert would have landed in my inbox.
 
 If I do end up in that situation, my options are limited. Try to fix it myself? Not very safe nor likely to be feasible. Add an ignore? I haven't had to do this for a while but [safety, for example, looks to have better support now for expiring ignores](https://docs.safetycli.com/safety-docs/administration/safety-policy-files) than last time I had to do it. Lastly - shut the thing down until a fix is available. It's worth considering in a pinch, particularly if the software or pipeline isn't all that time- or mission-critical.
 
-## Using Least-Privilege Credentials
+## Using least-privilege credentials
 
 It's been a long read to here, so I'll briefly mention a couple more points and wrap up.
 
 Try to avoid having powerful credentials lying around, or using more powerful credentials than are needed for a job. [Partitioning your development environments](#partitioning-my-work) helps, by letting you reduce the variety of credentials you have in the same place. My experience with Codespaces shines here as I can restrict a repository to exactly the permissions it needs with nothing else lying around.
 
-## Cloud Controls
+## Cloud controls
 
 There are powerful controls in Cloud infrastructures to limit cost exposure and where data can be copied. I've been looking around at Google Cloud and [quotas are cost controls far more proactive and effective than billing alarms](../2024-02-16-bigquery-quotas/index.md). [VPC Service Perimeters](https://cloud.google.com/vpc-service-controls/docs/service-perimeters) can prevent data from being transferred outside your organisation. Both are effectively disabled by default and not straightforward to use, but I'm building my understanding and will share some pragmatic advice when I have some.
 
