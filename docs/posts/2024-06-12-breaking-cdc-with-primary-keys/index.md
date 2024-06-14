@@ -1,5 +1,5 @@
 ---
-title: Breaking CDC With Primary Keys
+title: Breaking Change Data Capture with primary keys
 date: 2024-06-12
 ---
 
@@ -11,7 +11,7 @@ My work on dealing with multiple tables was interrupted when I discovered a subt
 
 <!-- more -->
 
-## Fortunately Thoughtless
+## Fortunately thoughtless
 
 A later post in this series tackles changes across multiple tables. As I was writing it, one of the examples I fired at the database was this innocent-looking set of statements - and without it I might have happily finished off the series without noticing this problem!
 
@@ -59,7 +59,7 @@ ALTER TABLE ONLY order_details
     ADD CONSTRAINT pk_order_details PRIMARY KEY (order_id, product_id);
 ```
 
-## CDC External Table
+## CDC external table
 
 I'll need to lay a table over the raw CSV files for `order_details` to query the CDC data.
 
@@ -77,7 +77,7 @@ ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 LOCATION 's3://your-target-bucket/cdc/public/order_details'
 ```
 
-## Clearer Example
+## Clearer example
 
 That exact transaction that led to discovery is quite tricky to work with in CDC without disambiguation logic, and I'll defer that complication for the next post. Here's a clearer illustration.
 
@@ -150,7 +150,7 @@ The CDC `U` update records have no corresponding insert for those. Querying for 
 
 I've run transactions through where an `order_details` row is deleted after an update. You do see the primary key columns in the deleted record, so you can still tie it back to the row that was deleted, but it doesn't help with the original update. If I deleted the `order_details` row with `order_id=66` in the example above, I'd be able to tidy up the corresponding `UPDATE`, but as you'd expect there's still no way to associate the `DELETE` with the `INSERT` with `order_id=1` is left behind.
 
-## Singular Primary Keys
+## Singular primary keys
 
 I've just shut down my RDS instance as it was running me up a bill - more on that in the last part of this series. I've not run a transaction through that updated a singular primary key column - for example, `UPDATE orders SET order_id = 2 WHERE order_id = 1;`. I see no reason that an update operation like that would behave any differently to the compound key in `order_details`.
 
@@ -166,7 +166,7 @@ Presumably, the information needed to correctly apply the changes is present in 
 
 If whatever source application is writing to the database never updates primary key values anywhere then I guess you wouldn't see this problem. I don't recall seeing a best practice called out to never update primary key values, and I don't know of database-level constraints that would prevent updates to primary key columns. Even if the source application doesn't make these kinds of updates as part of its normal operations, there's the possibility that manual troubleshooting or automation outside the application might.
 
-## Post-Script
+## Postscript
 
 I ran this discovery past a couple of colleagues to check I wasn't missing something obvious, including [Nathan Carney](https://www.linkedin.com/in/nathan-carney-88aabb7). He had a look round and amongst other things pointed me to [MS SQL Server documentation](https://learn.microsoft.com/en-us/sql/relational-databases/system-tables/cdc-change-tables-transact-sql?view=sql-server-ver16) that says:
 
