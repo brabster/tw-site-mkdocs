@@ -1,4 +1,4 @@
-# Company Details
+# Company details
 
 Tempered Works Ltd. is registered in England with company number 11372276, VAT number 296417076.
 
