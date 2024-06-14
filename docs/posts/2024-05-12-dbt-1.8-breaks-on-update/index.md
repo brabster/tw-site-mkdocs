@@ -37,7 +37,7 @@ Traceback (most recent call last):
 ModuleNotFoundError: No module named 'dbt.adapters.factory'
 ```
 
-## Clean Install to Fix
+## Clean install to fix
 
 Clearing my `venv` and reinstalling from scratch gets things back up and running. Here's the specific procedure I used:
 
@@ -54,7 +54,7 @@ $ dbt deps
 
 This also explains why my build wasn't breaking (well, not for this reason anyway) - it always starts from scratch.
 
-## Changes in Adapter Dependencies
+## Changes in adapter dependencies
 
 That's how you can fix the `No module named 'dbt.adapters.factory'` error if it comes up.
 As I read the [v1.8 upgrade docs](https://docs.getdbt.com/docs/dbt-versions/core-upgrade/upgrading-to-v1.8) I also learned that dbt Labs intend to change the way Python adapter dependencies work.

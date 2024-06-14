@@ -1,5 +1,5 @@
 ---
-title: Breaking Change Data Capture with primary keys
+title: Breaking change data capture with primary keys
 date: 2024-06-12
 ---
 

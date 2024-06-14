@@ -1,5 +1,5 @@
 ---
-title: Disambiguating Transactions in Change Data Capture
+title: Disambiguating transactions in change data capture
 date: 2024-06-04
 ---
 
@@ -13,11 +13,11 @@ In the CDC output, I get a row for each statement executing in the transaction. 
 
 I call this process "disambiguation" because I don't initially know which row to use and I eliminate that ambiguity. You could also think of it as a kind of deduplication.
 
-## Example Usecase - Promotions
+## Example usecase - promotions
 
 Here's an example of the kind of problem we might be able to solve with a bit of SQL that might otherwise need significant changes to software. Be aware that I am making the use case up, so please be prepared to suspend your disbelief accordingly. I'll only be focusing on aspects of the problem that I think show interesting challenges in CDC data.
 
-### Problem Statement
+### Problem statement
 
 We want to encourage customers to allow us plenty of time to fulfil their orders. We'll incentivise that with a promotion. Each month, we'll enter qualifying orders into a raffle to win some swag. "Qualifying" orders give more than 28 days notice between `order_date` and `required_date` when the order ships.
 
@@ -34,7 +34,7 @@ The Northwind database represents the backend of a sales system, and we'll focus
 
 I'll need to time-travel back to 1996, when I first went to university and still had hair because those are the dates in the data.
 
-## Case: Initial Load
+## Case: initial load
 
 I'll take a look at orders that were already shipped when we did our CDC full load, one that qualifies and one not. I'll pick those out of the existing historical data to help get a feel for the basic query I need. I've done a reload so the only records in the data are from the initial load. Here are a couple of example records, from the perspective of a run in August 1996.
 
@@ -70,7 +70,7 @@ WHERE (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
 
 42 days between order and required means the order `10249` would have qualified and `10253`, leaving only 14 days, would not.
 
-## From Query to View
+## From query to view
 
 Having this logic in a query is going to be a pain to work with. The case above is an example - my promotions logic and my test case details are mixed up in the same query. To separate them, I'll [refactor](https://refactoring.com/) to put the logic in a view instead - then I can query that view to debug and test my logic.
 
@@ -110,7 +110,7 @@ WHERE (shipped_date >= '1996-07-01' AND shipped_date < '1996-08-01')
 
     This case ticks the first criterion.
 
-## Case: Multi-Statement Transaction
+## Case: multi-statement transaction
 
 We've had a look at the single-row case from the initial load. This is the simplest case, where we just have a single CDC output row involved in determining eligibility. 
 It gets more interesting when we start running transactions through the system. I'll take the [multi-statement transaction from the last post](../2024-05-28-exploring-transactions-in-cdc/index.md#multi-statement-transactions-in-cdc) and run it to see how that looks with our logic.
@@ -168,7 +168,7 @@ As usual, there are other ways to express that logic but I think it's a fairly c
 
 I get three rows out of the query, one for each statement in the original transaction. Two of those rows represent "work in progress" and aren't useful for this use case (or any other interesting use case I can think of, to be honest. If you know of one, please enlighten me via feedback via instructions at the bottom of the post). What I need is a single row representing the state of the database for this order at the end of the transaction.
 
-## Simple Disambiguation
+## Simple disambiguation
 
 I'm sure it's possible to use `GROUP BY` to do this but it's not going to be clear or straightforward. `GROUP BY` **summarises** groups of rows, column by column. I want to **filter out** the rows before the last one in each transaction group. I can use a window function to label the last row in each transaction group and then use that label to filter out the other rows.
 
@@ -176,13 +176,13 @@ Building the window function: for each row, the "window" is the other rows in th
 
 That ordering puts the most recent row first. I use the `ROW_NUMBER()` function with this window to label each row with its position in the transaction so that the latest row gets the value `1`. It's now easy to filter out the rows that have values other than `1`.
 
-### Importance of Primary Key
+### Importance of primary key
 
 If a transaction for two different orders happened to commit at the exact same time, or a transaction updated multiple rows, I'd only get one row out, which means I'd filter out some order updates completely!
 
 Partitioning by the primary key for the table (`order_id` in this case) as well as `transaction_commit_timestamp` mitigates that risk, now I'd need two transactions for the same order committing at the same time to have a problem - the kind of edge case that's unlikely enough that we can probably accept the risk and not try to handle it.
 
-### Implementing Disambiguation
+### Implementing disambiguation
 
 I think this logic is all about the application's database interaction logic and the CDC mechanism rather than the promotions use case I'm working on. I'll add a view over the orders table to do this work and keep the complexity away from my promotions logic.
 
@@ -248,7 +248,7 @@ Checking that previously troublesome transaction `19999` shows a single row refl
 |-------------|----------------------------|--------|-----------------------|
 |D|2024-06-01 08:47:39.336187|19999|false|
 
-## Case: Complex Multi-Statement Transaction
+## Case: complex multi-statement transaction
 
 Based on my experience, a common design pattern that's used in user interfaces is to queue up a series of `ALTER` statements as a user navigates an interface making multiple changes. That makes the transactions larger and more complex, so I'll simulate that to check the disambiguation logic still works.
 
@@ -269,7 +269,7 @@ UPDATE orders SET shipped_date = '1996-08-01' WHERE order_id = 20002;
 COMMIT;
 ```
 
-### Before/After Disambiguation
+### Before/after disambiguation
 
 Before disambiguation, I see each statement in the transaction.
 
@@ -289,7 +289,7 @@ Row number three in the table above has the updated shipping date - that's the r
 
 That's the right row!
 
-## Data Pipeline
+## Data pipeline
 
 I've created a couple of views now, and it might be hard to visualise. I'll recap what the data pipeline looks like. The arrows indicate the flow of data, labelled for whether the underlying mechanism is actively pushing or passively pulling.
 
@@ -318,7 +318,7 @@ graph BT
     promotions_view -->|pull| consumer
 ```
 
-## Sense Check
+## Sense check
 
 Taking a step back, there's one simple check I can do to find any glaring issues. There should be some examples in the `orders` table for the same transaction that have more than one row. There should be none in the `orders_disambiguated` table. Is that the case?
 
@@ -342,7 +342,7 @@ Same query, but `FROM orders_disambiguated`?
 
 `transaction_sequence_number` is crucial to the solution above. Great if you have it available, but there are a couple of other scenarios worth mentioning.
 
-### CSV Line Number Order
+### CSV line number order
 
 [AWS documentation indicates that DMS writes lines to these `.csv` files in transaction order](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.S3.html) - and it looks like the rows come out in the right order when we query, so why bother with `transaction_sequence_number`? We could talk about the drawbacks of depending implicitly on the line ordering in the source files, but in the same docs, AWS tell us that the row order is not meaningful in Parquet. As Parquet is much more likely and advisable in real-world scenarios, depending on line order isn't an option anyway.
 
@@ -360,7 +360,7 @@ This is the tricky scenario my team faced in a recent engagement - and we were w
 
 It's not satisfying or pretty, but after a couple of days of work, a lot of tests and a LOT of automated and manual validation, we couldn't find any remaining ambiguous cases. If I get time, I'll recap the specifics of how we did it.
 
-## Next Time
+## Next time
 
 Are we done? Let's try this transaction and check out the promotions view...
 
