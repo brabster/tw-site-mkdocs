@@ -17,6 +17,7 @@ theme:
   features:
     - navigation.tabs
     - navigation.indexes
+    - navigation.footer
     - content.footnote.tooltips
     - content.code.copy
     - content.code.annotate
