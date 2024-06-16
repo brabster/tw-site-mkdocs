@@ -116,7 +116,7 @@ CREATE SCHEMA northwind_cdc
 
 Having done that, the next statement creates an "external table" over the CDC `orders` data we just created in S3. It tells Athena what columns it should expect are present, their types, the format of the underlying files and where they are in S3. If you make a mistake, `DROP` the table and try again. The underlying data in S3 won't be modified.
 
-!!! note
+??? note "`GlueCatalogGeneration`"
     Configuration option `GlueCatalogGeneration` tells Athena to generate a Glue catalogue entry for you, avoiding this step. If I used that option, I'd consider how schema evolution will happen and how I can prevent breaking schema changes from publishing automatically and causing problems for consumers of the data. My previous post on [SQL Data Contracts](../2023-05-19-dbt-contracts-in-sql/index.md) talks more about the product thinking behind my reasoning.
 
 ```sql
@@ -143,6 +143,9 @@ ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 LOCATION 's3://your-target-bucket/cdc/public/orders/'
 ```
 
+??? note "ALTER TABLE SET LOCATION"
+    It's possible to change the location backing a table in Athena, with [`ALTER TABLE ... SET LOCATION`](https://docs.aws.amazon.com/athena/latest/ug/alter-table-set-location.html). I found this useful after destroying and re-creating my DMS setup with the S3 target in a different bucket.
+
 All the columns are `STRING` typed, rather than reflecting the source database types. There's a couple of reasons for that. The fact that we are actually landing CSV files means all these values are really strings. There's also no representation of `NULL` in CSV.
 
 If I apply types other than `STRING` here, **Athena will transparently try to parse the values into the expected types**. When that doesn't work, I'll get an error in that invisible machinery that can only be fixed by dropping and recreating this `orders` table with string types, something that might cause a ripple of breakage and change across multiple people or teams if I'm not careful. I'll talk more about these issues when I discuss how I apply production thinking to data like this.
@@ -168,7 +171,7 @@ ORDER BY transaction_sequence_number DESC
  <figcaption>Athena query editor showing the query results for selecting rows from orders by transaction_sequence_number</figcaption>
 </figure>
 
-!!! note
+??? note "CDC Operation on Full Load"
     OK, so I messed up the first time around. When the CDC load operation happens, by default the operation column is omitted. That means, for the `.csv` format at least, the schema of the initial load and subsequent update files are different, with the initial load files missing the first column. (Using the Parquet format the column probably exists with value `NULL`, much less troublesome). I went back and added `includeOpForFullLoad=true` to my DMS S3 endpoint settings to have it put a column there containing `I` on load. That's also why the timestamps in the screenshots are more recent than in the `.csv` outputs. Have a gold star if you were paying enough attention to spot that!
 
 Ordering by `transaction_sequence_number DESC` I get the most recent statements executed in the database first. As I'd expect, the most recent three share the same `transaction_commit_timestamp` as they executed in the same transaction - but they have different and ordered `transaction_sequence_number`s, so we get them in the right order - `INSERT` first, `DELETE` last. The preceding three rows are the same statements executed in separate transactions - so `transaction_commit_timestamp` varies as well as `transaction_sequence_number`. Before that, we see `INSERT` for different `order_id`s, which is the end of the initial full load operation.
