@@ -146,15 +146,44 @@ It looks like there are five products in `order_id=30004`, instead of the correc
 
 The CDC `U` update records have no corresponding insert for those. Querying for `UPDATE`s without corresponding `INSERT` records looks like a good way of detecting and quantifying the problem.
 
+## Singular primary keys
+
+What about single-column primary keys? We can probably guess but I'll check. Here's a quick insert of `order_id 30005`, followed by an update of the primary key to `30006`. 
+
+```sql title="Single-column insert and update primary key" linenums="1"
+BEGIN;
+-- create new order 30005
+INSERT INTO orders VALUES(30005, 'VINET', ... , 'France');
+COMMIT;
+
+BEGIN;
+-- update order 30005 to be order 30006
+UPDATE orders SET order_id = 30006 WHERE order_id = 30005
+COMMIT;
+```
+
+When these transactions come through the CDC pipeline, we have what looks like two orders, instead of one. `order_id 30005` no longer exists in the source database, and we see the same signature update-without-an-insert pattern.
+
+```sql title="CDC output for updated primary key"
+SELECT
+    cdc_operation,
+    transaction_commit_timestamp,
+    order_date,
+    order_id
+FROM orders
+WHERE order_id IN ('30005', '30006')
+```
+
+|cdc_operation|transaction_commit_timestamp|order_date|order_id|
+|-------------|----------------------------|----------|--------|
+|I|2024-06-16 09:40:36.854638|2024-05-07|30005|
+|U|2024-06-16 09:40:51.026101|2024-05-07|30006|
+
+Ouch.
+
 ## Deletions
 
 I've run transactions through where an `order_details` row is deleted after an update. You do see the primary key columns in the deleted record, so you can still tie it back to the row that was deleted, but it doesn't help with the original update. If I deleted the `order_details` row with `order_id=66` in the example above, I'd be able to tidy up the corresponding `UPDATE`, but as you'd expect there's still no way to associate the `DELETE` with the `INSERT` with `order_id=1` is left behind.
-
-## Singular primary keys
-
-I've just shut down my RDS instance as it was running me up a bill - more on that in the last part of this series. I've not run a transaction through that updated a singular primary key column - for example, `UPDATE orders SET order_id = 2 WHERE order_id = 1;`. I see no reason that an update operation like that would behave any differently to the compound key in `order_details`.
-
-I'd expect it to commit successfully if a row with (`order_id=30004`, `product_id=2`) did not already exist in the table. Then I'd expect to see an `UPDATE` CDC record for `order_id=2` with no way of telling it was an update on `order_id=1`.
 
 ## Solutions
 

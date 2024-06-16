@@ -135,9 +135,9 @@ WHERE order_id = '19999'
 
 |cdc_operation|transaction_commit_timestamp|order_id|order_date|required_date|transaction_sequence_number|
 |-------------|----------------------------|--------|----------|-------------|---------------------------|
-|I|2024-05-31 20:09:45.208234|19998|1996-07-04|1996-08-01|20240531200945200000000000000000061|
-|U|2024-05-31 20:09:45.208234|19998|1996-07-04|1996-08-01|20240531200945200000000000000000065|
-|D|2024-05-31 20:09:45.208234|19998|||20240531200945200000000000000000069|
+|I|2024-05-31 20:09:45.208234|19999|1996-07-04|1996-08-01|20240531200945200000000000000000061|
+|U|2024-05-31 20:09:45.208234|19999|1996-07-04|1996-08-01|20240531200945200000000000000000065|
+|D|2024-05-31 20:09:45.208234|19999|||20240531200945200000000000000000069|
 
 OK, when `cdc_operation=D` for delete, we get `NULL` or the empty string back in the data fields other than the `order_id`. I can't tell the difference in the Athena UI, but `DATE(NULL) = NULL` so it must be the empty string, as we get a parse error. Why the empty string? Probably because the source data is `.csv`, so there's no notion of `NULL`-ness distinct from the empty string. Using the alternative Parquet format is a better choice, as it would provide a way of expressing `NULL`, as well as more metadata, like column type information.
 
