@@ -1,3 +1,3 @@
 git+https://${GH_TOKEN}@github.com/brabster/mkdocs-material-insiders.git
-git+https://github.com/brabster/mkdocs-rss-plugin.git@7bb6b4b357738ffdc0d3ebbdeaf9ad06b7189a38
+git+https://github.com/brabster/mkdocs-rss-plugin.git
 mkdocs-glightbox>=0.3.7
