@@ -86,6 +86,8 @@ extra:
       link: https://www.linkedin.com/in/paulbrabban
     - icon: fontawesome/solid/paper-plane
       link: mailto:paul@tempered.works
+    - icon: material/rss
+      link: feed_rss_created.xml
 
     
 validation:
