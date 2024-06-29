@@ -149,7 +149,7 @@ ORDER BY timestamp
 |2|4|
 |3|3|
 
-Wait, what? I'd expected to see `3,2,1` in the `row_number` column. Despite restricting the rows in my query, the window functions in the common table expression are still seeing the whole table, with five rows! If I move the condition up into the common table expression where the window function is:
+Wait, what? I'd expected to see `3,2,1` in the `row_number` column. Despite restricting my query to only three rows, the window functions in the common table expression are still seeing the whole table, with five rows! If I move the condition up into the common table expression where the window function is:
 
 ```sql title="Applying condition in the window function CTE"
 SELECT
