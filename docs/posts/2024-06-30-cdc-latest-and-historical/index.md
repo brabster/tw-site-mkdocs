@@ -41,7 +41,7 @@ When shipped_date is first set, there are 52 days between order and required, so
 
 This behaviour might seem odd and contrived, but I've seen things far weirder. How an application uses its database can be unintuitive, even more so for applications that have been around for a while and perhaps accumulated a few layers of changes. It can get even more confusing - the behaviour and meaning of specific database interactions might change over time, one-off corrective activity can occur to address problems, and integration efforts can lead to odd things happening as systems try to keep in sync.
 
-In a nutshell - strange-looking sequences of activity can surface in CDC data. The only way I know of to be confident of what these things mean and how to deal with them is to talk to experts - teams that support the application and folks performing business analysis roles.
+In a nutshell - strange-looking sequences of activity can surface in CDC data. The only way I know of to be confident of what these things mean and how to deal with them is to talk to people who know the systems and processes well - teams that support the application and folks performing business analysis roles.
 
 One application I recall was updating the same field in a row anywhere from once to dozens of times almost instantaneously. After some head scratching, the best guess was a job synchronising state from another system that maybe had a bug that perhaps never been noticed and certainly never been fixed! It's also worth remembering to be pragmatic - in that case, we adjusted our approach so that we could ignore that effectively useless column.
 
