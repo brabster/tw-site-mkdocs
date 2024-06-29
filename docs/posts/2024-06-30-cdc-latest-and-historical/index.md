@@ -173,8 +173,9 @@ That little detour explains why I don't see a row in my earlier query when I lim
 
 In the last usecase I worked on, the system whose job it was to make the query did not set any high bound, but recorded the most recent timestamp in the results as a low-bound for the next query. That functions as a rudimentary [watermark](https://beam.apache.org/documentation/basics/#watermark) with the risk of late-arriving data ignored. To make things a bit more challenging in that system, the tables we were interested in did not have useful timestamps like `shipped_date` and we had to effectively use the transaction commit time to infer the time at which important events were occurring.
 
+To use this solution, I update my `promotions` view to select from `orders_disambiguated_latest`. Running my query for August 1996, I get one row for each order, and each one gets the correct value for qualification. So long as I don't need to inspect the state of the system at some point in the past, I should be OK.
+
 Whilst it might not be a problem in the expected operation of the system, ideally I'd like to be able to inspect what the system looked like at a particular point in time before "now", as it can be useful to explain unexpected behaviour.
 
 I could also pack the logic to find the latest row into the query I run, effectively moving the window function to where the condition is. I'd rather keep the logic in a view where I can more easily inspect, document and test it if possible. I'll look at improving the approach next time.
 
-To use this solution, I update my `promotions` view to select from `orders_disambiguated_latest`. Running my query for August 1996, I get one row for each order, and each one gets the correct value for qualification. So long as I don't need to inspect the state of the system at some point in the past, I should be OK.
