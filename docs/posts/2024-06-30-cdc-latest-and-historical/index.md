@@ -51,7 +51,7 @@ The guidance is that the last update in the month of the `shipped_date` should b
 
 ### Window function in view approach
 
-I tried using a variant of the same window function approach that we used to disambiguate transactions, but I found a problem and learned something about window functions along the way. Here's the view, modifying the window function window to partition by order_id alone and order by the commit timestamp.
+I tried using a variant of the same window function approach that we used to disambiguate transactions, but I found a problem and learned something about window functions along the way. Here's the view, modifying the window function window to partition by `order_id` alone and order by the commit timestamp.
 
 ```sql title="Last state of an order for qualification, first attempt"
 CREATE OR REPLACE VIEW "orders_disambiguated_latest" AS 
@@ -169,9 +169,12 @@ That's what I'd expected to see with my condition in the outer query, but it tur
 
 ## What now?
 
-That little detour explains why I don't see a row in my earlier query when I limit `transaction_commit_timestamp < '2024-06-12 10:30:30.412977'`. The row I'd expect to see still has `position_in_chronology=2`, as the window function can still see the subsequent transaction :facepalm:. A solution for day-to-day operation is to avoid an upper time bound on your query. In the last usecase I worked on, the system whose job it was to make the query did not set any high bound, but recorded the most recent timestamp in the results as a low-bound for the next query. That functions as a rudimentary [watermark](https://beam.apache.org/documentation/basics/#watermark) with the risk of late-arriving data ignored.
+That little detour explains why I don't see a row in my earlier query when I limit `transaction_commit_timestamp < '2024-06-12 10:30:30.412977'`. The row I'd expect to see still has `position_in_chronology=2`, as the window function can still see the subsequent transaction :facepalm:. A solution for day-to-day operation is to avoid an upper time bound on your query.
+
+In the last usecase I worked on, the system whose job it was to make the query did not set any high bound, but recorded the most recent timestamp in the results as a low-bound for the next query. That functions as a rudimentary [watermark](https://beam.apache.org/documentation/basics/#watermark) with the risk of late-arriving data ignored. To make things a bit more challenging in that system, the tables we were interested in did not have useful timestamps like `shipped_date` and we had to effectively use the transaction commit time to infer the time at which important events were occurring.
 
 Whilst it might not be a problem in the expected operation of the system, ideally I'd like to be able to inspect what the system looked like at a particular point in time before "now", as it can be useful to explain unexpected behaviour.
 
 I could also pack the logic to find the latest row into the query I run, effectively moving the window function to where the condition is. I'd rather keep the logic in a view where I can more easily inspect, document and test it if possible. I'll look at improving the approach next time.
 
+To use this solution, I update my `promotions` view to select from `orders_disambiguated_latest`. Running my query for August 1996, I get one row for each order, and each one gets the correct value for qualification. So long as I don't need to inspect the state of the system at some point in the past, I should be OK.
