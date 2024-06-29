@@ -47,11 +47,11 @@ One application I recall was updating the same field in a row anywhere from once
 
 ## Picking the right state
 
-The guidance is that the last update in the month of the `shipped_date` should be used to determine qualification. Any updates that might occur after that can be ignored. Updates of the `shipped_date` that might mean an order qualifies in more than one month are expected to be rare corrective activity. We'll monitor that and accept the risk for now.
+The guidance is that the last update in the month of the `shipped_date` should be used to determine qualification. Any updates that might occur after that can be ignored. Updates of the `shipped_date` that might mean an order qualifies in more than one month are expected to be rare corrective activity. Let's say we'll monitor that and accept the risk for now.
 
 ### Window function in view approach
 
-I tried using a variant of the same window function approach that we used to disambiguate transactions, but it didn't work out quite the way I hoped. Here's the view, modifying the window function window to partition by order_id alone and order by the commit timestamp.
+I tried using a variant of the same window function approach that we used to disambiguate transactions, but I found a problem and learned something about window functions along the way. Here's the view, modifying the window function window to partition by order_id alone and order by the commit timestamp.
 
 ```sql title="Last state of an order for qualification, first attempt"
 CREATE OR REPLACE VIEW "orders_disambiguated_latest" AS 
@@ -93,7 +93,7 @@ No results. Huh? I know there's a row in there with the timestamp `2024-06-12 10
 
 ### Why you can't time-travel
 
-After a bit of head scratching I thought I had figured out what was going on. The window function frame when used in a view or common table expression, works with the `WHERE` clause in the view. Any `WHERE` conditions in your query will affect the rows you see, but not the values computed in window functions. Not very clear from the documentation I'd seen, so I wanted to confirm the hypothesis. Back to using the SQL interface like a REPL.
+After a bit of head scratching I thought I had figured out what was going on. When a window function is used in a view or common table expression (CTE), the "frame" is filtered by the `WHERE` clause in the view or CTE, not the calling query. Any `WHERE` conditions in the query will affect the rows you see, but not the values computed in window functions. That's not very clear from the documentation I'd seen, so I wanted to confirm the hypothesis. Back to using the SQL interface like a REPL.
 
 ```sql title="Simple example of window function filtering in CTEs"
 -- a single column, with a row for values 1-5 in place of a timestamp
@@ -109,6 +109,7 @@ WITH timestamps AS (
 reverse_row_numbers AS (
     SELECT
         timestamp,
+        -- no PARTITION BY so the "frame" is all the rows after any filtering
         ROW_NUMBER() OVER (ORDER BY timestamp DESC) row_number
     FROM timestamps
 )
@@ -164,11 +165,13 @@ WHERE timestamp <= 3
 That's what I'd expected to see with my condition in the outer query, but it turns out that's not how window functions work. I wondered if this was a behaviour peculiar to Athena/Trino, so I copy-pasted my example to BigQuery and found the same behaviour. I can't see a way to influence the window frame in a common table expression or view from a query's `WHERE` clause.
 
 ??? note "Efficiency impacts"
- This behaviour might lead to unexpected scan costs in queries involving window functions too. If you are expecting your `WHERE` clause to limit the data scanned, for example by predicate pushdown and partition pruning, you might be in for a nasty surprise when the window functions scan the whole dataset anyway. Keep an eye on those scan or cost estimates and actuals!
+    This behaviour might lead to unexpected scan costs in queries involving window functions too. If you are expecting your `WHERE` clause to limit the data scanned, for example by predicate pushdown and partition pruning, you might be in for a nasty surprise when the window functions scan the whole dataset anyway. Keep an eye on those scan or cost estimates and actuals!
 
 ## What now?
 
-That little detour explains why I don't see a row in my earlier query when I limit `transaction_commit_timestamp < '2024-06-12 10:30:30.412977'` - the row I'd expect to see still has `position_in_chronology=2`, as the window function can still see the subsequent transaction :facepalm:. Whilst it might not be a problem in the expected operation of the system, ideally I'd like to be able to inspect what the system looked like at a particular point in time before "now", as it can be useful to explain unexpected behaviour.
+That little detour explains why I don't see a row in my earlier query when I limit `transaction_commit_timestamp < '2024-06-12 10:30:30.412977'`. The row I'd expect to see still has `position_in_chronology=2`, as the window function can still see the subsequent transaction :facepalm:. A solution for day-to-day operation is to avoid an upper time bound on your query. In the last usecase I worked on, the system whose job it was to make the query did not set any high bound, but recorded the most recent timestamp in the results as a low-bound for the next query. That functions as a rudimentary [watermark](https://beam.apache.org/documentation/basics/#watermark) with the risk of late-arriving data ignored.
+
+Whilst it might not be a problem in the expected operation of the system, ideally I'd like to be able to inspect what the system looked like at a particular point in time before "now", as it can be useful to explain unexpected behaviour.
 
 I could also pack the logic to find the latest row into the query I run, effectively moving the window function to where the condition is. I'd rather keep the logic in a view where I can more easily inspect, document and test it if possible. I'll look at improving the approach next time.
 
