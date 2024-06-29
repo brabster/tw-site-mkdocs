@@ -75,7 +75,7 @@ Before moving `promotions` to use this view, I'll take a look at the data. Selec
 |U|1996-07-04|1996-07-10|1996-08-01|2024-06-12 10:30:30.412977|
 
 
-That's the right row, at the commit timestamp ending `412977` and with only 6 days in the notice period. So far so good - but what happens if I try to time-travel back to immediately before this transaction? I'll confirm I get the same result with a `transaction_commit_timestamp` set to **just** include this transaction:
+That's the right row, at the commit timestamp ending `412977` and with only 6 days in the notice period. So far so good - but what happens if I try to time-travel back to immediately before this transaction? I'll confirm I get the same result with a `transaction_commit_timestamp` set to include the timestamp of this transaction:
 
 ```sql title="Time-travelling with transaction_commit_timestamp"
 WHERE ('1996-08-01' <= shipped_date AND shipped_date < '1996-09-01')
@@ -94,6 +94,9 @@ No results. Huh? I know there's a row in there with the timestamp `2024-06-12 10
 ### Why you can't time-travel
 
 After a bit of head scratching I thought I had figured out what was going on. When a window function is used in a view or common table expression (CTE), the "frame" is filtered by the `WHERE` clause in the view or CTE, not the calling query. Any `WHERE` conditions in the query will affect the rows you see, but not the values computed in window functions. That's not very clear from the documentation I'd seen, so I wanted to confirm the hypothesis. Back to using the SQL interface like a REPL.
+
+??? note "Views and Common Table Expressions"
+    [Common Table Expressions using the WITH clause](https://trino.io/docs/current/sql/select.html#with-clause) allow a sub-query to be extracted and named. It's a powerful way of simplifying your queries without persisting anything in the database. Views have basically the same function, but they are persisted to the database and can be used by other views and other queries. Views can contain CTEs to simplify them, too. I think of views and CTEs as largely interchangeable and pick based on whether I want to persist the logic to the database or not.
 
 ```sql title="Simple example of window function filtering in CTEs"
 -- a single column, with a row for values 1-5 in place of a timestamp
