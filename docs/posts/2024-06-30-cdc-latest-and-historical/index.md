@@ -5,7 +5,7 @@ date: 2024-06-28
 
 ![Athena console showing no results for query](./assets/cdc_no_results.webp)
 
-In previous posts, I [disambiguated transactions by filtering out any transient statements](../2024-06-04-disambiguating-transactions-in-change-data-capture/index.md) and noted that [changes in primary key values cause big problems](../2024-06-12-breaking-cdc-with-primary-keys/index.md). Now I can start to answer useful questions about the current and historical changes in a source table.
+In previous posts, I [disambiguated transactions by filtering out any transient statements](../2024-06-04-disambiguating-transactions-in-change-data-capture/index.md) and noted that [changes in primary key values cause big problems](../2024-06-12-breaking-cdc-with-primary-keys/index.md). Now I can start to answer useful questions about the current and historical changes in a source table, learning something important about window functions along the way.
 
 --8<-- "ee.md"
 
