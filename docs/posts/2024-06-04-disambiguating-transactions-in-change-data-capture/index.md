@@ -222,6 +222,8 @@ Running the same query from the `orders_disambiguated` view instead of the `orde
 ??? note "Simplifying with QUALIFY"
     Many data warehouse systems, like [BigQuery, have a `QUALIFY` clause](https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax#qualify_clause). That allows you to add the clause `QUALIFY position_in_transaction = 1` to the CTE instead of needing a separate query to do that filtering. Athena/Trino does not support the `QUALIFY` clause.
 
+### Disambiguated promotions
+
 I can update the promotions logic now to take advantage of the disambiguated view.
 
 ```sql hl_lines="9" title="Promotions logic from disambiguated orders data"

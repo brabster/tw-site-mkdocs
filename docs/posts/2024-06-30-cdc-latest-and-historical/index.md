@@ -51,7 +51,7 @@ The guidance is that the last update in the month of the `shipped_date` should b
 
 ### Window function in view approach
 
-I tried using a variant of the same window function approach that we used to disambiguate transactions. It works well enough, but there's a problem and learned something about window functions along the way. Here's the view based on work in [implementing transaction disambiguation](../2024-06-04-disambiguating-transactions-in-change-data-capture/index.md#implementing-disambiguation), modifying the window function window to partition by `order_id` alone and order by the commit timestamp.
+I tried using a variant of the same window function approach that we used to disambiguate transactions. It works well enough, but there's a problem and I learned something about window functions along the way. Here's the view based on work in [implementing transaction disambiguation](../2024-06-04-disambiguating-transactions-in-change-data-capture/index.md#implementing-disambiguation), modifying the window function window to partition by `order_id` alone and order by the commit timestamp.
 
 ```sql title="Last state of an order for qualification, first attempt"
 CREATE OR REPLACE VIEW "orders_disambiguated_latest" AS 
@@ -96,7 +96,7 @@ No results. Huh? I know there's a row in there with the timestamp `2024-06-12 10
 ??? note "View or CTE (common table expression)?"
     [Common table expressions using the WITH clause](https://trino.io/docs/current/sql/select.html#with-clause) allow a sub-query to be extracted and named. It's a powerful way of simplifying my queries without persisting anything in the database. Views have basically the same function, but they are persisted to the database and can be used by other views and other queries. Views can contain CTEs to simplify them, too. I think of views and CTEs as largely interchangeable and pick a view when I want to make the logic available outside the current query, or when I want to be able to inspect and test the logic independently.
 
-After a bit of head scratching I thought I had figured out what was going on. When a window function is used in a view or common table expression (CTE), the rows it uses is filtered by the `WHERE` clause in the view or CTE, not the calling query. Any `WHERE` conditions in the query will affect the rows you see, but **not** the values computed in window functions. That's not very clear from the documentation I'd seen, so I wanted to confirm the hypothesis. Back to using the SQL interface like a REPL.
+After a bit of head scratching I thought I had figured out what was going on. When a window function is used in a view or common table expression (CTE), the rows it uses are filtered by the `WHERE` clause in the view or CTE, not the calling query. Any `WHERE` conditions in the query will affect the rows I see, but **not** the values computed in window functions. That's not very clear from the documentation I'd seen, so I wanted to confirm the hypothesis. Back to using the SQL interface like a REPL.
 
 ```sql title="Simple example of window function filtering in CTEs"
 -- a single column, with a row for values 1-5 in place of a timestamp
@@ -123,7 +123,7 @@ FROM reverse_row_numbers
 ORDER BY timestamp
 ```
 
-There is an initial table containing one column, with values 1-5 standing in for timestamps. We then augment that table, adding a column computed by a window function. The value in the new column is the position of the current row in reverse order so that the row with the biggest timestamp gets row number 1.
+There is an initial table containing one column, with values 1-5 standing in for timestamps. I'll augment that table, adding a column computed by a window function. The value in the new column is the position of the current row in reverse order so that the row with the biggest timestamp gets row number `1`.
 
 |timestamp|row_number|
 |---------|----------|
@@ -149,7 +149,7 @@ ORDER BY timestamp
 |2|4|
 |3|3|
 
-I originally expected to see `3,2,1` in the `row_number` column. Despite restricting my query to only three rows, the window functions in the CTE are still seeing the whole table, with five rows! If I move the condition up into the CTE where the window function is:
+I originally expected to see `3,2,1` in the `row_number` column. Despite restricting my query to only three rows, the window functions in the CTE are still seeing the whole table with five rows! If I move the condition up into the CTE where the window function is:
 
 ```sql title="Applying condition in the window function CTE"
 SELECT
@@ -168,15 +168,20 @@ WHERE timestamp <= 3
 That's what I'd expected to see with my condition in the outer query, but it turns out that's not how window functions work. I wondered if this was a behaviour peculiar to Athena/Trino, so I copy-pasted my example to BigQuery and found the same behaviour. I can't see a way to influence the window frame in a common table expression or view from a query's `WHERE` clause.
 
 ??? note "Efficiency and cost impacts"
-    This behaviour might lead to unexpected scan costs in queries involving window functions too. If you are expecting your `WHERE` clause to limit the data scanned you might be in for a nasty surprise when the window functions scan the whole dataset anyway. For example, if I have a terabyte-scale dataset going back five years with daily partitions, a `WHERE` clause with a low bound of midnight yesterday might look like it limits the scan to the last couple of days. A window function in there could force a scan of terabytes of data anyway! Always a good idea teep an eye on those scan or cost estimates and actuals to catch surprises early.
+    This behaviour might lead to unexpected scan costs in queries involving window functions too. If I'm expecting my `WHERE` clause to limit the data scanned, I'd be in for a nasty surprise when the window functions scan the whole dataset anyway. For example, if I have a terabyte-scale dataset going back five years with daily partitions, a `WHERE` clause with a low bound of midnight yesterday might look like it limits the scan to the last couple of days. A window function in there could force a scan of terabytes of data anyway! Always a good idea teep an eye on those scan or cost estimates and actuals to catch surprises early.
 
 ## What now?
 
-That little detour explains why I don't see a row in my earlier query when I limit `transaction_commit_timestamp < '2024-06-12 10:30:30.412977'`. The row I'd expect to see is filtered out as it still has `position_in_chronology=2` because the window function can still see the subsequent transaction :facepalm:.
+That little detour explains why I don't see a row in my earlier query when I limit `transaction_commit_timestamp < '2024-06-12 10:30:30.412977'`.
+
+- the row I'd expect to see still has `position_in_chronology=2` because the window function can still see the subsequent transaction, so it is filted out.
+- the row with `position_in_chronology=1` is filtered out by its commit timestamp.
+
+So... no results. :facepalm:.
 
 In the last usecase I worked on, the system whose job it was to make the query did not set any high bound, but recorded the most recent timestamp in the results as a low-bound for the next query. That functions as a rudimentary [watermark](https://beam.apache.org/documentation/basics/#watermark) with the risk of late-arriving data ignored. To make things a bit more challenging in that system, the tables we were interested in did not have useful timestamps like `shipped_date` and we had to effectively use the transaction commit time to infer the time at which important events were occurring.
 
-To use this solution, I update my `promotions` view to select from `orders_disambiguated_latest`. Running my query for August 1996, I get one row for each order, and each one gets the correct value for qualification. So long as I don't need to inspect the state of the system at some point in the past, I should be OK.
+To use this solution, I update [my `promotions` view to select from `orders_disambiguated_latest` instead of `orders_disambiguated`](../2024-06-04-disambiguating-transactions-in-change-data-capture/index.md#disambiguated-promotions). Running my query for August 1996, I get one row for each order, and each one gets the correct value for qualification. This solution works - so long as I don't need to inspect the state of the system at some point in the past.
 
 Whilst it might not be a problem in the expected operation of the system, ideally I'd like to be able to inspect what the system looked like at a particular point in time before "now", as it can be useful to explain unexpected behaviour. I could also pack the logic to find the latest row into the query I run, effectively moving the window function to where the condition is. I'd rather keep the logic in a view where I can more easily inspect, document and test it if possible. I'll look at improving the approach next time.
 
