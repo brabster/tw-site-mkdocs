@@ -65,6 +65,8 @@ markdown_extensions:
       base_path:
         - snippets
       check_paths: true
+      auto_append:
+        - abbreviations.md
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
@@ -95,3 +97,5 @@ validation:
   absolute_links: warn
   unrecognized_links: warn
 
+watch:
+  - snippets
