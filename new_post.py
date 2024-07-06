@@ -8,7 +8,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument('title', default='title')
 args = ap.parse_args()
 
-title_filename = f'{date.today()}-{re.sub(r'[ _]', '-', args.title.lower())}'
+title_filename = f"{date.today()}-{re.sub(r'[ _]', '-', args.title.lower())}"
 
 POST_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'docs', 'posts', f'{title_filename}')
 

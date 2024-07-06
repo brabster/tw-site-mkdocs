@@ -11,7 +11,7 @@ My work on dealing with multiple tables was interrupted when I discovered a subt
 
 <!-- more -->
 
-## Fortunately thoughtless
+## Accidental discovery
 
 A later post in this series tackles changes across multiple tables. As I was writing it, one of the examples I fired at the database was this innocent-looking set of statements - and without it I might have happily finished off the series without noticing this problem!
 
@@ -26,7 +26,7 @@ UPDATE order_details SET product_id = 77 WHERE order_id = 30000;
 COMMIT;
 ```
 
-## `order_details`
+## The `order_details` table
 
 The `order_details` table connects `orders` and `products`. Rows represent the presence of a particular product in a particular order and record properties like quantity of the product.
 
@@ -59,7 +59,7 @@ ALTER TABLE ONLY order_details
     ADD CONSTRAINT pk_order_details PRIMARY KEY (order_id, product_id);
 ```
 
-## CDC external table
+### An Athena table for `order_details`
 
 I'll need to lay a table over the raw CSV files for `order_details` to query the CDC data.
 
@@ -77,7 +77,7 @@ ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 LOCATION 's3://your-target-bucket/cdc/public/order_details'
 ```
 
-## Clearer example
+### A clearer example
 
 That exact transaction that led to discovery is quite tricky to work with in CDC without disambiguation logic, and I'll defer that complication for the next post. Here's a clearer illustration.
 
@@ -187,21 +187,50 @@ I've run transactions through where an `order_details` row is deleted after an u
 
 ## Solutions
 
-You got me on a good solution to this one. Maybe a full load will get things back in sync, but then what's the point in the interim CDC updates if they can't be trusted? :shrug:
+I didn't see any further useful metadata in the CDC data I have. Nothing in the [AWS DMS S3 target settings](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.S3.html) that I can turn on to get more information. Nor can I see any mention of the problem in the [AWS DMS Best Practices documentation](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_BestPractices.html).
 
-I don't see any further useful metadata in the CDC data I have. Nothing in the [AWS DMS S3 target settings](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Target.S3.html) that I can turn on to get more information. Nor can I see any mention of the problem in the [AWS DMS Best Practices documentation](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_BestPractices.html).
+[I asked on AWS re:Post to see if I've missed anything](https://repost.aws/questions/QUfXtCkhI9SGepdNLbsqTzjQ/how-to-determine-which-record-was-updated-when-primary-key-is-updated), and got a solution from an AWS support engineer. I can add a transformation to the CDC feed to add columns containing the previous values of primary key columns when those values are updated.
 
-Presumably, the information needed to correctly apply the changes is present in the commit logs, or things like read replicas wouldn't work. For whatever reason that information is not present or available in the CDC output. [I've asked on AWS re:Post to see if I've missed anything](https://repost.aws/questions/QUfXtCkhI9SGepdNLbsqTzjQ/how-to-determine-which-record-was-updated-when-primary-key-is-updated).
+### Adding primary key before columns
 
-If whatever source application is writing to the database never updates primary key values anywhere then I guess you wouldn't see this problem. I don't recall seeing a best practice called out to never update primary key values, and I don't know of database-level constraints that would prevent updates to primary key columns. Even if the source application doesn't make these kinds of updates as part of its normal operations, there's the possibility that manual troubleshooting or automation outside the application might.
+Following the approach suggested on re:Post, I added a transformation rule with action `add-before-image-columns` to [append before images for primary key columns to the tables, using my CloudFormation template](https://github.com/brabster/northwind_dms_cdc/blob/482c74a5dbfce1742654cb94dfed8a4a04cc5d8a/cloudformation/rds_dms.yml#L254). I then re-ran the example transactions above and saw new values appended to the CSV files.
+
+To inspect the new values with SQL, I updated the external table definitions to include the new columns, specifically: 
+
+- append `before_order_id STRING` to the `orders` table column list
+- append `before_order_id STRING, before_product_id STRING` to the `orders` table column list
+
+[Full updated table definitions are available in the supporting GitHub repository](https://github.com/brabster/northwind_dms_cdc/tree/main/athena). Revisiting the last Athena query now (when I re-ran the transactions, I adjusted the `order_ids` to avoid confusion with the previous transactions)):
+
+```sql title="CDC output for updated primary key with before image"
+SELECT
+    cdc_operation,
+    transaction_commit_timestamp,
+    order_date,
+    order_id,
+    before_order_id
+FROM orders
+WHERE order_id IN ('30015', '30016')
+```
+
+|cdc_operation|transaction_commit_timestamp|order_date|order_id|before_order_id|
+|-------------|----------------------------|----------|--------|---------------|
+|I|2024-07-05 20:11:22.407658|2024-05-26|30015||
+|U|2024-07-05 20:11:40.463515|2024-05-26|30016|30015|
+
+Great, I can now see that `order_id=30016` resulted from a primary key update on `order_id=30015`. How best to use this information may depend on what your usecase needs. For my promotions usecase, I could just ignore the problem altogether and accept the risk of an order qualifying more than once. Alternatively, I could ignore any rows with primary key updates by filtering out those that have a value in `before_order_id`.
+
+If nothing else, having these "before" values aids the team in understanding what's going on. They show how these strange-looking updates without inserts occurred, and connects apparently new orders to their original IDs.
 
 ## Postscript
+
+If whatever source application is writing to the database never updates primary key values anywhere then you wouldn't see this problem. Updates without corresponding inserts could indicate that the source application is behaving this way. I don't recall seeing a best practice called out to never update primary key values, and I don't know of database-level constraints that would prevent updates to primary key columns. Even if the source application doesn't make these kinds of updates as part of its normal operations, there's the possibility that manual troubleshooting or automation outside the application might.
 
 I ran this discovery past a couple of colleagues to check I wasn't missing something obvious, including [Nathan Carney](https://www.linkedin.com/in/nathan-carney-88aabb7). He had a look round and amongst other things pointed me to [MS SQL Server documentation](https://learn.microsoft.com/en-us/sql/relational-databases/system-tables/cdc-change-tables-transact-sql?view=sql-server-ver16) that says:
 
 > After change data capture is enabled, no modification is allowed on the primary key.
 
-That's the SQL Server specific CDC, not DMS, but it shows there's an awareness of the problem out there.
+That's the SQL Server specific CDC, not DMS.
 
 --8<-- "blog-feedback.md"
 
