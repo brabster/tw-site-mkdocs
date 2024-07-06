@@ -109,7 +109,7 @@ I'll walk you through what I did to prove that these security features can preve
 
 The [secure data exchange with ingress and egress rules guide](https://cloud.google.com/vpc-service-controls/docs/secure-data-exchange) is probably the next useful resource - I want to apply egress rules to prevent API calls being made from my GCP project across a "service perimeter" that encompasses the projects that should be able to talk to one another. For this demo, I'll only have the victim project inside the perimeter. My next question - what's a service perimeter? Here's a [service perimeter overview](https://cloud.google.com/vpc-service-controls/docs/service-perimeters).
 
-A lot is going on here. I had expected to find an automatic perimeter around the organisation that I could just check a box to say "prevent this project from interacting with anything outside its organisation". I appreciate that there will be much more complex needs in many larger organisations, but that seemed like a sensible default. I couldn't find anything like that. 
+A lot is going on here. I had expected to find an automatic perimeter around the organisation that I could just check a box to say "prevent this project from interacting with anything outside its organisation". I appreciate that there will be much more complex needs in many larger organisations, but that seemed like a sensible default. I couldn't find anything so straightforward. 
 
 ### Target protections
 
@@ -134,7 +134,7 @@ graph LR
     Sensitive_Table --x|CREATE TABLE AS...| egress_rule
 ```
 
-The security perimeter is a "folder" in the organisational structure that contains an egress rule to prevent BigQuery calls across the perimeter.
+The security perimeter can be a "folder" in the organisational structure that contains an egress rule to prevent BigQuery calls across the perimeter - or it can be scoped to the organisation itself.
 
 ### Create perimeter
 
@@ -196,10 +196,11 @@ I can still run normal SQL queries inside the project.
 
 ## Final notes
 
-I suspect the policy as it stands is too restrictive to be useful, as I can't query any datasets from other projects in the org as it stands. My goals here were
+I suspect the policy as it stands is too restrictive to be useful, as I can't query any datasets from other projects in the org as it stands. My goals here were:
 
-- to make sure I could use this functionality :white_check_mark:
-- that it really did prevent the exfiltration risk from BigQuery :white_check_mark:
+- to make sure I could use these controls :white_check_mark:
+- to be confident that these controls really can prevent the exfiltration risk from BigQuery :white_check_mark:
+- to be confident that these controls can mitigate the exfiltration with in the dbt vulnerability in BigQuery :white_check_mark:
 
 Using this control pragmatically to mitigate the risk whilst still being able to do useful work will take a little more investigation!
 
