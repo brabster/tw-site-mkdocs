@@ -47,6 +47,9 @@ graph LR
 
 ### Attacker setup
 
+!!! note
+    My initial exploration as I share it here is doing using the point-and-click console interface. To avoid any confusion, I'd recommend infrastructure as code and related good practices over point and click in an implementation that needs to be robust and reliable. That can be a big lift, especially for smaller organisations. Where that's the case, I'd say a bit of documentation and pointy-clicky steps still beats doing nothing!
+
 The attacker has a standard GCP account. My attacker project is a [BigQuery sandbox account, no credit card needed](https://cloud.google.com/bigquery/docs/sandbox). I create a project with the id `attacker-project-428619` as normal. Enter the project's BigQuery console and create a dataset.
 
 <figure markdown="span">
