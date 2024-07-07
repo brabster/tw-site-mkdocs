@@ -13,6 +13,9 @@ I recently discovered and responsibly disclosed [a vulnerability in the dbt anal
 
 ## Exfiltration to writable attacker dataset
 
+!!! note
+    The vulnerability I disclosed is related to how dbt processes packages. The risks and controls this post talks about go far beyond that though. They protect against attackers that have coerced a legitimate user to run their malicious code, including but not limited to SQL. They also protect against malicous insiders and plain old mistakes.
+
 The idea behind exfiltration by this vulnerability is to covertly get a victim to run malicious SQL on the attacker's behalf. The victim has read access to sensitive data, and that data is copied out to the attacker's public-writable dataset, in a different GCP project. I don't see any way for the defender's IAM controls to prevent it. The solution seems to be [VPC Service Controls](https://cloud.google.com/vpc-service-controls/docs/overview). In those docs:
 
 > To mitigate data exfiltration risks, your organization might also want to ensure secure data exchange across organizational boundaries with fine-grained controls. As an administrator, you might want to ensure the following:  
@@ -222,6 +225,8 @@ My goals here were:
 - to be confident that these controls really can prevent the exfiltration risk from BigQuery :white_check_mark:
 - to be confident that these controls can mitigate the exfiltration with in the dbt vulnerability in BigQuery :white_check_mark:
 - to get an idea how I might use these controls in practice :white_check_mark:
+
+Thanks to [Jenna Jordan](https://www.linkedin.com/in/jennajordan1/) and [Maayan Salom](https://www.linkedin.com/in/maayansa/) for sharing their perspectives and prompting me to write this up. [The disclosure on the dbt Slack](https://getdbt.slack.com/archives/C01NH3F2E05/p1720001546356899) produced a great thread of different perspectives and some starting points for thinking about the same risks on other platforms.
 
 --8<-- "blog-feedback.md"
 
