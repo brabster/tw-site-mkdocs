@@ -153,7 +153,7 @@ First, I open the `VPC Service Controls` page. It's in the `Security` section.
 
 <figure markdown="span">
  ![Initial empty view of VPC service controls for org tempered.works](./assets/vpcsc_perim_1.webp)
- <figcaption>The leaked table on the attacker's side</figcaption>
+ <figcaption>Opening VPC service controls</figcaption>
 </figure>
 
 I hit `MANAGE POLICIES`, then `CREATE`. I give the access policy a title - I've used `test` for this demo. I leave the included resources section empty (this is the part that makes it org-scoped!) and add my GCP super admin account as `Access Context Manager admin`.
