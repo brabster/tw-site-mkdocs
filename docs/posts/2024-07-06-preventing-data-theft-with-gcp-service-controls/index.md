@@ -216,6 +216,9 @@ I go back and add a second project `other-project` to my organisation `test` per
 |query a table in `bigquery-public-data`?|`SELECT COUNT(1) FROM bigquery-public-data.usa_names.usa_1910_2013`|No, prohibited by policy|
 |exfiltrate to `attacker-project`?|`CREATE OR REPLACE TABLE attacker-project-428619.attacker_dataset.leak_it AS SELECT 1 AS dummy`|No, prohibited by policy|
 
+!!! note
+    Even if you don't have permissions to see the VPC service controls in your organisation, you can tell whether they are in place by the errors you get back when you try to access resources you shouldn't be able to access. Errors like `VPC Service Controls: Request is prohibited by the organisation's policy.` mean that a perimeter prevented the action. IAM permissions errors indicate that a service perimeter did **not** prevent the action.
+
 This seems like a decent starting point!
 
 > Shout-out to this [Medium article giving a more IaC treatment, that mentioned how to use the identifier provided with deny messages to see why it was denied](https://medium.com/@bigface00/guarding-bigquery-enhancing-data-security-with-vpc-service-control-cd2fb37094a2). Very useful facility!
