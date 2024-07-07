@@ -70,7 +70,7 @@ Next, I share the new dataset with the `allUsers` security principal, with the `
  <figcaption>Allowing anyone to create tables the attacker dataset</figcaption>
 </figure>
 
-I think it's true that this dataset can now receive data from any BigQuery job, running in any other GCP project in the same region. The IAM permissions on the victim side are irrelevant. The other account needs a VPC service perimeter set up to prevent exfiltration. By default, they do not. I'll switch to my other GCP account to give it a try!
+I think it's true that this dataset can now receive data from any BigQuery job, running in any other GCP project in the same region. The IAM permissions on the victim side are irrelevant. The other account needs a VPC service perimeter set up to prevent exfiltration. By default, they do not have one. I'll switch to my other GCP account to give it a try!
 
 ### Victim default setup
 
