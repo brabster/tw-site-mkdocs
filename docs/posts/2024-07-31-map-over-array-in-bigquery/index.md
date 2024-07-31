@@ -66,15 +66,13 @@ I think about the next step as making a little table out of the array.
 SELECT word FROM UNNEST(['connecting', 'connected', 'connections']) AS word
 ```
 
-`UNNEST` turns the array into a table, and I alias the resulting rows as `word`. Then, I can select `word`, which maps the identity function over the array. If I put that back into my query...
+`UNNEST` turns the array into a table, and I have aliased the resulting rows as `word`. Then, I can select `word`, which maps the identity function over the array. If I put that back into my query...
 
 ```sql
 SELECT
     (SELECT word FROM UNNEST(SPLIT(the_text, ' ')) AS word) AS words
 FROM examples
 ```
-
-### Gather results into an array
 
 I get an error `Scalar subquery produced more than one element`. That's because I haven't collected the little table back up into an array yet. That's easy to do:
 
@@ -131,4 +129,4 @@ Naturally, I can combine map and filter operations in the same statement.
 
 I showed how to "map" the functional programming `map` and `filter` concepts to BigQuery by thinking in terms of little embedded SQL statements over unnested arrays as tables. I've not yet had any need to use `reduce`, the other function that springs to mind, so I'll update this if I ever need it.
 
-This approach seems to work generally across engines. Some data warehouses provide functions that implement these capabilities more directly and naturally. For example, the Trino (was Presto) engine under AWS Athena provides [transform (for map)](https://trino.io/docs/current/functions/array.html#transform), [filter](https://trino.io/docs/current/functions/array.html#filter) and [reduce](https://trino.io/docs/current/functions/array.html#reduce) functions over arrays.
+This approach seems to work generally across SQL engines with minimal dialect variation. Some data warehouses provide functions that implement these capabilities more directly and naturally. For example, the Trino (was Presto) engine under AWS Athena provides [transform (for map)](https://trino.io/docs/current/functions/array.html#transform), [filter](https://trino.io/docs/current/functions/array.html#filter) and [reduce](https://trino.io/docs/current/functions/array.html#reduce) functions over arrays.
