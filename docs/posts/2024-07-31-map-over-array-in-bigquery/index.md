@@ -127,7 +127,7 @@ Naturally, I can combine map and filter operations in the same statement.
 
 ## Multiple return values
 
-"But wait" I hear you say, "it looks like I select multiple columns in my `map`!". You're right, let's try:
+"But wait" I hear you say, "it looks like I can select multiple columns in my `map`!". You're right, let's try:
 
 ```sql
 SELECT
