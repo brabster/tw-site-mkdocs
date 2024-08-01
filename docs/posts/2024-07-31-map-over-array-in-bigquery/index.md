@@ -5,7 +5,7 @@ date: 2024-07-31
 
 ![SQL snippet for map explained in post](./assets/map_sql.webp)
 
-This walkthrough shows how I can use my functional programming techniques `map` and `filter` in SQL engines like BigQuery. These techniques give me a lot of power to keep processing efficiently at scale whilst keeping my SQL simple and relatively easy to understand.
+This walkthrough shows how I can use the functional programming techniques `map` and `filter` that I already know and love in SQL engines like BigQuery. These techniques give me a lot of processing power whilst keeping my SQL simple and relatively easy to understand. Unlike custom code, I can use the same SQL and infratructure I'd use to process ten rows to process ten billion rows in seconds.
 
 <!-- more -->
 
@@ -106,7 +106,7 @@ Which produces the output we want:
 |[connect,connect,connect]|
 |[eardrum,eardrum]|
 
-## Bonus - `filter`
+## Applying `filter`
 
 You've already figured this out, but once I've unnested my array into a table, I can use `WHERE` to filter.
 
@@ -124,6 +124,31 @@ Which filters out the word 'connected' from my arrays.
 |[eardrummed,eardrums]|
 
 Naturally, I can combine map and filter operations in the same statement.
+
+## Multiple return values
+
+"But wait" I hear you say, "it looks like I select multiple columns in my `map`!". You're right, let's try:
+
+```sql
+SELECT
+    ARRAY(SELECT word, LEFT(word, 7) FROM UNNEST(SPLIT(the_text, ' ')) AS word) AS words
+FROM examples
+```
+
+We get an error: `ARRAY subquery cannot have more than one column unless using SELECT AS STRUCT to build STRUCT values at [9:5]`. At least this error gives a clue how to proceed. Just like a regular `map` operation, you can't return multiple arrays, you have to pack the values into a single structure.
+
+```sql
+SELECT
+    ARRAY(SELECT STRUCT(word, LEFT(word, 7) AS stemmed) FROM UNNEST(SPLIT(the_text, ' ')) AS word) AS words
+  FROM examples
+```
+
+The resulting structure isn't easily represented in a table, so I'll [format the structs as JSON](https://cloud.google.com/bigquery/docs/reference/standard-sql/json_functions#to_json_string):
+
+|jsonified|
+|---------|
+|[{"word":"connecting","stemmed":"connect"},{"word":"connected","stemmed":"connect"},{"word":"connections","stemmed":"connect"}]|
+|[{"word":"eardrummed","stemmed":"eardrum"},{"word":"eardrums","stemmed":"eardrum"}]|
 
 ## Summary
 
