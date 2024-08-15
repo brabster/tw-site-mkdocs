@@ -3,9 +3,6 @@ title: Time travelling with change data capture
 date: 2024-07-14
 ---
 
-![hero image](./assets/hero.webp)
-
-
 
 --8<-- "ee.md"
 
@@ -155,12 +152,6 @@ WHERE (
 
 The exclusive bound on the `end_timestamp` is important. An inclusive bound returns the row you want **and the row before** when the timestamp exactly matches a `transaction_commit_timestamp`.
 
-
-
-<figure markdown="span">
- ![template figure](./assets/image.webp)
- <figcaption>template figure</figcaption>
-</figure>
 
 
 --8<-- "blog-feedback.md"
