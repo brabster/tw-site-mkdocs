@@ -1,6 +1,6 @@
 ---
 title: Time travelling with change data capture
-date: 2024-07-14
+date: 2024-08-15
 ---
 
 
