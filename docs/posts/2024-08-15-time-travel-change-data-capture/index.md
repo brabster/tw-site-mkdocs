@@ -10,7 +10,7 @@ date: 2024-08-15
 
 ## The historical query problem
 
-The last post showed that it's quite easy to see the latest state of any order in our orders table, but I ran into problems trying to see the latest state at a specific prior point in time. I'll pick a transaction with several updates to explore a solution and come back to `order_20002` at the end to demonstrate the solution.
+The last post showed that it's quite easy to see the latest state of any order in our orders table, but I ran into problems trying to see the latest state at a specific prior point in time. I'll pick a transaction with several updates to explore a solution and return to `order_20002` at the end to demonstrate the solution.
 
 ```sql title="Recap transactions for order_30101"
 SELECT
@@ -31,21 +31,21 @@ ORDER BY transaction_commit_timestamp
 |2024-06-28 07:19:32.597790|1996-07-04|1996-07-20|1996-08-01|
 |2024-06-28 07:19:43.913391|1996-07-04|1996-07-20|1996-08-02|
 
-This order was updated four times after the original insert. These example updates are each a few seconds apart. In a real system they could have been seconds, hours, days or years apart. The general question I want to answer is:
+This order was updated four times after the original insert. These example updates are each a few seconds apart. In a real system, they could have been seconds, hours, days or years apart. The general question I want to answer is:
 
-> what was the state of this order at a specific time?
+> What was the state of this order at a specific time?
 
-I'll take an example of `2024-06-28 07:19:15.000000`. It's obvious to a human that the correct answer is row three in the table above. The timestamp of that row, ending `07:19:14.859907`, is before the timestamp we're interested in, and the next row has a timestamp several seconds later, which is afterwards.
+I'll take the example of `2024-06-28 07:19:15.000000`. It's obvious to a human that the correct answer is row three in the table above. The timestamp of that row, ending `07:19:14.859907`, is before the timestamp we're interested in, and the next row has a timestamp several seconds later, which is afterwards.
 
-A simple `WHERE` clause won't help. `WHERE transaction_commit_timestamp = '2024-06-28 07:19:15.000000'` gives no results, because no transaction took place at that exact time. I can easily get all the transactions before or after the timestamp, but I can't get the one transaction giving the state of this order at that moment in time.
+A simple `WHERE` clause won't help. `WHERE transaction_commit_timestamp = '2024-06-28 07:19:15.000000'` gives no results, because no transaction occurred at that exact time. I can easily get all the transactions before or after the timestamp, but I can't get the one transaction giving the state of this order at that moment in time.
 
 ### Visualising the problem
 
-Each transaction related to a given primary key gets its own row in the database. That row indicates when the transaction took place - the point in time when the change took effect. The row does not tell us when the change was superceded by the next change. I visualise what's going on like this:
+Each transaction related to a given primary key gets its own row in the database. That row indicates when the transaction took place - the point in time when the change took effect. The row does not tell us when the change was superseded by the next change. I visualise what's going on like this:
 
-```console title="CDC records provide only start timestamps"
+```console title="Change data capture records provide only start timestamps"
                       
-      t1    t2    t3  ?  t4  future
+ t1    t2    t3  ?  t4  future
 Insert|-----|-----|---?--|----->
       Update|-----|---?--|----->
             Update|---?--|----->
@@ -56,7 +56,7 @@ Starting with the insert, each transaction is a new arrow, occurring at times t1
 
 ### A messy solution
 
-If I create a CTE including only the rows after the timestamp of interest, I can then use a subquery to select only the updates up to the timestamp of interest. The row I want is the the one with the largest timestamp.
+If I create a CTE including only the rows after the timestamp of interest, I can then use a subquery to select only the updates up to the timestamp of interest. The row I want is the one with the largest timestamp.
 
 ```sql title="Messy solution involving subqueries"
 WITH candidate_rows AS (
@@ -86,10 +86,10 @@ What else might I do?
 
 ### Window functions for end timestamps
 
-Within each row, I can only see the timestamp at which the change takes effect. I can't see when it was superceded. I would need to order the rows by timestamp and then look in the next row for that, which suggests a window function might be a simple and efficient solution.
+Within each row, I can only see the timestamp at which the change takes effect. I can't see when it was superseded. I would need to order the rows by timestamp and then look in the next row for that, which suggests a window function might be a simple and efficient solution.
 
 ```console title="End timestamps represent reality better"
-      t1    t2    t3  ?  t4  future
+ t1    t2    t3  ?  t4  future
 Insert|---->|     |   ?  |
       Update|---->|   ?  |
             Update|---?->|
@@ -102,11 +102,11 @@ If I have "end" timestamps, then I can write a simple, intuitive query for the s
 
 ```sql title="Example end timestamps for order_30101"
 SELECT
-    transaction_commit_timestamp,
+ transaction_commit_timestamp,
     LEAD(transaction_commit_timestamp) OVER (
         PARTITION BY order_id
         ORDER BY transaction_commit_timestamp
-    ) end_timestamp
+ ) end_timestamp
 FROM orders_disambiguated
 WHERE order_id = '30101'
 ORDER BY transaction_commit_timestamp
@@ -120,7 +120,7 @@ ORDER BY transaction_commit_timestamp
 |2024-06-28 07:19:32.597790|2024-06-28 07:19:43.913391|
 |2024-06-28 07:19:43.913391||
 
-I can see each row now has an `end_timestamp` that contains the `transaction_commit_timestamp` from the **next row**. The last row has `NULL` in this column, because there is no next row. I'll wrap that in a CTE to try it out.
+I can see each row now has an `end_timestamp` that contains the `transaction_commit_timestamp` from the **next row**. The last row has `NULL` in this column because there is no next row. I'll wrap that in a CTE to try it out.
 
 ```sql title="Ad-hoc trial of end timestamps in a query"
 WITH orders_with_ends AS (
@@ -139,11 +139,11 @@ SELECT
     required_date,
     shipped_date
 FROM orders_with_ends
-WHERE (
+WHERE order_id = '30101'
+    AND (
         transaction_commit_timestamp <= '2024-06-28 07:19:15.000000'
         AND end_timestamp > '2024-06-28 07:19:15.000000'
     )
-    AND order_id = '30101'
 ```
 
 |transaction_commit_timestamp|order_date|required_date|shipped_date|
@@ -167,7 +167,7 @@ SELECT
 FROM orders_disambiguated
 ```
 
-Querying for the timestamp we looked for earlier returns exactly the same results as I saw earlier, so I won't waste space repeating that here. More interesting is what happens when we look at a point in time after the last recorded transaction.
+Querying for the timestamp we looked for earlier returns the same results as I saw earlier, so I won't waste space repeating that here. More interesting is what happens when we look at a point in time after the last recorded transaction.
 
 ```sql title="Example query incorporating end timestamps"
 SELECT
@@ -176,14 +176,14 @@ SELECT
     required_date,
     shipped_date
 FROM orders_windowed
-WHERE (
+WHERE order_id = '30101'
+    AND (
         transaction_commit_timestamp <= '2024-08-01 00:00:00.000000'
         AND end_timestamp > '2024-08-01 00:00:00.000000'
     )
-    AND order_id = '30101'
 ```
 
-No results. That's not right - the last transaction was a delete, and is still the current state of `order_30101` at this point in time. The problem is that null value for the final transaction end timestamp. When `end_timestamp` is null, the comparison becomes `NULL > 'some-timestamp'`, and the result of that is actually null. Here's a query to prove it.
+No results. That's not right - the last transaction was a delete and is still in the current state of `order_30101` at this point. The problem is the null value for the final transaction end timestamp. When `end_timestamp` is null, the comparison becomes `NULL > 'some-timestamp'`, and the result of that is actually null. Here's a query to prove it.
 
 ```sql title="Operations involving null may be counterintuitive"
 SELECT
@@ -195,7 +195,7 @@ SELECT
 |---|---|
 |true|true|
 
-This behaviour feels unintuitive to me, but I think I'm reading meaning into null values that's not really there in the SQL. It makes more sense if I [translate "null" to "unknown" as explained at modern-sql.com](https://modern-sql.com/concept/three-valued-logic). Essentially, most operations involving "unknown" result in "unknown", which makes more sense to me.
+This behaviour feels unintuitive to me, but I think I'm reading meaning into null values that are not really there in the SQL. It makes more sense if I [translate "null" to "unknown" as explained at modern-sql.com](https://modern-sql.com/concept/three-valued-logic). Essentially, most operations involving "unknown" result in "unknown", which makes more sense to me.
 
 It's easy enough to deal with the null in the query. Something like this solves the problem and returns the correct final transaction row.
 
@@ -206,19 +206,19 @@ AND (
 )
 ```
 
-In principle it's a nice, clear solution when you read "null" as "unknown". In practice, I've found it complicates real-world use of the view. Anyone using this view will need to remember to handle the null case, or they will get queries that work but produce incorrect results for transactions that are current. In other words, a breeding ground for bugs.
+In principle, it's a nice, clear solution when you read "null" as "unknown". In practice, I've found it complicates real-world use of the view. Anyone using this view will need to remember to handle the null case, or they will get queries that work but produce incorrect results for transactions that are current. In other words, a breeding ground for bugs.
 
 ### Handling null end timestamps
 
-To provide more intuitive handlng of end timestamps for this kind of common point-in-time query, I can update my view to provide appropriate values. Null in this situation means that there is no known subsequent transaction. I can use `COALESCE` to provide an appropriate value in place of null.
+To provide a more intuitive handling of end timestamps for this kind of common point-in-time query, I can update my view to provide appropriate values. Null in this situation means that there is no known subsequent transaction. I can use `COALESCE` to provide an appropriate value in place of null.
 
 There are several options to make the kind of query I outlined above work intuitively.
 
-- `CURRENT_TIMESTAMP` inserts the timestamp when the query ran. I need to be careful to get the timestamp format correct as I'm depending on string sorting. Precision hasn't caused any issues for me, but timezones could present problems.
+- `CURRENT_TIMESTAMP` inserts the timestamp when the query runs. I need to be careful to get the timestamp format correct as I'm depending on string sorting. Precision hasn't caused any issues for me, but time zones could present problems.
 - As the values are strings, and non-null values will start with a number, I could use a string like `unknown` to represent those values with correct ordering. This approach could cause problems if users need to parse and compute with the timestamp values.
 - I could choose a fixed, valid timestamp value in the far future.
 
-I'm not sure which is "best", but I think I would try the "unknown" value next time. It seems least likely to cause confusion and will break if anyone tried to inappropriately parse it as a meaningful timestamp. Let's give it a try.
+I'm not sure which is "best", but I think I would try the "unknown" value next time. It seems least likely to confuse and will break if anyone tried to inappropriately parse it as a meaningful timestamp. Let's give it a try.
 
 ```sql title="A less error-prone view of end timestamps"
 CREATE OR REPLACE VIEW orders_windowed AS
@@ -233,7 +233,7 @@ SELECT
 FROM orders_disambiguated
 ```
 
-This view now works as expected with the naive, non-null handling version of the earlier query, returing the single last row at `07:19:43.913391`. Here are the start and end timestamp values for the final two transactions in that order, the last row including the synthetic end timestamp.
+This view now works as expected with the naive, non-null handling version of the earlier query, returning the single last row at `07:19:43.913391`. Here are the start and end timestamp values for the final two transactions in that order, the last row including the synthetic end timestamp.
 
 |transaction_commit_timestamp|end_timestamp|
 |---|---|
@@ -274,7 +274,7 @@ Here are the values of all the new columns for the last couple of transactions i
 |2024-06-28 07:19:32.597790|2024-06-28 07:19:43.913391|2024-06-28 07:19:43.913391|false|
 |2024-06-28 07:19:43.913391||unknown|true|
 
-## Solving the promotions usecase
+## Solving the promotions use case
 
 In the last article, I ran into [problems finding the correct transactions to use in promotions processing](../2024-06-30-cdc-latest-and-historical/index.md#why-i-cant-time-travel). The need to collect transactions into arbitrary time windows for processing in window functions caused problems and complexity.
 
@@ -284,8 +284,8 @@ To recap the problem I needed to solve: identify the orders that had a `shipped_
 
 ```sql title="Example query conditions to pick qualifying transactions"
 WHERE ('1996-08-01' <= shipped_date AND shipped_date < '1996-09-01')
-  AND transaction_commit_timestamp <= '2024-06-12 10:30:30.412977'
-  AND order_id = '20002'
+    AND transaction_commit_timestamp <= '2024-06-12 10:30:30.412977'
+    AND order_id = '20002'
 ```
 
 This query did not work correctly in the cases I looked at.
@@ -297,25 +297,27 @@ First, I'll update the promotions view to use the new `orders_windowed` view.
 ```sql title="Updating the promotions view to use orders_windowed" hl_lines="8"
 CREATE OR REPLACE VIEW "promotions" AS 
 WITH
-  order_urgency AS (
-   SELECT
-     *
-   , (CASE WHEN (cdc_operation = 'D') THEN null ELSE DATE_DIFF('day', DATE(order_date), DATE(required_date)) END) notice_period_days
-   FROM
-     orders_windowed
-) 
+    order_urgency AS (
+        SELECT
+            *
+            , (CASE
+                WHEN (cdc_operation = 'D')
+                    THEN null
+                    ELSE DATE_DIFF('day', DATE(order_date), DATE(required_date))
+                END) notice_period_days
+        FROM orders_windowed
+)
 SELECT
-  *
-, COALESCE((notice_period_days > 28), false) qualifies_for_promotion
-FROM
-  order_urgency
+    *
+    , COALESCE((notice_period_days > 28), false) qualifies_for_promotion
+FROM order_urgency
 ```
 
-The only change is the highlighted line, where I swap the `FROM` to point to the new view. The use of `*` in my `SELECT`s means no other changes are needed. If I were listing specific columns, I'd need to explicitly pass `end_timestamp` through.
+The only change is the highlighted line, where I swap the `FROM` to point to the new view. The use of `*` in my `SELECT` means no other changes are needed. If I were listing specific columns, I'd need to explicitly pass `end_timestamp` through.
 
 ### Checking correct behaviour
 
-Now I can adjust my query for qualifying orders and check the test cases that tripped up the previous solution. `order_20002` was the test case. It has two updates with `shipped_date` in the range, but the earlier one qualified, and the update that was active at the end of month did not.
+Now I can adjust my query for qualifying orders and check the test cases that tripped up the previous solution. `order_20002` was the test case. It has two updates with `shipped_date` in the range, but the earlier one qualified, and the update that was active at the end of the month did not.
 
 ```sql title="Checking correct behaviour for order_20002"
 SELECT
@@ -343,7 +345,7 @@ WHERE order_id = '20002'
 
 This query returns the single, correct result as before. If we set the timestamp we're interested in to exclude the last transaction, we should get the previous transaction back.
 
-We can move the the equality conditions in the last `AND` block to look just before the timestamp. We could also subtract one of the smallest time unit to get the same effect.
+We can move the equality conditions in the last `AND` block to look just before the timestamp. We could also subtract one of the smallest time unit to get the same effect.
 
 ```sql title="Checking correct behaviour for order_20002"
     AND (
@@ -358,9 +360,9 @@ We can move the the equality conditions in the last `AND` block to look just bef
 
 Where the previous solution returned no results, the `end_timestamp` approach brings back the correct row representing the state of the previous transaction.
 
-## Solving the promotions usecase
+## Solving the promotions use case
 
-We can now solve the promotions usecase as it stands. Which orders qualified for the promotion in the month of August 1996, based on the latest change data capture data at end August 2024?
+We can now solve the promotions use case as it stands. Which orders qualified for the promotion in August 1996, based on the latest change data capture data at the end of August 2024?
 
 ```sql title="Identifying qualifying orders"
 SELECT
