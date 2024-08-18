@@ -3,6 +3,9 @@ title: Time travelling with change data capture
 date: 2024-08-15
 ---
 
+![Visualisation of effects of end timestamps on a series of transactions](./assets/end_timestamp_viz.webp)
+
+In the last article of the series, I ran into difficulties as I tried to "time-travel" back to earlier points in time. That's an important capability for correct functioning and reproducing results. This article shows how to use window functions (also known as analytic functions) to simplify handling of processing time and avoid the previous problems.
 
 --8<-- "ee.md"
 
@@ -88,7 +91,7 @@ What else might I do?
 
 Within each row, I can only see the timestamp at which the change takes effect. I can't see when it was superseded. I would need to order the rows by timestamp and then look in the next row for that, which suggests a window function might be a simple and efficient solution.
 
-```console title="End timestamps represent reality better"
+```console title="End timestamps represent reality more clearly"
  t1    t2    t3  ?  t4  future
 Insert|---->|     |   ?  |
       Update|---->|   ?  |
