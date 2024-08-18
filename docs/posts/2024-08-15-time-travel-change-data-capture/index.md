@@ -1,6 +1,6 @@
 ---
 title: Time travelling with change data capture
-date: 2024-08-15
+date: 2024-08-18
 ---
 
 ![Visualisation of effects of end timestamps on a series of transactions](./assets/end_timestamp_viz.webp)
@@ -299,7 +299,7 @@ This query did not work correctly in the cases I looked at.
 
 First, I'll update the promotions view to use the new `orders_windowed` view.
 
-```sql title="Updating the promotions view to use orders_windowed" hl_lines="8"
+```sql title="Updating the promotions view to use orders_windowed" hl_lines="7"
 CREATE OR REPLACE VIEW "promotions" AS 
 WITH
     order_urgency AS (
