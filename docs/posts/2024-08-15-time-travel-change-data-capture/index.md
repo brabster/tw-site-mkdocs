@@ -270,12 +270,14 @@ A query including `WHERE is_current` now selects only the current state of order
 
 This view is compatible with the previous queries I've run. It also shows how to retain the null current timestamp in a `maybe_end_timestamp` column. That could ease those cases where it makes sense to explicitly handle the null value, in addition to `is_current` and `end_timestamp`.
 
-Here are the values of all the new columns for the last couple of transactions in `order_30101`.
+Here are the values of all the new columns for the last couple of transactions in `order_30101`. As expected, `is_current` is true for the last state of the order and false otherwise.
 
 |transaction_commit_timestamp|maybe_end_timestamp|end_timestamp|is_current|
 |---|---|---|---|
 |2024-06-28 07:19:32.597790|2024-06-28 07:19:43.913391|2024-06-28 07:19:43.913391|false|
 |2024-06-28 07:19:43.913391||unknown|true|
+
+A query can now add a simple condition `WHERE is_current` to select only the states that are current at the time the query is executed.
 
 ## Solving the promotions use case
 
@@ -303,11 +305,7 @@ WITH
     order_urgency AS (
         SELECT
             *
-            , (CASE
-                WHEN (cdc_operation = 'D')
-                    THEN null
-                    ELSE DATE_DIFF('day', DATE(order_date), DATE(required_date))
-                END) notice_period_days
+            , (CASE WHEN (cdc_operation = 'D') THEN null ELSE DATE_DIFF('day', DATE(order_date), DATE(required_date)) END) notice_period_days
         FROM orders_windowed
 )
 SELECT
