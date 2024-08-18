@@ -279,10 +279,87 @@ Here are the values of all the new columns for the last couple of transactions i
 
 ## Solving the promotions usecase
 
-In the last article, I ran into [problems finding the correct transactions to use in promotions processing](../2024-06-30-cdc-latest-and-historical/index.md#why-i-cant-time-travel). The problem was caused by a need to collect transactions into arbitrary time windows and then process them in order to figure out which should apply.
+In the last article, I ran into [problems finding the correct transactions to use in promotions processing](../2024-06-30-cdc-latest-and-historical/index.md#why-i-cant-time-travel). The need to collect transactions into arbitrary time windows for processing in window functions caused problems and complexity.
 
-This approach only needs to determine the timestamp of the next transaction, if it exists, to populate the `end_timestamp` field for a given transaction. The window of rows processed by the window function does not need to align in the same way with the time window of interest to the query.
+In contrast, this approach only needs to determine the timestamp of the next transaction for a given order, if it exists, to populate the `end_timestamp` field. The window of rows processed by the window function does not need to align in the same way with the time window of interest to the query.
 
+To recap the problem I needed to solve: identify the orders that had a `shipped_date` falling within a specific month based on the transaction states that were "current" at the end of the month.
+
+```sql title="Example query conditions to pick qualifying transactions"
+WHERE ('1996-08-01' <= shipped_date AND shipped_date < '1996-09-01')
+  AND transaction_commit_timestamp <= '2024-06-12 10:30:30.412977'
+  AND order_id = '20002'
+```
+
+This query did not work correctly in the cases I looked at.
+
+### Updating the promotions view
+
+First, I'll update the promotions view to use the new `orders_windowed` view.
+
+```sql title="Updating the promotions view to use orders_windowed" hl_lines="8"
+CREATE OR REPLACE VIEW "promotions" AS 
+WITH
+  order_urgency AS (
+   SELECT
+     *
+   , (CASE WHEN (cdc_operation = 'D') THEN null ELSE DATE_DIFF('day', DATE(order_date), DATE(required_date)) END) notice_period_days
+   FROM
+     orders_windowed
+) 
+SELECT
+  *
+, COALESCE((notice_period_days > 28), false) qualifies_for_promotion
+FROM
+  order_urgency
+```
+
+The only change is the highlighted line, where I swap the `FROM` to point to the new view. The use of `*` in my `SELECT`s means no other changes are needed. If I were listing specific columns, I'd need to explicitly pass `end_timestamp` through.
+
+### Checking correct behaviour
+
+Now I can adjust my query for qualifying orders and check the test cases that tripped up the previous solution. `order_20002` was the test case. It has two updates with `shipped_date` in the range, but the earlier one qualified, and the update that was active at the end of month did not.
+
+```sql
+SELECT
+    transaction_commit_timestamp,
+    end_timestamp,
+    shipped_date,
+    qualifies_for_promotion
+FROM promotions
+WHERE order_id = '20002'
+    -- and shipped_date is in the qualifying period
+    AND (
+        '1996-08-01' <= shipped_date
+        AND shipped_date < '1996-09-01'
+    )
+    -- measured by the state where the timestamp we're interested in falls between the commit and end timestamps
+    AND (
+        transaction_commit_timestamp <= '2024-06-12 10:30:30.412977'
+        AND end_timestamp > '2024-06-12 10:30:30.412977'
+    )
+```
+
+|transaction_commit_timestamp|end_timestamp|shipped_date|qualifies_for_promotion|
+|---|---|---|---|
+|2024-06-12 10:30:30.412977|2024-08-18 14:02:25.009000|	1996-08-01|false|
+
+This query returns the single, correct result as before. If we set the timestamp we're interested in to exclude the last transaction, we should get the previous transaction back.
+
+We can move the the equality conditions in the last `AND` block to look just before the timestamp. We could also subtract one of the smallest time unit to get the same effect.
+
+```sql title=""
+    AND (
+        transaction_commit_timestamp < '2024-06-12 10:30:30.412977'
+        AND end_timestamp >= '2024-06-12 10:30:30.412977'
+    )
+```
+
+|transaction_commit_timestamp|end_timestamp|shipped_date|qualifies_for_promotion|
+|---|---|---|---|
+|2024-06-12 10:30:30.041474|2024-06-12 10:30:30.412977|1996-08-01|true|
+
+Where the previous solution returned no results, the `end_timestamp` approach brings back the correct row representing the state of the previous transaction.
 
 --8<-- "blog-feedback.md"
 

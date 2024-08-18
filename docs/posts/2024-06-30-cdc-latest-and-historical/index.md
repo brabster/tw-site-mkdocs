@@ -91,7 +91,7 @@ Yes, the same row comes out. Now let's set the commit timestamp to right before 
 
 No results. Huh? I know there's a row in there with the timestamp `2024-06-12 10:30:30.041474` which should match! Where is it?
 
-### Why I can't time-travel
+`### Why I can't time-travel
 
 ??? note "View or CTE (common table expression)?"
     [Common table expressions using the WITH clause](https://trino.io/docs/current/sql/select.html#with-clause) allow a sub-query to be extracted and named. It's a powerful way of simplifying my queries without persisting anything in the database. Views have basically the same function, but they are persisted to the database and can be used by other views and other queries. Views can contain CTEs to simplify them, too. I think of views and CTEs as largely interchangeable and pick a view when I want to make the logic available outside the current query, or when I want to be able to inspect and test the logic independently.
