@@ -21,6 +21,7 @@ theme:
     - content.footnote.tooltips
     - content.code.copy
     - content.code.annotate
+    - search.share
 
 plugins:
   - privacy
