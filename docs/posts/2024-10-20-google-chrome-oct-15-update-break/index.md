@@ -13,7 +13,7 @@ The Oct 15, 2024 update of Google Chrome stable (130.0.6723.58) suddenly broke s
 
 > Connection error: unauthorised client refused
 
-This was the error message I was greeted with on Friday 18th Oct when I tried to get back to work in my GitHub Codespace after a four-day break. Everything was just fine when I pushed my last PR from the ferry in Europoort Rotterdam on Monday morning! Could it be something to do with the [six-monthly rebuild](../2024-02-27-automated-laptop-build-intro/index.md) I'd just done? A problem with GitHub? Was there a Chrome update between Monday and Friday morning when I ran my usual start of day `sudo update`?
+This was the error message I was greeted with on Friday 18th Oct when I tried to get back to work in my GitHub Codespace after a four-day break. Everything was just fine when I pushed my last PR from the ferry in Europoort Rotterdam on Monday morning! Could it be something to do with the [six-monthly rebuild](../2024-02-27-automated-laptop-build-intro/index.md) I'd just done? A problem with GitHub? Was there a Chrome update between Monday morning when I shut down and Friday morning when I ran my usual start of day `sudo update`?
 
 The short version: there's a Chrome setting `DefaultJavaScriptJitSetting` that disables the JS JIT compiler when set to value `2`. [`DefaultJavaScriptJitSetting` is documented in the Chrome enterprise policies](https://chromeenterprise.google/intl/en_uk/policies/#DefaultJavaScriptJitSetting). 
 
