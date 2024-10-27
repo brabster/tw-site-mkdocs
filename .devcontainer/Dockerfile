@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/python:3.8
+FROM mcr.microsoft.com/devcontainers/python:3.12
 
 # image processing dependencies for optimize plugin
 RUN apt-get update && \
