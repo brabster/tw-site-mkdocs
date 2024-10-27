@@ -5,7 +5,7 @@ date: 2024-10-27
 
 ![Codespaces error 'Connection error unauthorised client refused' appears when connecting to Codespace](./assets/codespaces_broken.webp)
 
-The Oct 15 2024 update of Google Chrome stable (130.0.6723.58) causes a JavaScript-related setting to suddenly break some sites like GitHub Codespaces and 1Password.
+The Oct 15, 2024 update of Google Chrome stable (130.0.6723.58) suddenly broke some sites, such as GitHub Codespaces and 1Password, due to a JavaScript-related setting.
 
 --8<-- "ee.md"
 
@@ -13,7 +13,7 @@ The Oct 15 2024 update of Google Chrome stable (130.0.6723.58) causes a JavaScri
 
 ## Discovery
 
->  Connection error: unauthorised client refused
+> Connection error: unauthorised client refused
 
 This was the error message I was greeted with on Friday 18th Oct when I tried to get back to work in my GitHub Codespace after a four-day break. Everything was just fine when I pushed my last PR from the ferry in Europoort Rotterdam on Monday morning! Could it be something to do with the [six-monthly rebuild](../2024-02-27-automated-laptop-build-intro/index.md) I'd just done? A problem with GitHub?
 
@@ -35,11 +35,11 @@ Setting this value to `1` allows JIT on all sites, or you can add exceptions on 
         "[*.]github.dev",
         "[*.]1password.eu",
         "[*.]1password.com"
-    ]
+ ]
 }
 ```
 
-I've [raised an issue against Chromium](https://issues.chromium.org/issues/374469562) which has been reproduced successfully. Hopefully the issue will be resolved soon and the exceptions will no longer be needed.
+I've [raised an issue against Chromium](https://issues.chromium.org/issues/374469562) which has been reproduced successfully. Hopefully, the problem will be resolved soon and the exceptions will no longer be needed.
 
 ## Remote codespace in local VSCode
 
@@ -65,7 +65,7 @@ I also found issues with [regex101.com](https://regex101.com), [1password](https
 
 <figure markdown="span">
  ![regex101 reporting an error and suggesting upgrading the browser](./assets/regex101_error.webp)
- <figcaption>"Unfortunately it seems your browser does not meet the criteria to properly render and utilize this website." regex101.com not working on latest Chrome</figcaption>
+ <figcaption>"Unfortunately it seems your browser does not meet the criteria to properly render and utilize this website." regex101.com not working on the latest Chrome</figcaption>
 </figure>
 
 <figure markdown="span">
@@ -78,9 +78,9 @@ I also found issues with [regex101.com](https://regex101.com), [1password](https
  <figcaption>"Troubleshoot this issue by clearing application resources" Google Sheets not working on latest Chrome</figcaption>
 </figure>
 
-WebAssembly seems to be mentioned in error messages more often than conincidence would suggest, and it might make sense for an issue related to compilation and WebAssembly to manifest like this. We'll see, but at least there's a workaround, even if it does involve "dropping the shields" on some sites.
+WebAssembly seems to be mentioned in error messages more often than coincidence would suggest, and it might make sense for an issue related to compilation and WebAssembly to manifest like this. We'll see, but at least there's a workaround, even if it does involve "dropping the shields" on some sites.
 
-I already have to place signifcant trust in GitHub Codespaces and 1password by the nature of the service they provide. Sorry, but I can live without regex101.com - I'm using [regexr.com](https://regexr.com) instead for now.
+I already have to place significant trust in GitHub Codespaces and 1password by the nature of the service they provide. Sorry, but I can live without regex101.com - I'm using [regexr.com](https://regexr.com) instead for now.
 
 --8<-- "blog-feedback.md"
 
