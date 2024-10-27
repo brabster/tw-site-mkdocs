@@ -7,8 +7,6 @@ date: 2024-10-27
 
 The Oct 15, 2024 update of Google Chrome stable (130.0.6723.58) suddenly broke some sites, such as GitHub Codespaces and 1Password, due to a JavaScript-related setting.
 
---8<-- "ee.md"
-
 <!-- more -->
 
 ## Discovery
