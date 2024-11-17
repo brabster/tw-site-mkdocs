@@ -9,6 +9,17 @@ The Oct 15, 2024 update of Google Chrome stable (130.0.6723.58) suddenly broke s
 
 <!-- more -->
 
+## Update 2024-11-17
+
+The underlying issue was identified in a [comment on the issue](https://issues.chromium.org/issues/374469562#comment13) last week.
+
+> Chrome does not support WebAssembly in jit-less mode. This breaks some websites that don't have a pure JS fallback path.
+
+It sounds like site authors taking advantage of WASM need to do extra work to support Chromium-based browsers with this JIT-less setting enabled. If that's the case, it may become unusable. I think I first flipped this setting when I heard about the [prevalence of browser security issues related to JS JIT compilation](https://microsoftedge.github.io/edgevr/posts/Super-Duper-Secure-Mode/) on [Security Now #963](https://www.grc.com/sn/sn-963-notes.pdf). If the pattern of JIT-related issues has continued, I wonder about the security implications of the apparent relationship between JIT and WASM.
+
+Anyway, I'll let the maintainers of the sites I found with issues know about the reason for the issue. Even if they don't support the fallback, it may be reasonable to update the error message so that a lack of WASM support no longer triggers an invalid "update your browser" message. 
+
+
 ## Discovery
 
 > Connection error: unauthorised client refused
