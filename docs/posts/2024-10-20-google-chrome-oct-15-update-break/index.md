@@ -17,8 +17,7 @@ The underlying issue was identified in a [comment on the issue](https://issues.c
 
 It sounds like site authors taking advantage of WASM need to do extra work to support Chromium-based browsers with this JIT-less setting enabled. If that's the case, it may become unusable. I think I first flipped this setting when I heard about the [prevalence of browser security issues related to JS JIT compilation](https://microsoftedge.github.io/edgevr/posts/Super-Duper-Secure-Mode/) on [Security Now #963](https://www.grc.com/sn/sn-963-notes.pdf). If the pattern of JIT-related issues has continued, I wonder about the security implications of the apparent relationship between JIT and WASM.
 
-Anyway, I'll let the maintainers of the sites I found with issues know about the reason for the issue. Even if they don't support the fallback, it may be reasonable to update the error message so that a lack of WASM support no longer triggers an invalid "update your browser" message. 
-
+Anyway, I'll let the maintainers of the sites I found with issues know about the reason for the issue. Even if they don't support the fallback, it may be reasonable to update the error message so that a lack of WASM support no longer triggers an invalid "update your browser" message. I'd like to just add sites I trust to the allowlist, but I'll have to enable JIT for all sites for now to get Google Sheets working, as that's essential for me professionally at the moment. Hopefully I'll figure out how to get it working via the allowlist, or Google will fix the issue - the commenter on the Chromium thread said they'd raised it with them.
 
 ## Discovery
 
