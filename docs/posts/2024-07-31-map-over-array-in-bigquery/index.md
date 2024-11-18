@@ -1,6 +1,8 @@
 ---
 title: Map over an array in BigQuery
 date: 2024-07-31
+categories:
+    - insights
 ---
 
 ![SQL snippet for map explained in post](./assets/map_sql.webp)

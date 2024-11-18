@@ -1,6 +1,8 @@
 ---
 title: Exploring transactions in change data capture
 date: 2024-05-28
+categories:
+    - insights
 ---
 
 ![Screenshot of a transaction containing insert, update and delete](./assets/txn_hero.webp)

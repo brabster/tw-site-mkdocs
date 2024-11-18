@@ -1,6 +1,8 @@
 ---
 title: Change data capture with AWS DMS
 date: 2024-05-21
+categories:
+    - insights
 ---
 
 ![hero image](./assets/hero-cdc.webp)

@@ -1,6 +1,8 @@
 ---
 title: Latest and historical state from change data capture
 date: 2024-06-28
+categories:
+    - insights
 ---
 
 ![Athena console showing no results for query](./assets/cdc_no_results.webp)
