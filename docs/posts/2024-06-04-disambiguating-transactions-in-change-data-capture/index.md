@@ -1,6 +1,8 @@
 ---
 title: Disambiguating transactions in change data capture
 date: 2024-06-04
+categories:
+    - insights
 ---
 
 ![Example query against disambiguated view](./assets/disambiguated_sql.webp)

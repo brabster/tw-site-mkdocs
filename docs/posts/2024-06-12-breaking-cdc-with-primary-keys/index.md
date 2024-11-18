@@ -1,6 +1,8 @@
 ---
 title: Breaking change data capture with primary keys
 date: 2024-06-12
+categories:
+    - insights
 ---
 
 ![A SQL statement that updates a row's primary key](./assets/break_pk.webp)

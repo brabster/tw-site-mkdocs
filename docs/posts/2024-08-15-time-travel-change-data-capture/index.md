@@ -1,6 +1,8 @@
 ---
 title: Time travelling with change data capture
 date: 2024-08-18
+categories:
+    - insights
 ---
 
 ![Visualisation of effects of end timestamps on a series of transactions](./assets/end_timestamp_viz.webp)
