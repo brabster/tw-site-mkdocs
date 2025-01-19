@@ -1,5 +1,5 @@
 ---
-title: Testing and deploying stored procedures
+title: Testing stored procedures
 date: 2025-01-18
 categories:
   - insights
