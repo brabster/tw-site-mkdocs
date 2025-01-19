@@ -167,7 +167,7 @@ Another thought that occurs to me is to use a testing solution that suits the ap
 
 ## Conclusion
 
-After a few hours poking at the practicalities of stored procedures, I don't see anything I've missed in my own experiences to date! It does look like testing strategies are possible that can help document how a procedure is supposed to behave and help catch regressions before they affect the production system (also known as :facepalm:facepalm-proofing!). I hope this post can help you get started if you're scratching your head, and please do get in touch if you have any thoughts or feedback!
+After a few hours poking at the practicalities of stored procedures, I don't see anything I've missed in my own experiences to date! It does look like testing strategies are possible that can help document how a procedure is supposed to behave and help catch regressions before they affect the production system and real users (I like to think of that as :facepalm:facepalm-proofing!). I hope this post can help you get started if you're scratching your head, and please do get in touch if you have any thoughts or feedback!
 
 --8<-- "blog-feedback.md"
 
