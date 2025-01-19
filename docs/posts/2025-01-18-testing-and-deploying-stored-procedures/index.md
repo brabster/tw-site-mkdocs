@@ -1,5 +1,5 @@
 ---
-title: Testing and deploying stored procedures with dbt
+title: Testing and deploying stored procedures
 date: 2025-01-18
 categories:
   - insights
