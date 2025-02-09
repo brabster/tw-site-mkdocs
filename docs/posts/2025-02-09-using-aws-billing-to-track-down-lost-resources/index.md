@@ -52,7 +52,11 @@ The vast majority of the resources I see are, I believe, network-related resourc
 
 ## Back to cost explorer
 
-I've found the most effective tool to track down these resources is back in the billing console. I switch the breakdown to usage type in the report parameters section, like this:
+I've found the most effective tool to track down these resources is back in the billing console.
+
+### Cost by usage type
+
+I switch the breakdown to usage type in the report parameters section, like this:
 
 <figure markdown="span">
  ![Screenshot of the AWS cost explorer report parameters panel](./assets/aws_billing_usage_types.webp)
@@ -70,7 +74,9 @@ Aha. This table is packed with useful information.
 
 `USE1-VpcEndpoint-Hours` is responsible for almost all the cost -  VPC endpoints in `us-east-1`. That makes sense - I had to have private endpoints to get from the RDS database locked away in a private VPC to the S3 and Secrets Manager services. I expected them to get cleaned up as part of my CloudFormation destroy operation, but it seems they did not.
 
-I'm also paying for `USE1-AWSSecretsManager-Secrets` - makes sense, I had a secret in there, the RDS database password, which hasn't been cleaned up in the destroy. `Aurora:BackupUsage` also makes sense - I have some backups of the RDS database. Aside from being in `eu-west-2`, the culprit behind `EUW2-Requests-Tier1` isn't clear - but I can switch the breakdown from "Usage type" to "API operation" to get another useful perspective.
+I'm also paying for `USE1-AWSSecretsManager-Secrets` - makes sense, I had a secret in there, the RDS database password, which hasn't been cleaned up in the destroy. `Aurora:BackupUsage` also makes sense - I have some backups of the RDS database. Aside from being in `eu-west-2`, the culprit behind `EUW2-Requests-Tier1` isn't clear. I can switch the breakdown from "Usage type" to "API operation" to get another useful perspective.
+
+### Cost by API operation
 
 <figure markdown="span">
  ![Screenshot of the AWS cost explorer API operation breakdown table](./assets/aws_billing_api_op_breakdown.webp)
@@ -78,6 +84,17 @@ I'm also paying for `USE1-AWSSecretsManager-Secrets` - makes sense, I had a secr
 </figure>
 
 `PutObject` and `CreateDBInstance:0021` look like possible culprits. There's no region information available here, so I find API operation and usage type work well together to shed actionable insights on costs. I either get pointed at the exact culprit, or I get specific information about where to go and look next.
+
+### Cost by resource
+
+There is another option in the "Dimension" drop-down - "Resource". When I click this option, I get access denied
+
+<figure markdown="span">
+ ![Screenshot of the AWS cost explorer resource dimension error](./assets/aws_billing_resource_breakdown.webp)
+ <figcaption>Resource dimension error message.</figcaption>
+</figure>
+
+I need to turn on [resource-level billing information](https://docs.aws.amazon.com/cost-management/latest/userguide/ce-resource-daily.html) to use this feature. It may contain even more explicit information, but I've found I get can get enough out of the on-by-default views I've already covered to solve my problems. I've turned it on anyway but it takes a while to become effective. I'll follow up if the information or cost associated with this feature is worth shouting about.
 
 ## Summary
 
