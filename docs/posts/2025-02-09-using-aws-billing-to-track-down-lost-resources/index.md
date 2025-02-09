@@ -9,8 +9,6 @@ categories:
 
 My AWS bill was higher than I expected, and it wasn't immediately clear what was driving the cost. Here's how I tracked down the culprits.
 
---8<-- "ee.md"
-
 <!-- more -->
 
 ## The mystery bill
@@ -87,3 +85,4 @@ AWS Billing's cost explorer reporting is packed with actionable information to t
 
 --8<-- "blog-feedback.md"
 
+--8<-- "ee.md"
