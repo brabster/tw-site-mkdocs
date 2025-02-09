@@ -13,7 +13,7 @@ My AWS bill was higher than I expected, and it wasn't immediately clear what was
 
 ## The mystery bill
 
-I'd been running an [RDS + DMS CloudFormation stack](https://github.com/brabster/northwind_dms_cdc/tree/main/cloudformation) for a few months as part of my CDC writing. Expect a post at some point going over the obvious and most subtle costs involved. When I tore the stack down in January 2025, I was still getting a bill of a couple of dollars a day and I wasn't sure why.
+I'd been running an [RDS + DMS CloudFormation stack](https://github.com/brabster/northwind_dms_cdc/tree/main/cloudformation) for a few months as part of my CDC writing. Expect a post at some point going over the obvious and more subtle costs involved. When I tore the stack down in January 2025, I was still getting a bill of a couple of dollars a day and I wasn't sure why.
 
 <figure markdown="span">
  ![Screenshot of the AWS console homepage billing section on my account on 2024-02-09](./assets/aws_billing_console.webp)
@@ -41,7 +41,7 @@ This view is a useful first step. The costs are in the VPC service, ruling out t
 AWS is a big, complex beast and I've had problems sometimes tracking down deployed resources that cost money - particularly tricky when the resources are deployed in a region you're not expecting! The [Tag Editor](https://docs.aws.amazon.com/tag-editor/latest/userguide/tagging.html) allows the enumeration of resources across regions, but as far as I know, it's not straightforward to use to track down these resources. I have very little deployed into this account, but when I search across all regions for all resources, I see the following:
 
 <figure markdown="span">
- ![Screenshot of the AWS tag editor, after searching all regions for all resources](./assets/aws_billing_usage_types.webp)
+ ![Screenshot of the AWS tag editor, after searching all regions for all resources](./assets/aws_billing_tag_editor.webp)
  <figcaption>The top six resource search results are listed in Tag Editor, showing items with identifiers, types, and regions. Types include Stack, Trail, and DHCPOptions. Regions include eu-west-1, 2 and 3. There are no tags assigned to the resources.</figcaption>
 </figure>
 
@@ -83,7 +83,24 @@ I'm also paying for `USE1-AWSSecretsManager-Secrets` - makes sense, I had a secr
  <figcaption>Table displaying API cost breakdown, with total costs and individual operation expenses listed.</figcaption>
 </figure>
 
-`PutObject` and `CreateDBInstance:0021` look like possible culprits. There's no region information available here, so I find API operation and usage type work well together to shed actionable insights on costs. I either get pointed at the exact culprit, or I get specific information about where to go and look next.
+`PutObject` and `CreateDBInstance:0021` look like possible culprits. There's no region information available here, so I find API operation and usage type work well together to shed actionable insights on costs.
+
+### API operation and usage type together
+
+Where I'm confused about what a billing item is, I can combine usage type and API operation, with one as dimension and the other as a filter, to clear up the confusion. To understand `CreateDBInstance:0021`, I set usage type as the dimension and API operation as a filter in the report parameters. There's exactly one item in the output table now.
+
+|API operation|Value|
+|-------------|-----|
+|Aurora:BackupUsage|$0.03|
+
+That clears that one up. How about `EUW2-Requests-Tier1`? Resetting the filters to usage type `EUW2-Requests-Tier1` and setting API operation as the dimension, I'm told:
+
+|API operation|Value|
+|-------------|-----|
+|PutObject costs|$0.03|
+|PutObject usage|5,340.00 Requests|
+
+Not sure what's causing those PutObject requests in this account, but at least I know what I'm looking for now!
 
 ### Cost by resource
 
