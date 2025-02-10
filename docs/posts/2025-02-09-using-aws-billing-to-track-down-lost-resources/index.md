@@ -115,7 +115,7 @@ I need to turn on [resource-level billing information](https://docs.aws.amazon.c
 
 ## Summary
 
-AWS Billing's cost explorer reporting is packed with actionable information to track down costs, including service, region and API operation usage. Using these different perspectives together can help quickly find the resources responsible, regardness of which region or service they're hiding in.
+AWS Billing's cost explorer reporting is packed with actionable information to track down costs, including service, region and API operation usage. Using these different perspectives together can help quickly find the resources responsible, regardless of which region or service they're hiding in.
 
 --8<-- "blog-feedback.md"
 
