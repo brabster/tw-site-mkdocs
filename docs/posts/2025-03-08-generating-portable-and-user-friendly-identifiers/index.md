@@ -46,7 +46,7 @@ In addition to these more user-facing needs, I have a couple of constraints to e
 : Software supply chains bring multiple types of risk, which I talk about a little in an earlier post touching on [supply chain security](../2024-05-01-how-i-do-python-supply-chain-security/index.md#assessing-dependency-risk). I'd rather not trust any source of software that I can avoid.
 - Collisions are very unlikely.
 : It needs to be unlikely that two different pieces of data produce the same identifier. I can design the system to make this scenario an irritation rather than a catastrophe, but the less likely it is, the better.
-- It should be efficient.
+- It's efficient.
 : I'd like an efficient solution that meets the other constraints. I don't want significant latency, nor do I want to waste compute power without good reason.
 
 Quite the list for such an apparently simple problem!
@@ -65,7 +65,7 @@ I've fallen into this trap before. I needed to generate hashes in [AWS Athena](h
 
 Unfortunately, when we migrated to BigQuery, `xxhash64` was not natively available! I could have used a Javascript UDF, but that would have introduced complexity and new supply chains, so... no. I switched to a hashing algorithm that BigQuery did support, then generated a mapping table for existing xxhash64-based IDs in Athena until all the original values had been found and replaced.
 
-Learning from that experience I used [MD5 hashing](https://en.wikipedia.org/wiki/MD5) now. MD5 has been around since the 1990s and is supported everywhere I've looked. MD5 might be a poor choice for use in crypto, but I see no reason why it's not suitable for the purpose of producing a fixed-length identifier. [MD5: The broken algorithm](https://www.avira.com/en/blog/md5-the-broken-algorithm) suggests that the chance of an accidental collision between two values is on the order of 10<sup>-29</sup>.
+Learning from that experience I use [MD5 hashing](https://en.wikipedia.org/wiki/MD5) now. MD5 has been around since the 1990s and is supported everywhere I've looked. MD5 might be a poor choice for use in crypto, but I see no reason why it's not suitable for the purpose of producing a fixed-length identifier. [MD5: The broken algorithm](https://www.avira.com/en/blog/md5-the-broken-algorithm) suggests that the chance of an accidental collision between two values is on the order of 10<sup>-29</sup>.
 
 > But, as you can imagine, the probability of collision of hashes even for MD5 is terribly low. That probability is lower than the number of water drops contained in all the oceans of the earth together.
 
@@ -89,12 +89,12 @@ LNQBvcVam593N%2FIch10uJg%3D%3D
 
 So Base64 is a bad choice, despite being commonly available in databases and programming languages. [Base32](https://en.wikipedia.org/wiki/Base32) works better, being an alphabet without those funny symbols. It still has the problem of those equals symbols padding the end, but there's a worse problem - it's not very portable. Again, Base32 isn't available on BigQuery, for example.
 
-So the encoding I've chosen is boring old hexadecimal. It's available everywhere, only includes the characters 0-9 and a-f, and produces values of a manageable size. One last gotcha - hex conversion functions may return upper or lowercase a-f, so be aware of the need to pick one and upper/lower accordingly. The non-SQL example require imports, but the modules are part of the runtime, not third-party dependencies.
+So the encoding I've chosen is boring old hexadecimal. It's available everywhere, only includes the characters 0-9 and a-f, and produces values of a manageable size. One last gotcha - hex conversion functions may return upper or lowercase a-f, so be aware of the need to pick one and upper/lower accordingly. The non-SQL examples in the following table require imports, but the modules are part of the runtime, not third-party dependencies.
 
 |Ecosystem|Expression|Output|
 |---------|----------|------|
 |BigQuery|`SELECT UPPER(TO_HEX(MD5('tempered.works')))`|`2CD401BDC55A9B9F7737F21C875D2E26`|
-|Athena/Trino|`SELECT LOWER(TO_HEX(MD5(TO_UTF8('tempered.works'))))`|`2CD401BDC55A9B9F7737F21C875D2E26`|
+|Athena/Trino|`SELECT TO_HEX(MD5(TO_UTF8('tempered.works')))`|`2CD401BDC55A9B9F7737F21C875D2E26`|
 |Snowflake|`SELECT UPPER(MD5('tempered.works'))`|`2CD401BDC55A9B9F7737F21C875D2E26`|
 |Python|`hashlib.md5(b'tempered.works').hexdigest().upper()`|`2CD401BDC55A9B9F7737F21C875D2E26`|
 |NodeJS|`crypto.createHash('md5').update('tempered.works').digest('hex').toUpperCase()`|`2CD401BDC55A9B9F7737F21C875D2E26`|
@@ -113,7 +113,7 @@ So how does this solution compare to my list of needs?
 - It doesn't create lock-in ✓
 - It avoids depending on new software supply chains ✓
 - Collisions are very unlikely ✓
-- It should be efficient ✓
+- It's efficient ✓
 
 Looking good. I'll update this post if I come across any drawbacks in the future.
 
