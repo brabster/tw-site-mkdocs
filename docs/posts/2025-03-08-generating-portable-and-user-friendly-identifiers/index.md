@@ -9,7 +9,7 @@ categories:
 
 ![A screenshot of the BigQuery console, with example SQL for generating an identfier from a string value as I outline below](./assets/image.webp)
 
-I'll share how I generate unique identifiers from data in 2025, avoiding the pitfalls I've seen along the way. TL;DR: I'm using [MD5](https://en.wikipedia.org/wiki/MD5) to produce a digest from a string or bytes value, then I'm using plain old [hexadecimal](https://en.wikipedia.org/wiki/Hexadecimal) encoding of that digest, specifying upper or lowercase for the alpha characters. This solution best meets the needs I describe next.
+I'll share how I generate unique identifiers from data in 2025, avoiding the pitfalls I've seen along the way. TL;DR: I'm using [MD5](https://en.wikipedia.org/wiki/MD5) to produce a digest from a string or bytes value, then I'm using plain old [hexadecimal](https://en.wikipedia.org/wiki/Hexadecimal) encoding of that digest, specifying upper or lowercase for the alpha characters. This solution meets the needs I describe next.
 
 --8<-- "ee.md"
 
