@@ -115,5 +115,7 @@ So how does this solution compare to my list of needs?
 
 Looking good. I'll update this post if I come across any drawbacks in the future.
 
+> EDIT 2025–03-10: I looked into performance and usability for MD5/hex in responding to a direct question I received, and https://medium.com/@thomas.ellyatt/what-is-farm-fingerprint-in-bigquery-and-why-do-i-love-it-4605fdbcf8eb. I confirmed that you can JOIN on the underlying bytes value without encoding to a hex string, and this may offer scan savings of 50% on that column (based on onw experiment over 1m generated rows). Whilst farm_fingerprint offers an even more efficient join, it fails my usability and portability requirements and the scan savings are negligible, based on my own experiences.
+
 --8<-- "blog-feedback.md"
 
