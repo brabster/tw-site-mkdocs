@@ -35,7 +35,7 @@ The trusted network looks quite different. These devices can also call out to th
 
 Every description of a guest network, including [the guest network description provided by the Eero devices I use](https://support.eero.com/hc/en-us/articles/207895123-How-do-I-share-my-eero-network-with-guests), is very specific about the kinds of devices you should use the guest network for: "sharing your home WiFi with others".
 
-I now believe it makes sense to use the guest network for **everything** that does not need local network connectivity, and that nearly every device I use on this network falls into that category.
+I now believe it makes sense to use the guest network for **everything** that does not need local network connectivity, and that nearly every device I have falls into that category.
 
 ## What is zero trust?
 
