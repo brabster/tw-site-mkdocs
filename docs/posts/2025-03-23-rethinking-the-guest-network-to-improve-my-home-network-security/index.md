@@ -50,6 +50,12 @@ So, applying a more zero-trust approach, the meanings of these two networks flip
 - guest network: the **strong security** network, making it harder for an attacker to move between devices and compromise the things that matter
 - untrusted network: the **weak security** network where a compromised device can more easily affect all the devices on that network
 
+## What did I do?
+
+I just started using my guest network for all my devices, instead of just visitors' devices. That involved going round existing devices, connecting them to the guest network, and having them "forget" the original "untrusted" network. I unplugged the couple of devices that were hard-wired into my network, and reconnected them to the guest network.
+
+Almost everything worked just as well on the guest network. I'll talk about those devices that didn't now.
+
 ## Which devices need local network connectivity?
 
 I've found local network connectivity is rarely needed - the only devices I have that I believe need it are:
@@ -58,7 +64,7 @@ I've found local network connectivity is rarely needed - the only devices I have
 - Sonos soundbar
 - IKEA dirigera hub and connected IoT devices
 
-Although I've struggled to find a definitive statement from the vendors, my experience is that these devices need to be on the same WiFi network as the device that is controlling them. The good news is that these devices don't **need** any access to anything that matters. I have these devices connected to my "untrusted" network.
+I think they're fairly easy to identify up front as the instructions say or imply you need to be on the same network as the device to use it - which can only work on the "untrusted" network. The good news is that these devices don't **need** any access to anything that matters, so I have them connected to my "untrusted" network.
 
 ### Adding an isolated home hub
 
@@ -73,6 +79,17 @@ I felt it important to register a new Google account as part of the process. Had
 So what's on my "guest" network? My phone, tablet, personal laptop, work laptop, my partner's personal and work devices, my child's Yoto player (another app I deleted from my phone, my partner and I use the hub to manage his story player now!), our games console, our smart TV, Switchbot temperature and humidity sensor, Ring doorbell, kindle - and so on. The point is almost all of the devices we have and use don't need local network access. They need to talk to the internet and that's it. My VPN (I use ExpressVPN) also works just fine on my guest network as you'd expect.
 
 I don't do anything cool or impressive on my home network - back in the day I had my WiFi printer, NAS, Raspberry Pi and so on, and those might have made the switch more difficult. I don't have anything like that these days. For me, they represent a lot of risk for minor cool and convenience and I can't justify or afford the time required to apply appropriate levels of security diligence. My advice to anyone who's being forced onto their "untrusted" network by unnecessary technology would be to think carefully about whether you can justify it.
+
+## My current home network setup
+
+To wrap, here's a diagram of how I currently visualise my home network, referring back to my earlier discussion.
+
+<figure markdown="span">
+ ![Diagram of a home network setup, showing devices connected to a WiFi router and an untrusted network with various smart devices.](./assets/home_setup.webp)
+ <figcaption>My ISP's router and my WiFi router chain out to the internet, with a small untrusted network with just the untrusted devices that need to be there, alongside the guest network visualised as independent devices connecting to the internet.</figcaption>
+</figure>
+
+I'd love to hear about anything I got wrong in this setup, additional steps I could reasonably take to further improve my security posture, or any value you got out of this writing!
 
 --8<-- "blog-feedback.md"
 
