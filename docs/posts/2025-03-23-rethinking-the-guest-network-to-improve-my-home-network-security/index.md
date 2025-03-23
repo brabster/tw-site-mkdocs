@@ -5,7 +5,7 @@ date: 2025-03-23
 
 ![Network diagram showing the internet connected to a router, linked to four devices: tablet, mobile phone, laptop, and IoT device.](./assets/schematic_guest_network.webp)
 
-I believe that making my guest network my default network reduces the potential harm a compromised app or device can cause. What was my "trusted" network is now my "untrusted" network, with only a few low-risk devices that **really** need local network connectivity connected to it, isolated from other devices that matter.
+I believe that making my guest network my default network reduces the potential harm a compromised app or device can cause. What was my "trusted" network is now my "untrusted" network, with only a few low-risk devices that **really** need local network connectivity connected to it, isolated from other devices that matter like my phone and work laptop.
 
 It's a simple change in how you use your home network, rather than requiring in-depth knowledge and experience. Having operated this way at home for a few months now, I've found little impact on day-to-day usability, but it's really helped me sleep better at night. I'll explain what I changed, why, and how I've adjusted my wider thinking on my home network security to take better advantage of this approach.
 
@@ -15,7 +15,7 @@ It's a simple change in how you use your home network, rather than requiring in-
 
 ## What's a "guest" network?
 
-Modern routers generally support a "guest" network, alongside the "trusted" network. The purpose of this guest network is to allow untrusted devices to use your fast and cheap internet connectivity without giving them any access to devices on your home network. ["What’s a guest Wi-Fi network, and why do you need one?"](https://www.kaspersky.co.uk/blog/guest-wifi/14446/) via Kaspersky describes the risk that this setup mitigates.
+Modern routers generally support a "guest" network, alongside the "trusted" network. The purpose of this guest network is to allow untrusted devices to use your fast and cheap internet connectivity without giving them any access to devices on your home network. ["What’s a guest Wi-Fi network, and why do you need one?"](https://www.kaspersky.co.uk/blog/guest-wifi/14446/) via Kaspersky describes the risk that this setup mitigates. That articles also walks through typical guest network setup if you currently don't have one - it should be a simple thing to set up.
 
 > Many pieces of malware are able to spread themselves over a local network, and if an infected device is connected to your Wi-Fi, it will try to contaminate everything in its range.
 
