@@ -1,6 +1,9 @@
 ---
 title: Rethinking the guest network to improve my home network security
 date: 2025-03-23
+categories:
+  - security
+  - operations
 ---
 
 ![Network diagram showing the internet connected to a router, linked to four devices: tablet, mobile phone, laptop, and IoT device.](./assets/schematic_guest_network.webp)
