@@ -1,7 +1,7 @@
 [build]
     command = "mkdocs build --strict"
     publish = "site"
-    environment = { PYTHON_VERSION = "3.12" }
+    environment = { PYTHON_VERSION = "3" }
 
 [context.production.environment]
     SITE_URL = "https://tempered.works"
