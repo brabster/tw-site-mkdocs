@@ -34,7 +34,7 @@ I'm happy to answer any questions you might have that I can help with, so please
 
 They waited until the end of the first year at uni to tell us that there weren't many jobs in physics, so that was my dream of writing maths on whiteboards for a living up the spout. My mum had gone to university after the divorce, getting a degree in computing and working as a contractor before getting a job in IT with a bank. I was too young to understand much about it at the time.
 
-She told twenty-one-year-old me to apply for the graduate scheme. I got in, and that set up my next thirteen years with HSBC, starting out in IT Security (first job: stuffing [Lotus Notes](https://en.wikipedia.org/wiki/HCL_Notes) passwords into envelopes) and ending up programming in Global Banking and Markets. I was aware of some contractors here and there, but I don't recall ever meeting one, let alone talking to them about contracting or anything much else.
+A few years later, she told twenty-one-year-old me to apply for the graduate scheme. I got in, and that set up my next thirteen years with HSBC, starting out in IT Security (first job: stuffing [Lotus Notes](https://en.wikipedia.org/wiki/HCL_Notes) passwords into envelopes) and ending up programming in Global Banking and Markets. I was aware of some contractors here and there, but I don't recall ever meeting one, let alone talking to them about contracting or anything much else.
 
 The other contact with contractor-types I can remember from these early days was my avid reading of Martin Fowler, Sam Newman, and the other luminaries at [Thoughtworks](https://en.wikipedia.org/wiki/Thoughtworks).
 
