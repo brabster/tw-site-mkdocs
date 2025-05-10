@@ -1,6 +1,8 @@
 ---
 title: My path to consultancy
 date: 2025-04-11
+categories:
+  - operations
 ---
 
 ![A country road stretches off into the sunny, leafy distance as my little boy cycles his favourite route home from school](./assets/country_road.webp)
