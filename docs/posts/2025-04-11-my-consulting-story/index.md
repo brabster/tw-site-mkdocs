@@ -22,7 +22,7 @@ Taking the plunge to become a contractor and consultant back in 2018 was one of 
 - I wasted time on a custom website before going with a static site generator and trustworthy theme.
 - Accounting and tax were more complicated than I realised, causing some hassle and unexpected, painful tax bills. If I were doing it again, I'd look for a well-recommended human accountant to show me the ropes and help me through the first year or two.
 - I've been able to pursue opportunities with teams and organisations that probably wouldn't have been open to me otherwise.
-- The work has been challenging in good ways, and I feel my professional development has benefited.
+- The work has been challenging in good ways, and I feel my professional development has been accelerated.
 - My fears about becoming mercenary and distant from the people I worked with were unfounded.
 - I've gained access to a great network of people who challenge and push me, and I've been able to stay in touch with the teams I've worked with over the years and see how my decisions played out.
 
