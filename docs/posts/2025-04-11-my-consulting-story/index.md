@@ -18,14 +18,17 @@ Taking the plunge to become a contractor and consultant back in 2018 was one of 
 - Didn't need to wear a suit, or buy a briefcase.
 - I had no problems finding work - contractors are just humans too, and my experience was up to the task.
 - The income was a big step up at a time when I needed it.
-- It really pushed the breadth and depth of my experience.
-- I've been able to pursue opportunities with teams and organisations that probably wouldn't have been open to me otherwise.
-- My fears about becoming mercenary and distant from the people I worked with were unfounded.
 - Setting up and running a business was easy enough, and felt pretty good.
 - I wasted time on a custom website before going with a static site generator and trustworthy theme.
 - Accounting and tax were more complicated than I realised, causing some hassle and unexpected, painful tax bills. If I were doing it again, I'd look for a well-recommended human accountant to show me the ropes and help me through the first year or two.
+- I've been able to pursue opportunities with teams and organisations that probably wouldn't have been open to me otherwise.
+- The work has been challenging in good ways, and I feel my professional development has benefited.
+- My fears about becoming mercenary and distant from the people I worked with were unfounded.
+- I've gained access to a great network of people who challenge and push me, and I've been able to stay in touch with the teams I've worked with over the years and see how my decisions played out.
 
-I took a permanent job with Equal Experts when I was offered it at a time of great personal and professional uncertainty in 2020 - new baby, COVID, and IR35. I feel like I've got the best of both worlds now, getting to be more consultant than contractor whilst being part of a great organisation.
+I took a permanent job with Equal Experts when I was offered it at a time of great personal and professional uncertainty in 2020 - new baby, COVID, and IR35. I feel like I've got the best of both worlds now, getting to be more consultant than contractor whilst being part of a great organisation. Tempered Works Ltd. is still alive but dormant in case I want to go back to being my own boss one day.
+
+I'm happy to answer any questions you might have that I can help with, so please feel free to give me a shout on [LinkedIn](https://www.linkedin.com/in/paulbrabban/).
 
 ## Prologue
 
@@ -75,7 +78,7 @@ I'll be honest. Day-rate money was frankly ridiculous compared to the salaries I
 
 If I were doing it again, I'd pay for a human accountant for the first year or two until I'd got a better handle on how accounting and tax works.
 
-## The first gig
+## My first gig
 
 It didn't take long to get my first engagement. I can't remember how I advertised my services, perhaps it was just on LinkedIn. I had a fair bit of AWS experience, I was a certified solution architect, but the gig needed Google Cloud. I remember standing outside the bus stop in the sunshine with the recruiter telling me not to worry about it, my skills would transfer and I'd be fine. I took the gig. There was a tech test and interview to get through, but they were fine, no different to what I'd expect for a permanent role.
 
