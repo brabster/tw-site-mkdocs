@@ -22,6 +22,7 @@ Taking the plunge to become a contractor and consultant back in 2018 was one of 
 - I've been able to pursue opportunities with teams and organisations that probably wouldn't have been open to me otherwise.
 - My fears about becoming mercenary and distant from the people I worked with were unfounded.
 - Setting up and running a business was easy enough, and felt pretty good.
+- I wasted time on a custom website before going with a static site generator and trustworthy theme.
 - Accounting and tax were more complicated than I realised, causing some hassle and unexpected, painful tax bills. If I were doing it again, I'd look for a well-recommended human accountant to show me the ropes and help me through the first year or two.
 
 I took a permanent job with Equal Experts when I was offered it at a time of great personal and professional uncertainty in 2020 - new baby, COVID, and IR35. I feel like I've got the best of both worlds now, getting to be more consultant than contractor whilst being part of a great organisation.
