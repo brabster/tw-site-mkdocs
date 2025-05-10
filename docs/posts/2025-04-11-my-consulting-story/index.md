@@ -88,7 +88,7 @@ I decided I wanted to diversify my experience, so I politely refused an extensio
 
 ## Evolving this site
 
-I wasted a lot of time building my own [custom React-based site in the early days](../2018-08-19-setting-up-a-gatsby-site/index.md). I wanted to have my own look and feel and thought that exercising my React skills would be helpful in finding work. After a while, I realised that I was spending too much time on the site and not enough on why the site was there - an accessible medium for me to share my experience and stash useful, referenceable material.
+I wasted a lot of time building my own [custom React-based site in the early days](../2018-08-19-setting-up-a-gatsby-site/index.md). I wanted to have my own look and feel and thought that exercising my React skills would be helpful in finding work. After a while, I realised that I was spending too much time on the site and not enough on why the site was there - to support my business and an accessible medium for me to share my experience and thoughts.
 
 I eventually found a [neat, blog-capable static site generator in mkdocs-material](../2024-03-29-mkdocs-material/index.md) that provided me the kind of publishing workflow and clean look and feel I wanted along with enough flexibilty to do everything I wanted. It's also got a lot of sponsorship and funding and a maintainance team that seems responsible and responsive, so I think it's a trustworthy option.
 
