@@ -17,3 +17,9 @@ The blog should be optimised for search engines, using relevant keywords and phr
 The blog should include appropriate links to sources and references, providing additional context and information for the reader.
 Any links in the blog should be checked for accuracy and functionality, ensuring they lead to the correct and relevant content.
 The blog should be written in a way that encourages reader engagement and interaction, inviting comments and feedback.
+
+## Categories
+
+Blog posts should have one or more categories, chosen from the list in #mkdocs.yml.
+Descriptions for each categories can be found under #docs/categories.
+If no suitable categories are found, a new category should be suggested.
