@@ -30,7 +30,7 @@ I took a permanent job with Equal Experts when I was offered it at a time of gre
 
 I feel like I've got the best of both worlds now, getting to be more consultant than contractor whilst being part of a great organisation. Tempered Works Ltd. is still alive but dormant in case I want to go back to being my own boss one day.
 
-I recognise that I don't belong to an underrepresented group in the tech industry. While I can't speak to the challenges others may face, I hope sharing my experiences can still provide some value or insight for those considering a similar path. I'm hoping this account will help others with more interesting stories to share their experiences and thoughts!
+I recognise that I don't belong to an underrepresented group in the tech industry. While I can't speak to the challenges others may face, I hope sharing my experiences can still provide some value or insight for those considering a similar path. I'm hoping this account will help others with more interesting stories to share their experiences and thoughts and I'll add links to any I'm made aware of!
 
 I'm also happy to answer any questions you might have that I can help with, so please feel free to give me a shout on [LinkedIn](https://www.linkedin.com/in/paulbrabban/). I will not share anything from any conversation without permission.
 
@@ -112,11 +112,12 @@ My first engagement with EE wasn't a great fit, being quite slow-moving (I'm not
 
 In 2020 I was offered a permanent position as a consultant with EE and I took it, despite the drop in income. Why?
 
+- Equal Experts was really great to work with.
 - My son had just been born.
 - COVID had just hit.
 - [IR35 legislation](https://en.wikipedia.org/wiki/IR35) was about to be implemented in the private sector.
 
-Whilst I had done nothing to avoid tax, I remember feeling unsure that I knew enough to be on the right side of the IR35 legislation. I felt that the legalese and opinions surrounding it were confusing and that if I got something wrong for any period of time, the financial consequences could be severe. Taking the job felt like an easy option, and I hoped to learn more about the inner workings of a successful consultancy.
+Whilst I had done nothing to avoid tax, I remember feeling unsure that I knew enough to be on the right side of the IR35 legislation. I felt that the legalese and opinions surrounding it were confusing and that if I got something wrong for any period of time, the financial consequences could be severe. Taking the job felt like a safe option, and I hoped to learn more about the inner workings of a successful consultancy.
 
 Tempered Works Ltd. still exists but is dormant at the moment. I'm able to keep the company alive for less than a couple of hundred GBP per year. I was also able to get a tweak to my contract so I could wrap up a light engagement with [The Developer Academy](https://thedeveloperacademy.com/), providing some course materials and teaching for their new data science bootcamp. I write on the EE blog, but I'm still able to write independently here, and I just credit Equal Experts where my writing crosses over significantly or involves some time in working hours, like this:
 
@@ -124,7 +125,13 @@ Tempered Works Ltd. still exists but is dormant at the moment. I'm able to keep 
 
 As an associate and an employee, I've had access to lots of other people and their experiences through our Slack. That's been really useful in collecting up other people's ideas and putting my own out there to be challenged.
 
-I've also had the huge benefit of staying in communication with the teams I've worked with over the years, and in particular the people who saw how my decisions played out after I moved on. By and large, the things I leave behind for the next person seem to work out positively in my absence! I'm very grateful for those long-term perspectives where I've been able to get them.
+I've also had the huge benefit of staying in communication with the teams I've worked with over the years, and in particular the people who saw how my decisions played out after I moved on. By and large, the things I leave behind for the next person seem to have worked out positively in my absence! I'm very grateful for those long-term perspectives where I've been able to get them.
+
+## Next steps
+
+If you've got a few years of experience and you're considering contracting or consulting, I'm happy to answer any questions you might have that I can help with, so please feel free to give me a shout on [LinkedIn](https://www.linkedin.com/in/paulbrabban/). I will not share anything from any conversation without permission.
+
+I'd also really recommend taking a look at joining the Equal Experts network, for all the reasons I talked about earlier. [Up-to-date info about joining is available on the site](https://www.equalexperts.com/join-us/). I'll signpost [our values](https://www.equalexperts.com/about-us/our-values/), which are really important to all of us and haven't really changed since I first read them back in the day.
 
 --8<-- "blog-feedback.md"
 
