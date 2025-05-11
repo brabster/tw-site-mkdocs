@@ -30,7 +30,9 @@ I took a permanent job with Equal Experts when I was offered it at a time of gre
 
 I feel like I've got the best of both worlds now, getting to be more consultant than contractor whilst being part of a great organisation. Tempered Works Ltd. is still alive but dormant in case I want to go back to being my own boss one day.
 
-I'm hoping this account will help others with more interesting stories to share their experiences and thoughts! I'm also happy to answer any questions you might have that I can help with, so please feel free to give me a shout on [LinkedIn](https://www.linkedin.com/in/paulbrabban/).
+I recognise that I don't belong to an underrepresented group in the tech industry. While I can't speak to the challenges others may face, I hope sharing my experiences can still provide some value or insight for those considering a similar path. I'm hoping this account will help others with more interesting stories to share their experiences and thoughts!
+
+I'm also happy to answer any questions you might have that I can help with, so please feel free to give me a shout on [LinkedIn](https://www.linkedin.com/in/paulbrabban/). I will not share anything from any conversation without permission.
 
 ## Prologue
 
