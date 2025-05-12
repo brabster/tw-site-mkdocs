@@ -1,6 +1,6 @@
 ---
 title: My path to consultancy
-date: 2025-04-11
+date: 2025-05-11
 categories:
   - operations
 ---
@@ -30,9 +30,7 @@ I took a permanent job with Equal Experts when I was offered it at a time of gre
 
 I feel like I've got the best of both worlds now, getting to be more consultant than contractor whilst being part of a great organisation. Tempered Works Ltd. is still alive but dormant in case I want to go back to being my own boss one day.
 
-I recognise that I don't belong to an underrepresented group in the tech industry. While I can't speak to the challenges others may face, I hope sharing my experiences can still provide some value or insight for those considering a similar path. I'm hoping this account will help others with more interesting stories to share their experiences and thoughts and I'll add links to any I'm made aware of!
-
-I'm also happy to answer any questions you might have that I can help with, so please feel free to give me a shout on [LinkedIn](https://www.linkedin.com/in/paulbrabban/). I will not share anything from any conversation without permission.
+I recognise that I don't belong to an underrepresented group in the tech industry and I can't speak to the challenges others may face. I hope sharing my experiences can still provide some value or insight for those considering a similar path. I'm also happy to answer any questions you might have that I can help with, so please feel free to give me a shout on [LinkedIn](https://www.linkedin.com/in/paulbrabban/). I will not share anything from any conversation without permission.
 
 ## Prologue
 
@@ -74,11 +72,11 @@ Time to embrace my inner mercenary.
 
 [LinkedIn says I started Tempered Works Ltd. in May 2018](https://www.linkedin.com/in/paulbrabban/details/experience/). I knew a couple of contractor people (as well as my mum, although she'd long since gone permanent!) well enough to buy them a coffee and pick their brains about what to do next and got advice on things like how to find work, how to set up my company, and how the banking and accounting side of things works. It's a bit of a blur now, but here's what I remember.
 
-Heading to the library to take photocopies of documents (maybe I even had to fax them like it was the late 1900s) to Metro Bank to get my bank account set up. Metro was the bank that Crunch recommended, so I just went with them. I've since switched to a Monzo business account, and I've ended up [writing a bit of code to make preparing my expenses quicker and easier](https://github.com/brabster/monzo-crunch-convert). Recording expenses was a worry, but that part turned out to be pretty easy. It all takes a bit of time, but it's not a big deal.
-
-I also remember the coffee shop I was sitting in before an interview with Infinity Works where I was deciding on a company name. I was going to use [the domain I got for my old blog, crossedstreams.com](https://crossedstreams.com/), but Urban Dictionary warned me about other meanings related to "crossing the streams" that have nothing to do with the Ghostbusters movies. Scratch that idea then. Sheffield has loads of places today built in old industrial buildings called things like "Cutlery Works" and "Electric Works" around these parts. We've got a proud history of steelmaking, and [tempering is a process to make steel tougher and less likely to break under stress](https://en.wikipedia.org/wiki/Tempering_(metallurgy)). I liked that idea as an analogy for what I like to think I do, so Tempered Works Ltd. was born.
+I remember the coffee shop I was sitting in before an interview with Infinity Works where I was deciding on a company name. I was going to use [the domain I got for my old blog, crossedstreams.com](https://crossedstreams.com/), but Urban Dictionary warned me about other meanings related to "crossing the streams" that have nothing to do with the Ghostbusters movies. Scratch that idea then. Sheffield has loads of places today built in old industrial buildings called things like "Cutlery Works" and "Electric Works" around these parts. We've got a proud history of steelmaking, and [tempering is a process to make steel tougher and less likely to break under stress](https://en.wikipedia.org/wiki/Tempering_(metallurgy)). I liked that idea as an analogy for what I like to think I do, so Tempered Works Ltd. was born.
 
 I'll be honest. Day-rate money was frankly ridiculous compared to the salaries I'd been working for before. I'd been worried about not making enough pension contributions in the latter part of my career to date, and I was able to pay the bills and start building a better retirement buffer very quickly. On the advice of one of the contractors I spoke to, I went with [crunch.co.uk](https://www.crunch.co.uk/) for accounting. I didn't have the confidence to do "my books" on my own, but I didn't want to pay for an actual human accountant. Despite my best efforts, I did get some things wrong here and there and ended up with occasional hassle and painful, unexpected tax bills.
+
+I remember heading to the library to take photocopies of documents (maybe I even had to fax them like it was the late 1900s) to Metro Bank to get my bank account set up. Metro was the bank that Crunch recommended, so I just went with them. I've since switched to a Monzo business account, and I've ended up [writing a bit of code to make preparing my expenses quicker and easier](https://github.com/brabster/monzo-crunch-convert). Recording expenses was a worry, but that part turned out to be pretty easy. It all takes a bit of time, but it's not a big deal.
 
 If I were doing it again, I'd pay for a human accountant for the first year or two until I'd got a better handle on how accounting and tax works.
 
