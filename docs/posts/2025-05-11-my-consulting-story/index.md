@@ -15,7 +15,7 @@ I had big doubts about becoming a consultant or contractor. Could I do it? Would
 
 Becoming a contractor and consultant back in 2018 was one of the best moves I've made.
 
-- Didn't need to wear a suit, or buy a briefcase.
+- I didn't need to wear a suit, or buy a briefcase.
 - I had no problems finding work - contractors are just humans too, and my experience was up to the task.
 - The income was a big step up at a time when I needed it.
 - Setting up and running a business was easy enough, and felt pretty good.
@@ -64,27 +64,25 @@ Then, as far as I know, the startup ran short of money. The other people there w
 
 Bills to pay.
 
-Need money.
-
 Time to embrace my inner mercenary.
 
 ## Tempered Works Ltd.
 
 [LinkedIn says I started Tempered Works Ltd. in May 2018](https://www.linkedin.com/in/paulbrabban/details/experience/). I knew a couple of contractor people (as well as my mum, although she'd long since gone permanent!) well enough to buy them a coffee and pick their brains about what to do next and got advice on things like how to find work, how to set up my company, and how the banking and accounting side of things works. It's a bit of a blur now, but here's what I remember.
 
-I remember the coffee shop I was sitting in before an interview with Infinity Works where I was deciding on a company name. I was going to use [the domain I got for my old blog, crossedstreams.com](https://crossedstreams.com/), but Urban Dictionary warned me about other meanings related to "crossing the streams" that have nothing to do with the Ghostbusters movies. Scratch that idea then. Sheffield has loads of places today built in old industrial buildings called things like "Cutlery Works" and "Electric Works" around these parts. We've got a proud history of steelmaking, and [tempering is a process to make steel tougher and less likely to break under stress](https://en.wikipedia.org/wiki/Tempering_(metallurgy)). I liked that idea as an analogy for what I like to think I do, so Tempered Works Ltd. was born.
+I remember the coffee shop I was sitting in before an interview with Infinity Works where I was deciding on a company name. I was going to use [the domain I got for my old blog, crossedstreams.com](https://crossedstreams.com/), but Urban Dictionary warned me about other meanings related to "crossing the streams" that have nothing to do with the Ghostbusters movies. Scratch that idea then. Sheffield has loads of places today built in old industrial buildings called things like "Cutlery Works" and "Electric Works". We've got a proud history of steelmaking, and [tempering is a process to make steel tougher and less likely to break under stress](https://en.wikipedia.org/wiki/Tempering_(metallurgy)). I liked that idea as an analogy for what I like to think I do, so Tempered Works Ltd. was born.
 
 I'll be honest. Day-rate money was frankly ridiculous compared to the salaries I'd been working for before. I'd been worried about not making enough pension contributions in the latter part of my career to date, and I was able to pay the bills and start building a better retirement buffer very quickly. On the advice of one of the contractors I spoke to, I went with [crunch.co.uk](https://www.crunch.co.uk/) for accounting. I didn't have the confidence to do "my books" on my own, but I didn't want to pay for an actual human accountant. Despite my best efforts, I did get some things wrong here and there and ended up with occasional hassle and painful, unexpected tax bills.
 
-I remember heading to the library to take photocopies of documents (maybe I even had to fax them like it was the late 1900s) to Metro Bank to get my bank account set up. Metro was the bank that Crunch recommended, so I just went with them. I've since switched to a Monzo business account, and I've ended up [writing a bit of code to make preparing my expenses quicker and easier](https://github.com/brabster/monzo-crunch-convert). Recording expenses was a worry, but that part turned out to be pretty easy. It all takes a bit of time, but it's not a big deal.
+I remember heading to the library to take photocopies of documents (maybe I even had to fax them like it was the late 1900s) to Metro Bank to get my bank account set up. Recording expenses and filing paperwork was a worry, but that part turned out to be pretty easy. It all takes a bit of time, but it's not a big deal.
 
 If I were doing it again, I'd pay for a human accountant for the first year or two until I'd got a better handle on how accounting and tax works.
 
 ## My first gig
 
-It didn't take long to get my first engagement. I can't remember how I advertised my services, perhaps it was just on LinkedIn. I had a fair bit of AWS experience, I was a certified solution architect, but the gig needed Google Cloud. I remember standing outside the bus stop in the sunshine with the recruiter telling me not to worry about it, my skills would transfer and I'd be fine. I took the gig. There was a tech test and interview to get through, but they were fine, no different to what I'd expect for a permanent role.
+It didn't take long to get my first engagement. I can't remember how I advertised my services, perhaps it was just on LinkedIn. I had a fair bit of AWS experience, I was a certified solution architect, but the gig needed Google Cloud. I remember standing outside a bus stop in the sunshine with the recruiter telling me not to worry about it, my skills would transfer and I'd be fine. I took the gig. There was a tech test and interview to get through, but they were no different to what I'd expect for a permanent role.
 
-He was right, and I had a really enjoyable first engagement with [Dunnhumby](https://www.dunnhumby.com/), a super-cool data science company. I'm normally not sure if I can directly link myself to a client, so I avoid it. In this case, I'd had writing published on their public blog, so the link is already there.
+He was right, and I had a really enjoyable first engagement with [Dunnhumby](https://www.dunnhumby.com/), a super-cool data science company. I'm normally not sure if I can directly link myself to a client but in this case, I'd had writing published on their public blog, so the link is already out there.
 
 I decided I wanted to diversify my experience, so I politely refused an extension to go and do something else. I recall the person paying for me saying that I wasn't like other contractors he'd worked with, more like part of the team. It was great to get that feedback, reinforcing that I could succeed as a contractor without being aloof and distant!
 
@@ -92,7 +90,7 @@ I decided I wanted to diversify my experience, so I politely refused an extensio
 
 I wasted a lot of time building my own [custom React-based site in the early days](../2018-08-19-setting-up-a-gatsby-site/index.md). I wanted to have my own look and feel and thought that exercising my React skills would be helpful in finding work. After a while, I realised that I was spending too much time on the site and not enough on why the site was there - to support my business and an accessible medium for me to share my experience and thoughts.
 
-I eventually found a [neat, blog-capable static site generator in mkdocs-material](../2024-03-29-mkdocs-material/index.md) that provided me the kind of publishing workflow and clean look and feel I wanted along with enough flexibilty to do everything I wanted. It's also got a lot of sponsorship and funding and a maintainance team that seems responsible and responsive, so I think it's a trustworthy option.
+I eventually found a [neat, blog-capable static site generator in mkdocs-material](../2024-03-29-mkdocs-material/index.md) that provided me the kind of publishing workflow, flexibility and clean look and feel I wanted. It's also got a lot of sponsorship and funding and a maintainance team that seems responsible and responsive, so I think it's a trustworthy option.
 
 ## Equal Experts - Associate
 
@@ -110,7 +108,7 @@ My first engagement with EE wasn't a great fit, being quite slow-moving (I'm not
 
 In 2020 I was offered a permanent position as a consultant with EE and I took it, despite the drop in income. Why?
 
-- Equal Experts was really great to work with.
+- I had a great experience working with Equal Experts.
 - My son had just been born.
 - COVID had just hit.
 - [IR35 legislation](https://en.wikipedia.org/wiki/IR35) was about to be implemented in the private sector.
