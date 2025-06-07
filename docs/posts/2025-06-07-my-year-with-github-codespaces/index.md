@@ -2,8 +2,8 @@
 title: GitHub Codespaces, one year later
 date: 2025-06-07
 categories:
-    - Security
-    - Operations
+    - security
+    - operations
 ---
 
 ![A screenshot of the GitHub web UI option to create a new Codespace on main](./assets/codespaces_hero.webp)
@@ -22,7 +22,7 @@ I joined a team and found another new team member who had been struggling to get
 
 [Codespaces uses the devcontainer spec](https://github.com/devcontainers). I had already created a [`devcontainer.json`](https://containers.dev/implementors/json_reference/) for the repo we were working on to get myself up and running. When I paired with my team-mate and saw the kinds of difficulties they were having, I suggested trying a Codespace. A couple of clicks plus a minute or so later, they were up and running in their web browser, able to start orienting themselves with the work in progress and very quickly started making significant contributions. It is not just the IDE - the OS version, supporting software like `gcloud` or `awscli` tooling to authenticate, IDE plugins - all of this can be quite easily managed as part of the repo.
 
-There are different ways of running Codespaces, including plugging my local VSCode into the Codespace running in the cloud. (I think some [other IDEs like IntelliJ are supported by Codespaces](https://blog.jetbrains.com/blog/2022/11/09/remote-development-in-jetbrains-ides-now-available-to-github-codespaces-users/), but I have not tried them myself.) I used this option temporarily to continue working when an [obscure privacy setting I had enabled broke Codespaces and a number of other websites via a Chrome browser update back in October](../2024-10-20-google-chrome-oct-15-update-break/). The devcontainer configuration can also be used with a local container runtime, although I was unable to get this working owing to my use of rootless Docker (and Podman) being unsupported at the time.
+There are different ways of running Codespaces, including plugging my local VSCode into the Codespace running in the cloud. (I think some [other IDEs like IntelliJ are supported by Codespaces](https://blog.jetbrains.com/blog/2022/11/09/remote-development-in-jetbrains-ides-now-available-to-github-codespaces-users/), but I have not tried them myself.) I used this option temporarily to continue working when an [obscure privacy setting I had enabled broke Codespaces and a number of other websites via a Chrome browser update back in October](../2024-10-20-google-chrome-oct-15-update-break/index.md). The devcontainer configuration can also be used with a local container runtime, although I was unable to get this working owing to my use of rootless Docker (and Podman) being unsupported at the time.
 
 I've been using the browser-based VSCode option, and it places no more demand on my physical computer than Google Sheets. I can get away with a relatively cheap, light machine, and I have been stripping away software that I used to install and no longer need. The fact that I can source-control OS, software installation and configuration declaratively in the devcontainer setup and then anyone with a functional computer that can run a web browser can become productive in minutes feels like a huge step forward. I've certainly spent plenty of time over the years dealing with local environment problems on my own and other people's computers!
 
