@@ -40,9 +40,41 @@ If I'm experimenting with a new library or evaluating an open-source repo that I
 
 Infostealing malware is all the rage for the bad actors these days. [A recent report says that infostealers stole 2.1 billion credentials in 2024](https://www.scworld.com/brief/most-credentials-stolen-using-infostealing-malware-report-finds). I'm scared of these things, I want to minimise the risk of being exposed to one, and the impact if it should happen.
 
-If a package, IDE extension or some other software contains credential-stealing malware, it can only steal secrets that *that specific Codespace* has access to. There's still risk there as my Codespaces often contain powerful credentials like cloud authentication tokens, but secrets can be Codespace-specific and I try to minimise the secrets each Codespace has access to. 
+If a package, IDE extension or some other software contains credential-stealing malware, it can only steal secrets that *that specific Codespace* has access to. There's still risk there as my Codespaces often contain powerful credentials like cloud authentication tokens, but I keep secrets Codespace-specific and I minimise the number of secrets and how long they are valid for.
 
-My local machine and web browser, which is logged into countless personal and professional services, is completely out of reach (as far as I know). Malware in one Codespace cannot see credentials used in a different Codespace for another project or client. This literally helps me sleep better at night, knowing I've taken more steps to protect my family, employer and clients.
+As far as I know, my local machine and web browser, logged into countless personal and professional services, is completely out of reach of malware that might slip into a Codespace though the various supply chains that lead to a modern development environment. That reduces the blast radius if something does go wrong, and literally helps me sleep better at night, knowing I've taken more steps to protect my family, employer and clients.
+
+The devcontainer setup for this website's repo is an example. [`devcontainer.json`](https://github.com/brabster/tw-site-mkdocs/blob/main/.devcontainer/devcontainer.json) points to a Dockerfile, setups up githooks and grants read access to a private fork of my mkdocs theme. Things are locked down by default and I need to explicity add permissions.
+
+```json
+{
+  "build": { "dockerfile": "Dockerfile" },
+  "postCreateCommand": "git config --local core.hooksPath .githooks/",
+  "customizations": {
+    "codespaces": {
+      "repositories": {
+        "brabster/mkdocs-material-insiders": {
+          "permissions": {
+            "contents": "read"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+The associated [Dockerfile](https://github.com/brabster/tw-site-mkdocs/blob/main/.devcontainer/Dockerfile) just updates the OS and installed a few packages related to image optimisation.
+
+```dockerfile
+FROM mcr.microsoft.com/devcontainers/python:3
+
+# image processing dependencies for optimize plugin
+RUN apt-get update && \
+    apt-get install -y webp imagemagick bash-completion
+```
+
+I did not want to install those packages on my local machine, as I felt I couldn't justify the risk just to optimise by blog images, but in a Codespace, I don't see much risk. If one of those packages is compromised the bad actors might get credentials that let them read my private fork of my theme. Much less scary then the same compromise on my local machine.
 
 Onto the rainclouds.
 
