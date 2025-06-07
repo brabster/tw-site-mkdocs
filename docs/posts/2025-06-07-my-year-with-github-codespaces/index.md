@@ -36,13 +36,25 @@ I automate dependency updates as part of my `devcontainer` initialization. I upd
 
 ## Minimising blast radius
 
+Before Codespaces, I felt that my local environment had a nasty concentrating effect on supply chain risk - all supply chains, for everything I'd worked on, brought together in once place.
+
+<figure markdown="span">
+![A diagram showing the risks of local development environments, with arrows pointing from various sources of supply chain risk towards a central laptop, illustrating how vulnerabilities can concentrate on a single machine](./assets/local_insecurity.svg)
+<figcaption>Local development environments concentrate supply chain risk</figcaption>
+</figure>
+
+Now, with Codespaces, I feel that my local environment is well-isolated from each Codespace I use, exposed only to the user interface and interactions. Each Codespace is exposed to the minimal risk necessary for that specific piece of software.
+
+<figure markdown="span">
+![A diagram showing how GitHub Codespaces isolates supply chain risks, with separate arrows pointing to individual cloud-based environments rather than a single local machine](./assets/codespaces_security.svg)
+<figcaption>Codespaces isolates supply chain risk to individual environments</figcaption>
+</figure>
+
 If I'm experimenting with a new library or evaluating an open-source repo that I don't trust, I can spin it up in a Codespace with a click. It has no access to anything other than what's in that empty Codespace. It's not the first time I've seen recommendations for software only to spin it up in a blank Codespace and find it's running three-year old dependencies that are riddled with critical vulnerabilities. Erm - I'll pass thanks.
 
 Infostealing malware is all the rage for the bad actors these days. [A recent report says that infostealers stole 2.1 billion credentials in 2024](https://www.scworld.com/brief/most-credentials-stolen-using-infostealing-malware-report-finds). I'm scared of these things, I want to minimise the risk of being exposed to one, and the impact if it should happen.
 
-If a package, IDE extension or some other software contains credential-stealing malware, it can only steal secrets that *that specific Codespace* has access to. There's still risk there as my Codespaces often contain powerful credentials like cloud authentication tokens, but I keep secrets Codespace-specific and I minimise the number of secrets and how long they are valid for.
-
-As far as I know, my local machine and web browser, logged into countless personal and professional services, is completely out of reach of malware that might slip into a Codespace though the various supply chains that lead to a modern development environment. That reduces the blast radius if something does go wrong, and literally helps me sleep better at night, knowing I've taken more steps to protect my family, employer and clients.
+If a package, IDE extension or some other software contains credential-stealing malware, it can only steal secrets that *that specific Codespace* has access to. There's still risk there as my Codespaces often contain powerful credentials like cloud authentication tokens, but I keep secrets Codespace-specific and I minimise the number of secrets and how long they are valid for. As far as I know, my local machine and web browser, logged into countless personal and professional services, is completely out of reach of malware that might slip into a Codespace.
 
 The devcontainer setup for this website's repo is an example. [`devcontainer.json`](https://github.com/brabster/tw-site-mkdocs/blob/main/.devcontainer/devcontainer.json) points to a Dockerfile, setups up githooks and grants read access to a private fork of my mkdocs theme. Things are locked down by default and I need to explicity add permissions.
 
