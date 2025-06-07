@@ -76,7 +76,7 @@ The devcontainer setup for this website's repo is an example. [`devcontainer.jso
 }
 ```
 
-The associated [Dockerfile](https://github.com/brabster/tw-site-mkdocs/blob/main/.devcontainer/Dockerfile) just updates the OS and installed a few packages related to image optimisation.
+The associated [Dockerfile](https://github.com/brabster/tw-site-mkdocs/blob/main/.devcontainer/Dockerfile) just updates the OS and installs a few packages related to image optimisation.
 
 ```dockerfile
 FROM mcr.microsoft.com/devcontainers/python:3
@@ -86,7 +86,7 @@ RUN apt-get update && \
     apt-get install -y webp imagemagick bash-completion
 ```
 
-I did not want to install those packages on my local machine, as I felt I couldn't justify the risk just to optimise by blog images, but in a Codespace, I don't see much risk. If one of those packages is compromised the bad actors might get credentials that let them read my private fork of my theme. Much less scary then the same compromise on my local machine.
+I did not want to install those packages on my local machine, as I felt I couldn't justify the risk just to optimise my blog images, but in a Codespace, I don't see much risk. If one of those packages is compromised the bad actors might get credentials that let them read my private fork of my theme. Much less scary then the same compromise on my local machine.
 
 Onto the rainclouds.
 
@@ -115,19 +115,19 @@ So far, I've never run up enough usage or storage to get billed outside the free
 
 ### Sharp edges in billing
 
-I hit a particularly frustrating "sharp edge" with GitHub's billing system. Twice, despite being well within the free Codespaces tier, I was denied access to Codespaces because I had an insufficient balance to cover *other* minor GitHub charges (like sponsorships). Resolving this involved hours of contacting support to expedite the process. I now ensure my linked payment account always has enough to cover  GitHub charges, and I've raised the issue to GitHub support. I'm sure they don't want to disincentivise people paying for the pro tier or sponsorships!
+I hit a particularly frustrating "sharp edge" with GitHub's billing system. Twice, despite being well within the free Codespaces tier, I was denied access to Codespaces because I had an insufficient balance to cover *other* minor GitHub charges (like sponsorships). Resolving this involved hours of contacting support to expedite the process. I now ensure my linked payment account always has enough to cover GitHub charges, and I've raised the issue with GitHub support. I'm sure they do not want to disincentivise people paying for the pro tier or sponsorships!
 
-## Final Thoughts and Practical Advice
+## Final thoughts and advice
 
 If you're considering GitHub Codespaces as your primary development environment, here's my advice:
 
 * Try it out on personal projects. Take advantage of the free tier. I write these blog posts in Codespaces!
-* Codespaces (and [`devcontainer.json`](https://containers.dev/) in general) provide an environment that is far more similar to CI/CD systems likt GitHub Actions than a traditional local setup. I'm experimenting with ways to reuse more between Codespaces and GitHub actions.
-* It's a far better experience than full virtual desktops. In my experience, full virtual desktop environments have always been sluggish and awkward to work with. Codespaces slots into my day to day working without getting the way.
-* Consider local devcontainers as a stepping stone. Using devcontainers for local development could bring some of the consistency and security benefits withoutfully shifting to the cloud. I tried it first but ran into issues with rootless container runtimes.
-* Explore alternatives if GitHub isn't your ecosystem. While my experience has been tied to GitHub, similar concepts exist. For example, [Gitpod](https://www.gitpod.io/) is a cloud development environment often integrated with GitLab.
+* Codespaces (and [`devcontainer.json`](https://containers.dev/) in general) provide an environment that is far more similar to CI/CD systems like GitHub Actions than a traditional local setup. I'm experimenting with ways to reuse more between Codespaces and GitHub Actions.
+* It's a far better experience than full virtual desktops. In my experience, full virtual desktop environments have always been sluggish and awkward to work with. Codespaces slots into my day-to-day working without getting in the way.
+* Consider local devcontainers as a stepping stone. Using devcontainers for local development could bring some of the consistency and security benefits without, or before, fully shifting to the cloud. I tried local devcontainers first but ran into issues with my rootless container runtimes.
+* Explore alternatives if GitHub isn't your ecosystem. While my experience has been tied to GitHub, similar concepts exist. For example, [Gitpod](https://www.gitpod.io/) is a cloud development environment that I've seen integrated with GitLab.
 
-My year with GitHub Codespaces has been overwhelmingly positive. The day to day experience has been consistently good, sufficiently similar to local working that I've not been irritated by it. The challenges haven't been a big deal and it's definitely my preferred option today given the choice!
+My year with GitHub Codespaces has been overwhelmingly positive. The day-to-day experience has been consistently good, sufficiently similar to local working that I've not been irritated by it. The challenges have not been a big deal and it's definitely my preferred option today given the choice!
 
 --8<-- "ee.md"
 
