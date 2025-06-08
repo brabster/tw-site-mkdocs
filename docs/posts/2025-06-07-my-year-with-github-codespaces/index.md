@@ -90,7 +90,7 @@ I did not want to install those packages on my local machine, as I felt I couldn
 
 Onto the rainclouds.
 
-### The network tether
+## The network tether
 
 Codespaces, being cloud-based, demands consistent network connectivity. For me in the UK, on good home broadband or a stable phone hotspot, the latency is rarely noticeable. It feels just like working locally. There's no lag at the terminal, navigating directory structures, opening and scrolling through files is smooth. I've put together a [short video to illustrate what the experience of opening and starting work in a Codespace is like on a good network connection](https://www.youtube.com/watch?v=4sDDyr3Uhak).
 
@@ -98,7 +98,7 @@ When connectivity is slow or spotty, like when I'm on the train over to Manchest
 
 I've accepted the limitation and use that time for catching up on the reading I lament never having time to do, or working on Google Docs things in offline mode instead.
 
-### The cost
+## The cost
 
 GitHub offers a monthly free tier for personal accounts ([see GitHub Codespaces pricing](https://docs.github.com/en/billing/managing-billing-for-your-products/managing-billing-for-github-codespaces/about-billing-for-github-codespaces) for the latest details). Currently, this is 120 core hours and 15GB-month storage for Free plans, 180 core hours and 20GB for Pro plans. The smallest instance size you can get is two-core, so that's 60 hours by the clock on the wall, or about 3 hours a day for a 20-day working month (4.5 for the pro plan).
 
@@ -113,7 +113,7 @@ The 2-core instance bills at $0.18/hr (so the per-core price is currently $0.07/
 
 So far, I've never run up enough usage or storage to get billed outside the free tier.
 
-### Sharp edges in billing
+## Sharp edges in billing
 
 I hit a particularly frustrating "sharp edge" with GitHub's billing system. Twice, despite being well within the free Codespaces tier, I was denied access to Codespaces because I had an insufficient balance to cover *other* minor GitHub charges (like sponsorships). Resolving this involved hours of contacting support to expedite the process. I now ensure my linked payment account always has enough to cover GitHub charges, and I've raised the issue with GitHub support. I'm sure they do not want to disincentivise people paying for the pro tier or sponsorships!
 
