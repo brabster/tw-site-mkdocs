@@ -56,6 +56,10 @@ Infostealing malware is all the rage for the bad actors these days. [A recent re
 
 If a package, IDE extension or some other software contains credential-stealing malware, it can only steal secrets that *that specific Codespace* has access to. There's still risk there as my Codespaces often contain powerful credentials like cloud authentication tokens, but I keep secrets Codespace-specific and I minimise the number of secrets and how long they are valid for. As far as I know, my local machine and web browser, logged into countless personal and professional services, is completely out of reach of malware that might slip into a Codespace.
 
+I've also found that the GitHub Copilot AI assistant works just fine in a Codespace. I've started using Copilot as a writing assistant for these posts, helping me spot grammatical errors, typos, unnecessary jargon and so on. I feel a lot more comfortable experimenting with AI assistance in the isolated and limited environment of a Codespace, given that we don't really understand how they work or what they're capable of!
+
+## Example setup
+
 The devcontainer setup for this website's repo is an example. [`devcontainer.json`](https://github.com/brabster/tw-site-mkdocs/blob/main/.devcontainer/devcontainer.json) points to a Dockerfile, setups up githooks and grants read access to a private fork of my mkdocs theme. Things are locked down by default and I need to explicity add permissions.
 
 ```json
@@ -119,13 +123,11 @@ I hit a particularly frustrating "sharp edge" with GitHub's billing system. Twic
 
 ## Final thoughts and advice
 
-If you're considering GitHub Codespaces as your primary development environment, here's my advice:
-
 * Try it out on personal projects. Take advantage of the free tier. I write these blog posts in Codespaces!
 * Codespaces (and [`devcontainer.json`](https://containers.dev/) in general) provide an environment that is far more similar to CI/CD systems like GitHub Actions than a traditional local setup. I'm experimenting with ways to reuse more between Codespaces and GitHub Actions.
 * It's a far better experience than full virtual desktops. In my experience, full virtual desktop environments have always been sluggish and awkward to work with. Codespaces slots into my day-to-day working without getting in the way.
 * Consider local devcontainers as a stepping stone. Using devcontainers for local development could bring some of the consistency and security benefits without, or before, fully shifting to the cloud. I tried local devcontainers first but ran into issues with my rootless container runtimes.
-* Explore alternatives if GitHub isn't your ecosystem. While my experience has been tied to GitHub, similar concepts exist. For example, [Gitpod](https://www.gitpod.io/) is a cloud development environment that I've seen integrated with GitLab.
+* Explore alternatives if GitHub isn't your ecosystem. [Gitpod](https://www.gitpod.io/) is a cloud development environment that I've seen integrated with GitLab - [it looks like a very similar experience to Codespaces](https://www.youtube.com/watch?v=zSvS_7P8AO0).
 
 My year with GitHub Codespaces has been overwhelmingly positive. The day-to-day experience has been consistently good, sufficiently similar to local working that I've not been irritated by it. The challenges have not been a big deal and it's definitely my preferred option today given the choice!
 
