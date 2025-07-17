@@ -184,6 +184,14 @@ It currently contains 451 billion rows and weighs in at 21.45GB. The maximum sin
 
 Given that most of my queries are in specific date ranges, I could optimise further - but that's one for another day.
 
-## Update 2024-02-17
+---
+
+## Update February 2024
 
 There actually **is** a "don't bankrupt me" setting, although it's a pain to find. More importantly, there is a quota system lurking in there you can use for much more observable and effective control on a per-project or per-user over-time basis. Read more in [the next post in the series](../2024-02-16-bigquery-quotas/index.md).
+
+---
+
+## Update July 2025
+
+Google is making BigQuery safer by default from September 2025, introducing daily usage limits for new projects. If you’re concerned about runaway costs, see my latest post: [BigQuery, safer by default from September 2025](../2025-07-17-bigquery-will-be-safer-by-default/index.md) for details on the new quota system.
