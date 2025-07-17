@@ -18,17 +18,17 @@ I received an email entitled "[Action Advised] Review and set appropriate daily 
 
 ## New projects
 
-As of September 1st, 2025, new projects using the default on-demand BigQuery pricing model will have a daily usage limit 200TiB. The current model has no default limit, potentially leading to unlimited financial exposure as I've wrote about in [$1,370 Gone in Sixty Seconds](../2024-02-08-pypi-downloads-danger/index.md) and [The BigQuery Safety Net](../2024-02-16-bigquery-quotas/index.md).
+As of September 1st, 2025, new projects using the default on-demand BigQuery pricing model will have a daily usage limit of 200TiB. The current model has no default limit, potentially leading to unlimited financial exposure - as I've written about in [$1,370 Gone in Sixty Seconds](../2024-02-08-pypi-downloads-danger/index.md), explaining how a single query could run up a bill over $1,300 in less than a minute, and in [The BigQuery Safety Net](../2024-02-16-bigquery-quotas/index.md), explaining how the quota system can mitigate these risks.
 
-Still, 200TiB is a lot, and at the $5/TiB current pricing, it's still $1000 per day. No big deal for most SMEs, but it'd hurt if I hit it! I see no indication that any smart adjustments will be made automatically based on usage patterns, so I'll still be setting my own values for these quotas anyway.
+200TiB is still a lot, and at the $5/TiB current pricing, it's $1000 per day. Most SMEs won't be affected, but an unexpected spike could still be painful. I see no indication that any smart adjustments will be made automatically based on usage patterns, so I'll still be setting my own values for these quotas anyway.
 
 ## Existing projects
 
-If a project already has a quota value other than `unlimited` set for `QueryUsagePerDay` or `QueryUsagePerUserPerDay` then no changes will be made. Otherwise, Google will set a quota based on usage in the last 30 days.
+If a project already has a quota value other than `unlimited` set for `QueryUsagePerDay` or `QueryUsagePerUserPerDay`, then no changes will be made. Otherwise, Google will set a quota based on usage in the last 30 days.
 
 ## Auditing
 
-THe changes will be visible in audit logs when they occur.
+The changes will be visible in audit logs when they occur.
 
 ## Summary
 
