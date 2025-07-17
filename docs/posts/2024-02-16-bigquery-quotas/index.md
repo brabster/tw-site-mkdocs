@@ -128,3 +128,9 @@ If you aren't able to access this information, I'd suggest to your GCP Overlords
 I'd want to set things up to have fairly generous quotas by default - there might be a temptation to really restrict potential spend once someone with a budgetary responsibliity starts thinking about it.
 A generous default is literally infinitely better than an unlimited default! I'd set up with a generous default and per-project overrides. There will be no way you can work around the quota if you do need to use more than the allotted quota per day, aside from waiting until the next day. That would be **really** frustrating.
 
+---
+
+## Update July 2025
+
+BigQuery’s default quotas are changing in September 2025, making it much harder to accidentally rack up huge bills. For the latest on these changes and what they mean for your projects, check out: [BigQuery, safer by default from September 2025](../2025-07-17-bigquery-will-be-safer-by-default/index.md).
+
