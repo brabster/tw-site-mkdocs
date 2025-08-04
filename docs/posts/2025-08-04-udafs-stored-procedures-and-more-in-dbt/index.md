@@ -103,7 +103,7 @@ I can then reference them in the consumer project as `{{ source('shared_function
 
 In a couple of larger projects, I've written the macros in one place and used them in another. Using a source definition helps me keep track of what is being used where and allows easy toggling between environments.
 
-On one hand, using `sources` for this feels a bit weird. These aren't "data sources". However, they are "sources" in the sense of "source nodes for edges in the dbt graph".
+On one hand, using `sources` for this feels a bit weird. These aren't "data sources". However, they are "sources" in the sense of "source nodes for edges in the dbt graph". It feels like dbt's `sources` definition was intended more for the former meaning than the latter. More on the mental model later.
 
 ## Conclusion
 
@@ -134,7 +134,7 @@ I think the other thing I should briefly mention to help this generalisation wor
 
 My mental model has dbt fulfilling a similar role to Terraform for the database. It creates persistent things, like tables, views, udfs, grants, stored procedures and so on. When I visualise what the dbt graph represents, it's mostly a description of how these kinds of objects are connected.
 
-I think the other way of looking at it is from a data flow perspective, with the nodes representing how data moves through the pipeline. Given some of the internals of dbt, I feel that this perspective might have been part of the original dbt thinking, and it means that things that aren't relations don't feel like they fit well.
+I think the other way of looking at it is from a data flow perspective, with the nodes representing how data moves through the pipeline. Given some of the internals of dbt, and the way "sources" are represented, I feel that this perspective might have been part of the original dbt thinking. It means that things that aren't relations don't feel like they fit well at the moment.
 
 I'm sure I've read a blog post along these lines in the past, saying that it's hard to describe dbt due to it being a bit of a mix of the two. As dbt Labs consider incorporating non-relation elements as "first-class citizens" into the core of dbt, it may be important to recognise and resolve questions about how to think about dbt to avoid confusion and the forming of factions.
 
