@@ -17,7 +17,7 @@ I've updated the `dbt_materialized_udf` repo with the updates and the new materi
 
 ### User-defined aggregate function
 
-Unlike UDFs that operate on a single row, UDAFs operate on groups of rows. My use case involved masking off groups that were too small for privacy reasons, and I wanted a single, testable, atomic function that took care of it to minimise the risk of accidents. In use:
+Unlike UDFs that operate on a single row, UDAFs operate on groups of rows. My use case involved masking off groups that were too small for privacy reasons, and I wanted a single, testable, atomic function that took care of it to minimise the risk of accidents. `privacy_preserving_count` in use:
 
 ```sql
 {{ config(
@@ -32,7 +32,7 @@ IF(COUNT(1) < threshold, NULL, COUNT(1))
 
 I've managed to largely avoid stored procedures in my career until recently, and I wrote about some of the [difficulties I found trying to find a clean approach for testing stored procedures](../2025-01-18-testing-stored-procedures/index.md) back in January. I wanted to use chi-squared hypothesis testing on several tables in a dataset, and I couldn't find a way of doing that without a lot of duplication or a stored procedure. The stored procedure is the only approach that allows me to parametrise the relation that is being tested, and [BigQuery has a community-provided chi-square procedure to do the job](https://github.com/GoogleCloudPlatform/bigquery-utils/blob/master/stored_procedures/README.md#chi_squaretable_name-string-independent_var-string-dependent_var-string-out-result-structx-float64-dof-float64-p-float64).
 
-Stored procedures are just persistent objects in the database, so they fit into the pattern I've already established for other materializations pretty trivially. Here's an example:
+Stored procedures are just persistent objects in the database, so they fit into the pattern I've already established for other materializations pretty trivially. `row_count` in use:
 
 ```sql
 {{
@@ -51,7 +51,7 @@ INTO row_count;
 
 On the other hand, stored procedures are scripts, and don't behave like anything else I've dealt with when they are executed. You `CALL` a stored procedure, and if it produces output, you have to pass in an "output variable" and then read it. Not a relation - an output variable. How can I incorporate that into a dbt pipeline?
 
-The best solution I found is a custom materialization that creates or replaces a table, calls the procedure and then copies the result to the table. This example runs a hypothesis test over public data to see whether penguin species prefer specific islands (spoiler - they do).
+The best solution I found is a custom materialization that creates or replaces a table, calls the procedure and then copies the result to the table. This example runs a hypothesis test over public data to see whether penguin species prefer specific islands (spoiler - they do). Here's model `test_penguins`:
 
 ```sql
 {{ config(
