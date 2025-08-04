@@ -7,7 +7,7 @@ categories:
 
 ![A screenshot showing a stored procedure in the BigQuery console, with dbt compilation details in a comment block.](./assets/sp.webp)
 
-It's been over a year since I first wrote about [managing UDFs using custom dbt materializations](../2024-02-19-udf-dbt-models/index.md). The approach has held up well, but a recent project required me to go further and bring UDAFs (user-defined aggregate functions) and stored procedures into the fold. The same approach worked well, and dbt Labs are considering adding formal support for UDFs!
+It's been over a year since I first wrote about [managing UDFs using custom dbt materializations](../2024-02-19-udf-dbt-models/index.md). The approach has held up well, but a recent project required me to go further and bring UDAFs (user-defined aggregate functions) and stored procedures into the fold. The same approach worked well, and [dbt Labs are considering adding formal support for UDFs](https://github.com/dbt-labs/dbt-core/blob/main/docs/roadmap/2025-05-new-engine-same-language.md#out-of-the-box-support-for-udfs)!
 
 <!-- more -->
 
@@ -126,7 +126,7 @@ In this figure, the network of UDFs is the brownish coloured nodes to the left a
 
 I also had a report of **breakage with the original UDF implementation on dbt Cloud**, which returned an empty array of relations. I didn't know what I should return for a UDF, the [documentation suggests that returning something for the "relation cache" is optional](https://docs.getdbt.com/guides/create-new-materializations?step=2#update-the-relation-cache) and the empty array worked and avoided assumptions. Creating a `relation` object and returning that fixed the problem, so it seems that returning something isn't actually optional in some execution contexts.
 
-I've been unable to reproduce the problem myself, so I don't know more than that. I've updated the repo to return a `relation` object for each of the materialization types.
+I've been unable to reproduce the problem myself, so I don't know more than that. I've updated the repo to return a `relation` object for each materialization type.
 
 ### On mental models
 
