@@ -138,6 +138,10 @@ I think the other way of looking at it is from a data flow perspective, with the
 
 I'm sure I've read a blog post along these lines in the past, saying that it's hard to describe dbt due to it being a bit of a mix of the two. As dbt Labs consider incorporating non-relation elements as "first-class citizens" into the core of dbt, it may be important to recognise and resolve questions about how to think about dbt to avoid confusion and the forming of factions.
 
+## Getting involved
+
+There's a [GitHub issue about dbt's formal support for UDFs](https://github.com/dbt-labs/dbt-core/discussions/11851). Head over there to get the latest news and get involved in the conversation, too!
+
 --8<-- "blog-feedback.md"
 
 --8<-- "ee.md"
