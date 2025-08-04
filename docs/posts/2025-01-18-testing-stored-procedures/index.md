@@ -7,6 +7,13 @@ categories:
 
 ![hero image](./assets/hero.webp)
 
+
+## Update August 2025
+
+Since writing this post, I've found a clean way to handle stored procedures and their outputs for dbt users by treating them as materializations. This makes testing them as straightforward as testing any other dbt model. Read more in [UDAFs, stored procedures and more in dbt](../2025-08-04-udafs-stored-procedures-and-more-in-dbt/index.md).
+
+---
+
 Whilst I've used and written about UDFs a lot, I can't recall ever having a reason to work with stored procedures. When I was asked how I'd go about wrapping them in automation and testing, I thought it'd be a good excuse to take a look and see how I might go about testing them!
 
 <!-- more -->
