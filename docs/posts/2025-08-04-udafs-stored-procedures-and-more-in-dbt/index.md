@@ -107,7 +107,7 @@ On one hand, using `sources` for this feels a bit weird. These aren't "data sour
 
 ## Conclusion
 
-These all work for me in BigQuery today, and based on the feedback I've had, they're easily converted to PostgreSQL and Snowflake, so likely others too. I set out to make sure my sharing of this work could help those who were looking for a solution without becoming part of anyone's supply chain, so I focused only on BigQuery and avoided generalisation.
+These all work for me in BigQuery today, and based on the feedback I've had, they're easily converted to PostgreSQL and Snowflake, so likely others too. I set out to make sure my sharing of this work could help those who were looking for a solution without becoming part of anyone's supply chain, so I focused only on BigQuery and avoided generalisation. My goal was to make each materialization self-contained and self-explanatory in a single file, even if the reader doesn't know much about dbt internals. The duplication and simplicity is intentional!
 
 Now, with dbt Labs expressing an intent to bring UDF support into the core product, I hope sharing that work and this update helps that effort happen and succeed. As a minimum, it'll need to be generalised to allow different types of adapters to implement the features for the various kinds of databases out there. I'll point out [this detailed set of generalisations over my work](https://github.com/dbt-labs/dbt-core/discussions/10395#discussioncomment-13967906) as a great start, and I look forward to making the repo an archive one day soon!
 
