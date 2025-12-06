@@ -1,19 +1,26 @@
 ---
 title: How to get pwned with --extra-index-url
 date: 2025-12-06
+categories:
+    - security
+    - operations
+    - automation
 ---
 
-![hero image](./assets/malicious-install.webp)
+<figure markdown="span">
+ ![A diagram illustrating a dependency confusion attack using Python's pip. The layout compares a "private registry" hosting a safe package (version 0.0.1) against a "public registry" hosting a malicious package of the same name (version 1.0.0). An arrow from the private registry is labeled "nope, too old," while an arrow from the public registry is labeled "winner!" pointing to the user's computer. The computer is stamped "COMPROMISED" because pip prioritized the higher version number found on the public index.](./assets/scenario.webp)
+ <figcaption>Illustration of Dependency Confusion. When using --extra-index-url, pip checks all configured indexes and defaults to installing the package with the highest version number, allowing a public attacker to supersede internal packages.</figcaption>
+</figure>
 
 Python's built-in pip package manager has a dangerous behaviour when used with private package registries. If you specify your private registry with the `--extra-index-url` flag (there are other dangerous variants too), an attacker can publish a malicious package with the same name and a higher version to PyPI, and their package will be installed.
 
-This post confirms that this is still a problem today and introduces [a test suite and publicly-available test packages](https://github.com/brabster/cve-2018-20225) that you can use to easily confirm the safety - or not - of your own setup.
+This post confirms that this is still a problem today and introduces [a test suite and publicly-available test packages](https://github.com/brabster/cve-2018-20225) that you can use to more easily confirm the safety - or not - of your own setup.
 
 <!-- more -->
 
 ## Two variants of package `example-package-cve-2018-20225`
 
-I've written two variants of a new package that I'll use to demonstrate the problem. The package is essentially a single `__init__.py` file that prints a message to show which package has been installed, an empty `example.py` file and minimal metadata required to publish the package to a registry.
+I've written two variants of a new package that I'll use to demonstrate the problem. The package is essentially a single `__init__.py` file that prints a message to show which package has been installed when it's imported, an empty `example.py` file and minimal metadata required to publish the package to a registry.
 
 ### The "safe" version
 
@@ -82,9 +89,14 @@ There are many Python package managers, and I'm not going to look at them all. `
 
 ## Summary
 
-If you didn't know about this problem, don't feel bad. I wouldn't have known either had it not been for a [vulnerability scanner alerting me to it last year](../2024-05-18-handling-cve-2018-20225/index.md).
+If you didn't know about this problem, don't feel bad. I wouldn't have known either had it not been for a [vulnerability scanner alerting me to it last year](../2024-05-18-handling-cve-2018-20225/index.md). You're certainly not alone. When I asked ChatGPT how to safely use a private package registry, the response it generated, based of course on the content it's been trained on, included using `--extra-index-url` with no mention of this risk.
 
-After twenty-plus years, I have opinions about the state of our industry and open source. I'll save that for another day, other than to say I wish we could stop handing the threat actors gifts and blaming the users of our software for not knowing about things that we *kinda* go out of our way not to tell them about. Sigh. Anyway...
+<figure markdown="span">
+ ![ChatGPT conversation showing a response recommending pip install with --extra-index-url flag for private package registry, with text explaining this allows searching both PyPI and private registry](./assets/chatgpt-extra-index-url.webp)
+ <figcaption>ChatGPT recommending the vulnerable --extra-index-url approach</figcaption>
+</figure>
+
+After twenty-plus years, I have opinions about the state of our industry and open source. I'll save that for another day, other than to say I wish we could stop handing the threat actors gifts and blaming the users of our software for not knowing about things that we *kinda* go out of our way not to tell them about.  Anyway...
 
 - There are many ways to put yourself at risk of CVE-2018-20225; if you get it wrong, an attacker has a trivially easy route onto your computer or infrastructure.
 - Being confident that what you're doing is safe isn't trivial; I've provided source code, a suite of scenario results and a test harness to help you.
