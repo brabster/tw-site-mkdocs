@@ -40,7 +40,7 @@ I think it's worth taking a moment to reflect on how how easy it is to spend mon
 
 There are several ways you can mess up partition pruning, described here in [best practises](https://cloud.google.com/bigquery/docs/querying-partitioned-tables#best_practices_for_partition_pruning). Although there is a `max_bytes_billed` option you can set when you run queries programmatically, there is no way I can see of setting that in the UI. The "query settings" UI contains a whole bunch of weird and wonderful options, but doesn't offer a "don't bankrupt me without asking first" setting.
 
-(Not true! See [update](#update-2024-02-17))
+(Not true! See [update](#update-february-2024))
 
 I find the scan estimates you can see in the screenshots incredibly helpful - but they only go so far. You can still run the query before the scan estimate comes back, the UI doesn't link those numbers to costs, on a smaller screen the numbers disappear off the side and if you're using other tooling, like say a Jupyter notebook - YOU WILL NEVER SEE THEM. Brutally sharp edges all round.
 
@@ -164,7 +164,7 @@ I did consider using a [BigQuery materialized view](https://cloud.google.com/big
 
 ## Worst-Case Scenarios and Bullet-Dodging Effectiveness
 
-(See [update](#update-2024-02-17) for more controls)
+(See [update](#update-february-2024) for more controls)
 
 Had I done nothing to protect against excessive scan and spend, that mistake could have been a £1,370 per-run cost, over several runs.
 For my specific query it'd likely be less than the full cost but it'd be hundreds of GBP per run. I don't see anything that would limit the spend that could easily have run to over £20k. How effective were those cost-protection measures I put in place?
@@ -186,7 +186,7 @@ Given that most of my queries are in specific date ranges, I could optimise furt
 
 ---
 
-## Update February 2024
+## Update February 2024 
 
 There actually **is** a "don't bankrupt me" setting, although it's a pain to find. More importantly, there is a quota system lurking in there you can use for much more observable and effective control on a per-project or per-user over-time basis. Read more in [the next post in the series](../2024-02-16-bigquery-quotas/index.md).
 
