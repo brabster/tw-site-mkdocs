@@ -3,7 +3,10 @@ title: How to get pwned with --extra-index-url
 date: 2025-12-06
 ---
 
-![hero image](./assets/malicious-install.webp)
+<figure markdown="span">
+ ![Terminal output showing pip install command installing version 1.0.0 of example-package-cve-2018-20225 from PyPI, followed by Python import statement displaying message 'oops, this is the malicious package'](./assets/malicious-install.webp)
+ <figcaption>Demonstration of dependency confusion attack: pip installs the malicious package from PyPI instead of the intended private package</figcaption>
+</figure>
 
 Python's built-in pip package manager has a dangerous behaviour when used with private package registries. If you specify your private registry with the `--extra-index-url` flag (there are other dangerous variants too), an attacker can publish a malicious package with the same name and a higher version to PyPI, and their package will be installed.
 
@@ -83,6 +86,18 @@ There are many Python package managers and I'm not going to look at them all. `u
 ## Summary
 
 If you didn't know about this problem, don't feel bad. I wouldn't have known either had it not been for a [vulnerability scanner alerting me to it last year](../2024-05-18-handling-cve-2018-20225/index.md).
+
+Even AI assistants get this wrong. When I asked both ChatGPT and Gemini (with custom tuning) how to safely use a private package registry, both confidently recommended using `--extra-index-url`, which is exactly the vulnerable approach.
+
+<figure markdown="span">
+ ![ChatGPT conversation showing a response recommending pip install with --extra-index-url flag for private package registry, with text explaining this allows searching both PyPI and private registry](./assets/chatgpt-extra-index-url.webp)
+ <figcaption>ChatGPT recommending the vulnerable --extra-index-url approach</figcaption>
+</figure>
+
+<figure markdown="span">
+ ![Gemini conversation showing a response recommending pip install with --extra-index-url flag for private package registry, explaining it adds additional package indexes to search](./assets/gemini-tuned-extra-index-url.webp)
+ <figcaption>Gemini (with custom tuning) also recommending the vulnerable --extra-index-url approach</figcaption>
+</figure>
 
 After twenty-odd years, I have opinions about the state of our industry and open source. I'll save that for another day, other than to say I wish we could stop handing the threat actors gifts and blaming the users of our software for not knowing about things that we *kinda* go out of our way not to tell them about. Sigh. Anyway...
 

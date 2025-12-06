@@ -1,0 +1,7 @@
+Sitemap: https://tempered.works/sitemap.xml
+
+User-agent: *
+Disallow: /tag/
+Disallow: /category/
+Disallow: /archive/
+Disallow: /page/
