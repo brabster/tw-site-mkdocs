@@ -14,7 +14,7 @@ categories:
 
 Python's built-in pip package manager has a dangerous behaviour when used with private package registries. If you specify your private registry with the `--extra-index-url` flag (there are other dangerous variants too), an attacker can publish a malicious package with the same name and a higher version to PyPI, and their package will be installed.
 
-This post confirms that this is still a problem today and introduces [a test suite and publicly-available test packages](https://github.com/brabster/cve-2018-20225) that you can use to more easily confirm the safety - or not - of your own setup.
+This post confirms that the vulnerability ([CVE-2018-20225 7.8 HIGH](https://nvd.nist.gov/vuln/detail/cve-2018-20225)) still a problem today and introduces [a test suite and publicly-available test packages](https://github.com/brabster/cve-2018-20225) that you can use to more easily confirm the safety - or not - of your own setup.
 
 <!-- more -->
 
@@ -72,7 +72,7 @@ I'm trying out a few scenarios I'm interested in. What happens when you specify 
 
 ### GitLab's PyPI pass-through behaviour
 
-[A GitLab registry will pass through requests for packages that it doesn't hold to PyPI. This is flagged as a security risk.](https://docs.gitlab.com/user/packages/pypi_repository/#package-request-forwarding-security-notice) I think it's actually a step forward from the various riskier alternatives, because you don't get the dependency confusion problem.
+[A GitLab registry will pass through requests for packages that it doesn't hold to PyPI. This is flagged as a security risk](https://docs.gitlab.com/user/packages/pypi_repository/#package-request-forwarding-security-notice). If you're at risk of this problem, I think using a registry with a fallback to PyPI is actually a big step forward. It resolves the dependency confusion problem, adds no inconvenience and works with different package managers - just requiring the removal of the word "extra" for `pip`.
 
 `pip install ${PACKAGE} requests --index-url ${GITLAB_INDEX_URL}`
 : ✅ Safe (Installs target package + public lib (`requests`) from GitLab index only, succeeds and installs the right package)
