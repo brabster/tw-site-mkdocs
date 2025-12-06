@@ -19,11 +19,11 @@ I've written two variants of a new package that I'll use to demonstrate the prob
 
 The "safe" version of the package is at version `0.0.1`. It prints `this is the safe, private package` when imported.
 
-This package stands in for your intended, private package. I've [published it to GitLab](https://gitlab.com/api/v4/projects/76907979/packages/pypi/simple) and made the registry public for convenience of testing. I don't think the public accessibility of the registry affects the outcomes of my testing.
+This package stands in for your intended, private package. I've [published it to GitLab](https://gitlab.com/api/v4/projects/76907979/packages/pypi/simple) and made the registry public for the convenience of testing. I don't think the public accessibility of the registry affects the outcomes of my testing.
 
 ### The "malicious" version
 
-The "malicious" version of the package is at version `1.0.0`. There's nothing special about that version, it's just a larger version than `0.0.1`.
+The "malicious" version of the package is at version `1.0.0`. There's nothing special about that version; it's just a larger version than `0.0.1`.
 
 This package prints "oops, this is the malicious package" when imported. It's [published to PyPI](https://pypi.org/project/example-package-cve-2018-20225/).
 
@@ -32,9 +32,9 @@ This package prints "oops, this is the malicious package" when imported. It's [p
 I've created a matrix GitHub actions workflow to test a variety of install and update scenarios in parallel. There are far too many potential tools and combinations to even try to test them all, which is why I've made these packages available publicly. If you trust them, you can use them to test whatever specific scenario you want.
 
 !!! warning
-    Obviously if you use them, you're trusting, as a minimum, that my intentions are good and that my supply chain out to these packages is robust and under my control. I'd always recommend taking whatever precautions you can and I'm afraid I can't take any responsibility for anything bad that might happen :shrug:.
+    If you use the test packages I provided in the registries, you're trusting, as a minimum, that my intentions are good and that my supply chain out to these packages is robust and under my control. I'd always recommend taking whatever precautions you can, and I'm afraid I can't take any responsibility for anything bad that might happen :shrug:.
 
-All the tests are run against the currently latest versions of the package management software. The tests report failure if the malicious package is installed. [You can see the current latest test run in the repo's GitHub actions tab.](https://github.com/brabster/cve-2018-20225/actions). You cal also see the packages and how I published them to PyPI and GitLab in the repo too.
+All the tests are run against the latest versions (at time of writing) of the package management software. The tests report failure if the malicious package is installed. [You can see the current latest test run in the repo's GitHub actions tab.](https://github.com/brabster/cve-2018-20225/actions). You can also see the packages and how I published them to PyPI and GitLab in the repo too.
 
 ## Test scenarios
 
@@ -72,19 +72,19 @@ I'm trying out a few scenarios I'm interested in. What happens when you specify 
 
 ### Is `uv` vulnerable?
 
-There are many Python package managers and I'm not going to look at them all. `uv` is the current darling of the community and has [different  behaviour when this flag is used in a pip-like manner](https://docs.astral.sh/uv/reference/cli/#uv-pip-install--extra-index-url), so I'll take a look to confirm that.
+There are many Python package managers, and I'm not going to look at them all. `uv` is the current darling of the community and has [different behaviour when this flag is used in a pip-like manner](https://docs.astral.sh/uv/reference/cli/#uv-pip-install--extra-index-url), so I'll take a look to confirm that.
 
 `uv pip install ${PACKAGE} --extra-index-url ${GITLAB_INDEX_URL}`
 : ✅ Safe (Uses `uv` with the risky flag)
 
 `uv pip install ${PACKAGE} --index-strategy unsafe-best-match`
-: 🚨 Malicious (Uses `uv` but forces legacy `pip` behavior)
+: 🚨 Malicious (Uses `uv` but forces legacy `pip` behaviour)
 
 ## Summary
 
 If you didn't know about this problem, don't feel bad. I wouldn't have known either had it not been for a [vulnerability scanner alerting me to it last year](../2024-05-18-handling-cve-2018-20225/index.md).
 
-After twenty-odd years, I have opinions about the state of our industry and open source. I'll save that for another day, other than to say I wish we could stop handing the threat actors gifts and blaming the users of our software for not knowing about things that we *kinda* go out of our way not to tell them about. Sigh. Anyway...
+After twenty-plus years, I have opinions about the state of our industry and open source. I'll save that for another day, other than to say I wish we could stop handing the threat actors gifts and blaming the users of our software for not knowing about things that we *kinda* go out of our way not to tell them about. Sigh. Anyway...
 
 - There are many ways to put yourself at risk of CVE-2018-20225; if you get it wrong, an attacker has a trivially easy route onto your computer or infrastructure.
 - Being confident that what you're doing is safe isn't trivial; I've provided source code, a suite of scenario results and a test harness to help you.
