@@ -14,7 +14,7 @@ categories:
 
 Python's built-in pip package manager has a dangerous behaviour when used with private package registries. If you specify your private registry with the `--extra-index-url` flag (there are other dangerous variants too), an attacker can publish a malicious package with the same name and a higher version to PyPI, and their package will be installed.
 
-This post confirms that the vulnerability ([CVE-2018-20225 7.8 HIGH](https://nvd.nist.gov/vuln/detail/cve-2018-20225)) still a problem today and introduces [a test suite and publicly-available test packages](https://github.com/brabster/cve-2018-20225) that you can use to more easily confirm the safety - or not - of your own setup.
+This post confirms that the vulnerability ([CVE-2018-20225 7.8 HIGH](https://nvd.nist.gov/vuln/detail/cve-2018-20225)) is still a problem today and introduces [a test suite and publicly-available test packages](https://github.com/brabster/cve-2018-20225) that you can use to more easily confirm the safety - or not - of your own setup.
 
 <!-- more -->
 
