@@ -37,9 +37,9 @@ This package prints `oops, this is the malicious package` when imported. It's [p
 
 ### Getting pwned
 
-This is the kind of thing I’ve seen in the wild, thankfully without a malicious package hiding on PyPI waiting to pounce. This is **supposed** to install the safe package at version `0.0.1` from the private GitLab index.
+This is the kind of thing I’ve seen in the wild, thankfully without a malicious package hiding on PyPI waiting to pounce. This is **supposed** to install the safe package at version `0.0.1` from the private GitLab index, but...
 
-```console hl_lines="9, 12"
+```console title="Installing the wrong package" hl_lines="8 11"
 $ pip install example_package_cve_2018_20225 --extra-index-url $GITLAB_INDEX
 Looking in indexes: https://pypi.org/simple, https://gitlab.com/api/v4/projects/76907979/packages/pypi/simple
 Collecting example_package_cve_2018_20225
