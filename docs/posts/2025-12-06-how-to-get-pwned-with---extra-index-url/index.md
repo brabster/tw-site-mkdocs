@@ -35,6 +35,27 @@ The "malicious" variant of the package is at version `1.0.0`. There's nothing sp
 
 This package prints `oops, this is the malicious package` when imported. It's [published to PyPI](https://pypi.org/project/example-package-cve-2018-20225/).
 
+### Getting pwned
+
+This is the kind of thing I’ve seen in the wild, thankfully without a malicious package hiding on PyPI waiting to pounce. This is **supposed** to install the safe package at version `0.0.1` from the private GitLab index, but...
+
+```console title="Installing the wrong package" hl_lines="8 11"
+$ pip install example_package_cve_2018_20225 --extra-index-url $GITLAB_INDEX
+Looking in indexes: https://pypi.org/simple, https://gitlab.com/api/v4/projects/76907979/packages/pypi/simple
+Collecting example_package_cve_2018_20225
+  Obtaining dependency information for example_package_cve_2018_20225 from https://files.pythonhosted.org/packages/be/c3/801bbafdf280dde66839dd9ced6e95ffee8faf27174db2dff3fd8c943446/example_package_cve_2018_20225-1.0.0-py3-none-any.whl.metadata
+  Using cached example_package_cve_2018_20225-1.0.0-py3-none-any.whl.metadata (74 bytes)
+Using cached example_package_cve_2018_20225-1.0.0-py3-none-any.whl (1.6 kB)
+Installing collected packages: example_package_cve_2018_20225
+Successfully installed example_package_cve_2018_20225-1.0.0
+
+$ python -c 'import example_package_cve_2018_20225'
+oops, this is the malicious package
+$ 
+```
+
+Oops. Hope that malicious package isn’t stealing your credentials, installing a backdoor, or some other nefarious activity…
+
 ## Testing approach
 
 I've created a [GitHub actions workflow to test a variety of install and update scenarios](https://github.com/brabster/cve-2018-20225/blob/main/.github/workflows/test_cases.yml). There are far too many potential tools and combinations to test them all, which is why I've made these packages available publicly. You can use them to test whatever specific scenario you want.
