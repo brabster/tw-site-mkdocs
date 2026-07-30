@@ -7,6 +7,7 @@ Reads all posts in docs/posts/ and:
 Run this after `zensical build`. The netlify.toml does this automatically.
 """
 
+import argparse
 import os
 import re
 import xml.etree.ElementTree as ET
@@ -121,11 +122,12 @@ def load_posts() -> list[dict]:
 # Homepage generation
 # ---------------------------------------------------------------------------
 
-def generate_homepage(posts: list[dict]) -> None:
+def generate_homepage(posts: list[dict], index_path: Path | None = None) -> None:
     """Rewrite docs/index.md: keep everything up to GENERATED_MARKER, append
     a 'Recent posts' section for the N most recent posts."""
 
-    base_content = INDEX_MD.read_text(encoding="utf-8")
+    idx = index_path or INDEX_MD
+    base_content = idx.read_text(encoding="utf-8")
 
     if GENERATED_MARKER in base_content:
         base_content = base_content[: base_content.index(GENERATED_MARKER) + len(GENERATED_MARKER)]
@@ -146,16 +148,18 @@ def generate_homepage(posts: list[dict]) -> None:
             f"{post['excerpt'][:200]}{'...' if len(post['excerpt']) > 200 else ''}\n"
         )
 
-    INDEX_MD.write_text("".join(lines), encoding="utf-8")
-    print(f"Updated {INDEX_MD} with {min(len(posts), RECENT_POSTS_COUNT)} recent posts.")
+    idx.write_text("".join(lines), encoding="utf-8")
+    print(f"Updated {idx} with {min(len(posts), RECENT_POSTS_COUNT)} recent posts.")
 
 
 # ---------------------------------------------------------------------------
 # RSS feed generation
 # ---------------------------------------------------------------------------
 
-def generate_rss(posts: list[dict]) -> None:
-    """Write a valid RSS 2.0 feed to docs/feed_rss_created.xml."""
+def generate_rss(posts: list[dict], output: Path | None = None) -> None:
+    """Write a valid RSS 2.0 feed to site/feed_rss_created.xml."""
+
+    out = output or FEED_XML
 
     rss = ET.Element("rss", version="2.0")
     rss.set("xmlns:atom", "http://www.w3.org/2005/Atom")
@@ -191,19 +195,17 @@ def generate_rss(posts: list[dict]) -> None:
     tree = ET.ElementTree(rss)
     ET.indent(tree, space="  ")
 
-    SITE_DIR.mkdir(exist_ok=True)
-    with FEED_XML.open("w", encoding="utf-8") as fh:
+    out.parent.mkdir(exist_ok=True)
+    with out.open("w", encoding="utf-8") as fh:
         fh.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         tree.write(fh, encoding="unicode", xml_declaration=False)
 
-    print(f"Written {FEED_XML} with {min(len(posts), FEED_POSTS_COUNT)} items.")
+    print(f"Written {out} with {min(len(posts), FEED_POSTS_COUNT)} items.")
 
 
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
-
-import argparse
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
