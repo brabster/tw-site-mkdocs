@@ -24,7 +24,6 @@ theme:
     - search.share
 
 plugins:
-  - privacy
   - glightbox
   - meta
   - search
@@ -41,14 +40,7 @@ plugins:
         - performance
         - python
         - security
-  - rss:
-      match_path: posts/.* 
-      date_from_meta:
-        as_creation: date
-      categories:
-        - categories
-        - tags
-      
+
 
 markdown_extensions:
   - toc:
@@ -69,8 +61,8 @@ markdown_extensions:
       auto_append:
         - abbreviations.md
   - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      emoji_index: !!python/name:zensical.extensions.emoji.twemoji
+      emoji_generator: !!python/name:zensical.extensions.emoji.to_svg
   - def_list
   - attr_list
   - footnotes
@@ -89,8 +81,6 @@ extra:
       link: https://www.linkedin.com/in/paulbrabban
     - icon: fontawesome/solid/paper-plane
       link: mailto:paul@tempered.works
-    - icon: material/rss
-      link: feed_rss_created.xml
 
     
 validation:

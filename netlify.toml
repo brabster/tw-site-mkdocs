@@ -1,5 +1,5 @@
 [build]
-    command = "mkdocs build --strict"
+    command = "zensical build --strict"
     publish = "site"
     environment = { PYTHON_VERSION = "3" }
 
