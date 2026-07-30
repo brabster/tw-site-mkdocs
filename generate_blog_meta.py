@@ -1,10 +1,10 @@
-"""Pre-build script for the Tempered Works blog.
+"""Build script for the Tempered Works blog.
 
 Reads all posts in docs/posts/ and:
   - Regenerates the "recent posts" section of docs/index.md
-  - Writes docs/feed_rss_created.xml (RSS 2.0)
+  - Writes site/feed_rss_created.xml (RSS 2.0)
 
-Run this before `zensical build`. The netlify.toml does this automatically.
+Run this after `zensical build`. The netlify.toml does this automatically.
 """
 
 import os
@@ -24,7 +24,8 @@ REPO_ROOT = Path(__file__).parent
 DOCS_DIR = REPO_ROOT / "docs"
 POSTS_DIR = DOCS_DIR / "posts"
 INDEX_MD = DOCS_DIR / "index.md"
-FEED_XML = DOCS_DIR / "feed_rss_created.xml"
+SITE_DIR = REPO_ROOT / "site"
+FEED_XML = SITE_DIR / "feed_rss_created.xml"
 
 GENERATED_MARKER = "<!-- GENERATED_CONTENT -->"
 SITE_URL = os.environ.get("SITE_URL", os.environ.get("DEPLOY_PRIME_URL", "https://tempered.works"))
@@ -190,6 +191,7 @@ def generate_rss(posts: list[dict]) -> None:
     tree = ET.ElementTree(rss)
     ET.indent(tree, space="  ")
 
+    SITE_DIR.mkdir(exist_ok=True)
     with FEED_XML.open("w", encoding="utf-8") as fh:
         fh.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         tree.write(fh, encoding="unicode", xml_declaration=False)
@@ -201,8 +203,21 @@ def generate_rss(posts: list[dict]) -> None:
 # Entry point
 # ---------------------------------------------------------------------------
 
+import argparse
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--step",
+        choices=["pre", "post", "all"],
+        default="all",
+        help="pre: homepage only; post: RSS only; all: both (default)",
+    )
+    args = parser.parse_args()
+
     posts = load_posts()
     print(f"Found {len(posts)} posts.")
-    generate_homepage(posts)
-    generate_rss(posts)
+    if args.step in ("pre", "all"):
+        generate_homepage(posts)
+    if args.step in ("post", "all"):
+        generate_rss(posts)

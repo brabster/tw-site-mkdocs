@@ -1,5 +1,5 @@
 [build]
-    command = "python generate_blog_meta.py && zensical build --strict"
+    command = "python generate_blog_meta.py --step pre && zensical build --strict && python generate_blog_meta.py --step post"
     publish = "site"
     environment = { PYTHON_VERSION = "3" }
 
