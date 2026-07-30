@@ -9,6 +9,7 @@ copyright: |
 
 theme:
   name: material
+  variant: classic
   language: en
   favicon: favicon.ico
   logo: favicons/favicon-32x32.webp
