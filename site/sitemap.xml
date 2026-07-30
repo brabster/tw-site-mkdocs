@@ -4,27 +4,6 @@
         <loc>http://localhost:8000/</loc>
       </url>
       <url>
-        <loc>http://localhost:8000/category/automation/</loc>
-      </url>
-      <url>
-        <loc>http://localhost:8000/category/contracts/</loc>
-      </url>
-      <url>
-        <loc>http://localhost:8000/category/insights/</loc>
-      </url>
-      <url>
-        <loc>http://localhost:8000/category/operations/</loc>
-      </url>
-      <url>
-        <loc>http://localhost:8000/category/performance/</loc>
-      </url>
-      <url>
-        <loc>http://localhost:8000/category/python/</loc>
-      </url>
-      <url>
-        <loc>http://localhost:8000/category/security/</loc>
-      </url>
-      <url>
         <loc>http://localhost:8000/company/</loc>
       </url>
       <url>
