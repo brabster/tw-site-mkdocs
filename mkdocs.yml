@@ -84,6 +84,19 @@ extra:
       link: mailto:paul@tempered.works
 
     
+nav:
+  - Home: index.md
+  - Category:
+    - automation: category/automation.md
+    - contracts: category/contracts.md
+    - insights: category/insights.md
+    - operations: category/operations.md
+    - performance: category/performance.md
+    - python: category/python.md
+    - security: category/security.md
+  - Company: company/index.md
+  - Portfolio: portfolio/index.md
+
 validation:
   omitted_files: warn
   absolute_links: warn
