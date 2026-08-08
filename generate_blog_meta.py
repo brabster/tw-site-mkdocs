@@ -92,7 +92,12 @@ def parse_post(path: Path) -> dict | None:
     except yaml.YAMLError:
         return None
 
-    if not fm or not fm.get("title") or not fm.get("date"):
+    if (
+        not isinstance(fm, dict)
+        or fm.get("draft", False)
+        or not fm.get("title")
+        or not fm.get("date")
+    ):
         return None
 
     body = content[m.end():]
