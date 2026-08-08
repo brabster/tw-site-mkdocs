@@ -5,7 +5,7 @@ categories:
   - insights
 ---
 
-![hero image](./assets/hero.webp)
+![Screenshot of a stored procedure definition and test written in BigQuery SQL](./assets/hero.webp)
 
 
 ## Update August 2025

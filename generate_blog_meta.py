@@ -51,10 +51,10 @@ def _extract_cover_image(raw: str, slug: str) -> tuple[str, str] | None:
         return None
     alt = m.group(1)
     src = m.group(2).strip()
-    # Rebase relative paths from post directory to docs root
+    # Rebase relative paths from post directory to docs root.
+    # Use removeprefix to handle only the leading "./" safely.
     if not src.startswith("http") and not src.startswith("/"):
-        src_rel = src.lstrip(".").lstrip("/")
-        src = f"posts/{slug}/{src_rel}"
+        src = f"posts/{slug}/{src.removeprefix('./')}"
     return (alt, src)
 
 
@@ -160,7 +160,12 @@ def generate_homepage(posts: list[dict], index_path: Path | None = None) -> None
         badge_line = f"  *{post['date_str']}*" + (f" &nbsp; {category_badges}" if category_badges else "")
 
         cover = post.get("cover_image")
-        cover_md = f"\n![{cover[0]}]({cover[1]})\n\n" if cover else ""
+        cover_md = (
+            f'\n<figure markdown="span">\n'
+            f' ![{cover[0]}]({cover[1]})\n'
+            f' <figcaption>{cover[0]}</figcaption>\n'
+            f'</figure>\n\n'
+        ) if cover else ""
 
         lines.append(
             f"\n### [{post['title']}]({post['url']})\n\n"

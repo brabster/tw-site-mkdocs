@@ -353,7 +353,9 @@ class TestGenerateHomepage(unittest.TestCase):
             post = _make_post(cover_image=("Hero alt", "posts/my-slug/assets/hero.webp"))
             gbm.generate_homepage([post], index_path=idx)
             result = idx.read_text(encoding="utf-8")
+        self.assertIn('<figure markdown="span">', result)
         self.assertIn("![Hero alt](posts/my-slug/assets/hero.webp)", result)
+        self.assertIn("<figcaption>Hero alt</figcaption>", result)
 
     def test_no_image_tag_when_cover_image_absent(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -362,6 +364,7 @@ class TestGenerateHomepage(unittest.TestCase):
             post = _make_post(cover_image=None)
             gbm.generate_homepage([post], index_path=idx)
             result = idx.read_text(encoding="utf-8")
+        self.assertNotIn("<figure", result)
         self.assertNotIn("![", result)
 
 
