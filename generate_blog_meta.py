@@ -42,10 +42,12 @@ FEED_POSTS_COUNT = 20
 # Post parsing
 # ---------------------------------------------------------------------------
 
-def _extract_cover_image(raw: str, slug: str) -> tuple[str, str] | None:
-    """Return (alt_text, src_relative_to_docs_root) for the first image found in raw,
-    or None if no image is present. src paths relative to the post directory are
-    rebased so they work when referenced from docs/index.md."""
+def _extract_cover_image(raw: str, slug: str) -> tuple[str, str, str] | None:
+    """Return (alt_text, src_relative_to_docs_root, caption) for the first image
+    found in raw, or None if no image is present. caption is the figcaption text
+    if the image is inside a <figure> block, otherwise an empty string. src paths
+    relative to the post directory are rebased so they work when referenced from
+    docs/index.md."""
     m = re.search(r'!\[([^\]]*)\]\(([^)\s]+)\)', raw)
     if not m:
         return None
@@ -55,7 +57,17 @@ def _extract_cover_image(raw: str, slug: str) -> tuple[str, str] | None:
     # Use removeprefix to handle only the leading "./" safely.
     if not src.startswith("http") and not src.startswith("/"):
         src = f"posts/{slug}/{src.removeprefix('./')}"
-    return (alt, src)
+
+    # Look for a <figcaption> immediately after the image in the same <figure> block.
+    caption = ""
+    fig_m = re.search(
+        r'<figure[^>]*>.*?!\[[^\]]*\]\([^)]+\).*?<figcaption>(.*?)</figcaption>',
+        raw, re.DOTALL
+    )
+    if fig_m:
+        caption = fig_m.group(1).strip()
+
+    return (alt, src, caption)
 
 
 def parse_post(path: Path) -> dict | None:
@@ -160,12 +172,16 @@ def generate_homepage(posts: list[dict], index_path: Path | None = None) -> None
         badge_line = f"  *{post['date_str']}*" + (f" &nbsp; {category_badges}" if category_badges else "")
 
         cover = post.get("cover_image")
-        cover_md = (
-            f'\n<figure markdown="span">\n'
-            f' ![{cover[0]}]({cover[1]})\n'
-            f' <figcaption>{cover[0]}</figcaption>\n'
-            f'</figure>\n\n'
-        ) if cover else ""
+        if cover:
+            figcaption = f" <figcaption>{cover[2]}</figcaption>\n" if cover[2] else ""
+            cover_md = (
+                f'\n<figure markdown="span">\n'
+                f' ![{cover[0]}]({cover[1]})\n'
+                f'{figcaption}'
+                f'</figure>\n\n'
+            )
+        else:
+            cover_md = ""
 
         lines.append(
             f"\n### [{post['title']}]({post['url']})\n\n"

@@ -27,7 +27,7 @@ def _make_post(
     date_str: str = "2024-06-15",
     categories: list[str] | None = None,
     excerpt: str = "A short excerpt.",
-    cover_image: tuple[str, str] | None = None,
+    cover_image: tuple[str, str, str] | None = None,
     url: str = "https://example.com/posts/test-post/",
     slug: str = "test-post",
 ) -> dict:
@@ -62,31 +62,47 @@ class TestExtractCoverImage(unittest.TestCase):
         raw = "Some text\n![Alt text](./assets/photo.webp)\nMore text."
         result = gbm._extract_cover_image(raw, "my-slug")
         self.assertIsNotNone(result)
-        alt, src = result
+        alt, src, caption = result
         self.assertEqual(alt, "Alt text")
         self.assertEqual(src, "posts/my-slug/assets/photo.webp")
+        self.assertEqual(caption, "")
 
     def test_finds_image_inside_figure_block(self):
         raw = '<figure markdown="span">\n ![Alt](./assets/img.png)\n</figure>'
         result = gbm._extract_cover_image(raw, "my-post")
         self.assertIsNotNone(result)
-        alt, src = result
+        alt, src, caption = result
         self.assertEqual(alt, "Alt")
         self.assertEqual(src, "posts/my-post/assets/img.png")
+        self.assertEqual(caption, "")
+
+    def test_extracts_figcaption_from_figure_block(self):
+        raw = (
+            '<figure markdown="span">\n'
+            ' ![Alt](./assets/img.png)\n'
+            ' <figcaption>A meaningful caption</figcaption>\n'
+            '</figure>'
+        )
+        result = gbm._extract_cover_image(raw, "my-post")
+        self.assertIsNotNone(result)
+        alt, src, caption = result
+        self.assertEqual(alt, "Alt")
+        self.assertEqual(src, "posts/my-post/assets/img.png")
+        self.assertEqual(caption, "A meaningful caption")
 
     def test_preserves_absolute_url(self):
         raw = "![Alt](https://example.com/image.png)"
-        _, src = gbm._extract_cover_image(raw, "slug")
+        _, src, _ = gbm._extract_cover_image(raw, "slug")
         self.assertEqual(src, "https://example.com/image.png")
 
     def test_handles_path_without_leading_dot_slash(self):
         raw = "![Alt](assets/photo.webp)"
-        _, src = gbm._extract_cover_image(raw, "my-slug")
+        _, src, _ = gbm._extract_cover_image(raw, "my-slug")
         self.assertEqual(src, "posts/my-slug/assets/photo.webp")
 
     def test_returns_first_image_when_multiple_present(self):
         raw = "![First](./a.webp) and ![Second](./b.webp)"
-        _, src = gbm._extract_cover_image(raw, "slug")
+        _, src, _ = gbm._extract_cover_image(raw, "slug")
         self.assertIn("a.webp", src)
 
 
@@ -241,10 +257,11 @@ class TestParsePost(unittest.TestCase):
             post = gbm.parse_post(path)
         self.assertIsNotNone(post)
         self.assertIsNotNone(post["cover_image"])
-        alt, src = post["cover_image"]
+        alt, src, caption = post["cover_image"]
         self.assertEqual(alt, "My alt")
         self.assertIn("2024-06-15-my-post", src)
         self.assertIn("assets/hero.webp", src)
+        self.assertEqual(caption, "")
 
     def test_cover_image_is_none_when_no_image_before_more(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -267,7 +284,7 @@ class TestParsePost(unittest.TestCase):
             post = gbm.parse_post(path)
         self.assertIsNotNone(post)
         self.assertIsNotNone(post["cover_image"])
-        _, src = post["cover_image"]
+        _, src, _ = post["cover_image"]
         self.assertIn("assets/photo.webp", src)
 
 
@@ -346,16 +363,28 @@ class TestGenerateHomepage(unittest.TestCase):
         # The displayed excerpt portion should not exceed 200 Xs followed by ...
         self.assertNotIn("X" * 201, result)
 
-    def test_cover_image_rendered_when_present(self):
+    def test_cover_image_rendered_without_figcaption_when_no_caption(self):
         with tempfile.TemporaryDirectory() as tmp:
             idx = Path(tmp) / "index.md"
             self._write_index(idx, "# Home\n")
-            post = _make_post(cover_image=("Hero alt", "posts/my-slug/assets/hero.webp"))
+            post = _make_post(cover_image=("Hero alt", "posts/my-slug/assets/hero.webp", ""))
             gbm.generate_homepage([post], index_path=idx)
             result = idx.read_text(encoding="utf-8")
         self.assertIn('<figure markdown="span">', result)
         self.assertIn("![Hero alt](posts/my-slug/assets/hero.webp)", result)
-        self.assertIn("<figcaption>Hero alt</figcaption>", result)
+        self.assertNotIn("<figcaption>", result)
+
+    def test_cover_image_rendered_with_figcaption_when_caption_present(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            idx = Path(tmp) / "index.md"
+            self._write_index(idx, "# Home\n")
+            post = _make_post(cover_image=("Hero alt", "posts/my-slug/assets/hero.webp", "A real caption"))
+            gbm.generate_homepage([post], index_path=idx)
+            result = idx.read_text(encoding="utf-8")
+        self.assertIn('<figure markdown="span">', result)
+        self.assertIn("![Hero alt](posts/my-slug/assets/hero.webp)", result)
+        self.assertIn("<figcaption>A real caption</figcaption>", result)
+        self.assertNotIn("<figcaption>Hero alt</figcaption>", result)
 
     def test_no_image_tag_when_cover_image_absent(self):
         with tempfile.TemporaryDirectory() as tmp:
