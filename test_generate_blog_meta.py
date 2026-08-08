@@ -583,6 +583,32 @@ class TestValidateNoCookieBannerRisks(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "off-site <link> resource"):
                 gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
 
+    def test_rejects_unquoted_off_site_browser_resource(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                '<html><body><script src=https://platform.twitter.com/widgets.js></script></body></html>',
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "off-site <script> resource"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
+    def test_rejects_missing_built_html(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            with self.assertRaisesRegex(ValueError, "does not contain any built HTML files"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
+    def test_rejects_inline_tracker_script(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                "<html><body><script>window.dataLayer = window.dataLayer || [];</script></body></html>",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "Google Tag Manager dataLayer"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
     def test_allows_self_hosted_assets_and_external_links(self):
         with tempfile.TemporaryDirectory() as tmp:
             site_dir = Path(tmp)

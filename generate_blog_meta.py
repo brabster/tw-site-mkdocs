@@ -212,10 +212,11 @@ def _find_external_browser_resources(raw: str, allowed_hosts: set[str]) -> list[
     matches = []
     for tag, attr in RESOURCE_TAG_ATTRIBUTES.items():
         pattern = re.compile(
-            rf"<{tag}\b[^>]*\b{attr}=['\"]([^'\"]+)['\"]",
+            rf"<{tag}\b[^>]*\b{attr}=(?:['\"]([^'\"]+)['\"]|([^\s>]+))",
             re.IGNORECASE,
         )
-        for url in pattern.findall(raw):
+        for quoted_url, unquoted_url in pattern.findall(raw):
+            url = quoted_url or unquoted_url
             parsed = urlparse(url)
             if parsed.scheme not in ("http", "https") or not parsed.hostname:
                 continue
@@ -228,16 +229,29 @@ def validate_no_cookie_banner_risks(
     site_dir: Path | None = None,
     site_url: str = SITE_URL,
 ) -> None:
-    """Fail if built pages include likely cookie-banner-triggering features."""
+    """Fail if built pages include likely cookie-banner-triggering features.
+
+    Assumes site_dir contains the current HTML output from the build that just ran.
+    """
     built_site = site_dir or SITE_DIR
     allowed_hosts = _allowed_resource_hosts(site_url)
+    html_files = list(built_site.rglob("*.html"))
 
-    for path in built_site.rglob("*.html"):
+    if not html_files:
+        raise ValueError(f"{built_site} does not contain any built HTML files to validate.")
+
+    for path in html_files:
         raw = path.read_text(encoding="utf-8")
+        inline_only = re.sub(
+            r"<script\b[^>]*\bsrc=(?:['\"][^'\"]+['\"]|[^\s>]+)[^>]*>.*?</script>",
+            "",
+            raw,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
 
         inline_scripts = re.findall(
-            r"<script\b(?![^>]*\bsrc=)[^>]*>(.*?)</script>",
-            raw,
+            r"<script\b[^>]*>(.*?)</script>",
+            inline_only,
             flags=re.IGNORECASE | re.DOTALL,
         )
         inline_script_text = "\n".join(inline_scripts)
