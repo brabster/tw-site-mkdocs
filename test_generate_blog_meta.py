@@ -626,7 +626,7 @@ class TestValidateNoCookieBannerRisks(unittest.TestCase):
                 "<html><body><script>navigator.sendBeacon('/collect', 'hit=1');</script></body></html>",
                 encoding="utf-8",
             )
-            with self.assertRaisesRegex(ValueError, "navigator.sendBeacon"):
+            with self.assertRaisesRegex(ValueError, "beacon-style tracking calls"):
                 gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
 
     def test_allows_self_hosted_assets_and_external_links(self):
