@@ -66,14 +66,15 @@ def _extract_cover_image(raw: str, slug: str) -> tuple[str, str, str] | None:
     if not src.startswith("http") and not src.startswith("/"):
         src = f"posts/{slug}/{src.removeprefix('./')}"
 
-    # Look for a <figcaption> immediately after the image in the same <figure> block.
+    # Look for a <figcaption> in the same <figure> block that contains the matched image.
     caption = ""
-    fig_m = re.search(
-        r'<figure[^>]*>.*?!\[[^\]]*\]\([^)]+\).*?<figcaption>(.*?)</figcaption>',
-        raw, re.DOTALL
-    )
-    if fig_m:
-        caption = fig_m.group(1).strip()
+    # Find the figure block that contains the matched image by anchoring on the image position.
+    img_pos = m.start()
+    fig_m = re.search(r'<figure[^>]*>(.*?)</figure>', raw, re.DOTALL)
+    if fig_m and fig_m.start() <= img_pos <= fig_m.end():
+        cap_m = re.search(r'<figcaption>(.*?)</figcaption>', fig_m.group(1), re.DOTALL)
+        if cap_m:
+            caption = cap_m.group(1).strip()
 
     return (alt, src, caption)
 
@@ -137,7 +138,9 @@ def _clean_excerpt(raw: str) -> str:
     """Strip Markdown/HTML noise from excerpt text."""
     # Remove pymdownx snippet directives
     text = re.sub(r"--8<--[^\n]*", "", raw)
-    # Remove HTML block elements (figures, divs, etc.)
+    # Remove block elements that include text we don't want in excerpts (e.g. figcaption)
+    text = re.sub(r"<figcaption>.*?</figcaption>", "", text, flags=re.DOTALL)
+    # Remove remaining HTML tags (keeping their inner text where appropriate)
     text = re.sub(r"<[^>]+>", "", text, flags=re.DOTALL)
     # Remove Markdown images
     text = re.sub(r"!\[.*?\]\(.*?\)", "", text)
@@ -186,12 +189,11 @@ def generate_homepage(posts: list[dict], index_path: Path | None = None) -> None
         badge_line = f"  *{post['date_str']}*" + (f" &nbsp; {category_badges}" if category_badges else "")
 
         cover = post.get("cover_image")
-        if cover:
-            figcaption = f" <figcaption>{cover[2]}</figcaption>\n" if cover[2] else ""
+        if cover and cover[2]:
             cover_md = (
                 f'\n<figure markdown="span">\n'
                 f' ![{cover[0]}]({cover[1]})\n'
-                f'{figcaption}'
+                f' <figcaption>{cover[2]}</figcaption>\n'
                 f'</figure>\n\n'
             )
         else:

@@ -31,7 +31,7 @@ def _make_post(
     url: str = "https://example.com/posts/test-post/",
     slug: str = "test-post",
 ) -> dict:
-    date = datetime(2024, 6, 15, tzinfo=timezone.utc)
+    date = datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
     return {
         "title": title,
         "date": date,
@@ -363,16 +363,15 @@ class TestGenerateHomepage(unittest.TestCase):
         # The displayed excerpt portion should not exceed 200 Xs followed by ...
         self.assertNotIn("X" * 201, result)
 
-    def test_cover_image_rendered_without_figcaption_when_no_caption(self):
+    def test_cover_image_omitted_when_no_caption(self):
         with tempfile.TemporaryDirectory() as tmp:
             idx = Path(tmp) / "index.md"
             self._write_index(idx, "# Home\n")
             post = _make_post(cover_image=("Hero alt", "posts/my-slug/assets/hero.webp", ""))
             gbm.generate_homepage([post], index_path=idx)
             result = idx.read_text(encoding="utf-8")
-        self.assertIn('<figure markdown="span">', result)
-        self.assertIn("![Hero alt](posts/my-slug/assets/hero.webp)", result)
-        self.assertNotIn("<figcaption>", result)
+        self.assertNotIn('<figure markdown="span">', result)
+        self.assertNotIn("![Hero alt]", result)
 
     def test_cover_image_rendered_with_figcaption_when_caption_present(self):
         with tempfile.TemporaryDirectory() as tmp:

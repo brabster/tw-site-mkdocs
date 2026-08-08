@@ -3,7 +3,10 @@ title: GROUP BY ALL solves a really annoying SQL problem
 date: 2025-05-29
 ---
 
-![A SQL query screenshot demonstrating GROUP BY ALL, which eliminates the need to list non-aggregated columns explicitly after GROUP BY](./assets/modified_query.webp)
+<figure markdown="span">
+ ![A SQL query screenshot demonstrating GROUP BY ALL, which eliminates the need to list non-aggregated columns explicitly after GROUP BY](./assets/modified_query.webp)
+ <figcaption>GROUP BY ALL automatically includes all non-aggregated SELECT columns, removing the need to list them manually.</figcaption>
+</figure>
 
 Does your SQL still copy most of your columns from `SELECT` after `GROUP BY`?
 
