@@ -91,7 +91,7 @@ class _CookieBannerRiskParser(HTMLParser):
             if url:
                 parsed = urlparse(url)
                 if (
-                    parsed.scheme in ("http", "https")
+                    (parsed.scheme in ("http", "https") or (not parsed.scheme and parsed.netloc))
                     and parsed.hostname
                     and parsed.hostname not in self.allowed_hosts
                 ):
