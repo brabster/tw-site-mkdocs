@@ -21,6 +21,7 @@ import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from email.utils import format_datetime
+from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -65,6 +66,49 @@ RESOURCE_TAG_ATTRIBUTES = {
     "source": "src",
     "video": "src",
 }
+
+
+class _CookieBannerRiskParser(HTMLParser):
+    """Collect browser-loaded resources and inline script bodies from HTML."""
+
+    def __init__(self, allowed_hosts: set[str]):
+        super().__init__()
+        self.allowed_hosts = allowed_hosts
+        self.external_resources: list[tuple[str, str]] = []
+        self.inline_scripts: list[str] = []
+        self._script_chunks: list[str] | None = None
+        self._script_has_src = False
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        tag = tag.lower()
+        attr_map = {name.lower(): value for name, value in attrs if value is not None}
+
+        resource_attr = RESOURCE_TAG_ATTRIBUTES.get(tag)
+        if resource_attr:
+            url = attr_map.get(resource_attr)
+            if url:
+                parsed = urlparse(url)
+                if (
+                    parsed.scheme in ("http", "https")
+                    and parsed.hostname
+                    and parsed.hostname not in self.allowed_hosts
+                ):
+                    self.external_resources.append((tag, url))
+
+        if tag == "script":
+            self._script_has_src = "src" in attr_map
+            self._script_chunks = []
+
+    def handle_data(self, data: str) -> None:
+        if self._script_chunks is not None and not self._script_has_src:
+            self._script_chunks.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag.lower() == "script" and self._script_chunks is not None:
+            if not self._script_has_src:
+                self.inline_scripts.append("".join(self._script_chunks))
+            self._script_chunks = None
+            self._script_has_src = False
 
 
 # ---------------------------------------------------------------------------
@@ -207,24 +251,6 @@ def _allowed_resource_hosts(site_url: str = SITE_URL) -> set[str]:
     return hosts
 
 
-def _find_external_browser_resources(raw: str, allowed_hosts: set[str]) -> list[tuple[str, str]]:
-    """Return (tag, url) pairs for browser-loaded off-site resources in HTML."""
-    matches = []
-    for tag, attr in RESOURCE_TAG_ATTRIBUTES.items():
-        pattern = re.compile(
-            rf"<{tag}\b[^>]*\b{attr}=(?:['\"]([^'\"]+)['\"]|([^\s>]+))",
-            re.IGNORECASE,
-        )
-        for quoted_url, unquoted_url in pattern.findall(raw):
-            url = quoted_url or unquoted_url
-            parsed = urlparse(url)
-            if parsed.scheme not in ("http", "https") or not parsed.hostname:
-                continue
-            if parsed.hostname not in allowed_hosts:
-                matches.append((tag, url))
-    return matches
-
-
 def validate_no_cookie_banner_risks(
     site_dir: Path | None = None,
     site_url: str = SITE_URL,
@@ -242,26 +268,15 @@ def validate_no_cookie_banner_risks(
 
     for path in html_files:
         raw = path.read_text(encoding="utf-8")
-        inline_only = re.sub(
-            r"<script\b[^>]*\bsrc=(?:['\"][^'\"]+['\"]|[^\s>]+)[^>]*>.*?</script>",
-            "",
-            raw,
-            flags=re.IGNORECASE | re.DOTALL,
-        )
-
-        inline_scripts = re.findall(
-            r"<script\b[^>]*>(.*?)</script>",
-            inline_only,
-            flags=re.IGNORECASE | re.DOTALL,
-        )
-        inline_script_text = "\n".join(inline_scripts)
+        parser = _CookieBannerRiskParser(allowed_hosts)
+        parser.feed(raw)
+        inline_script_text = "\n".join(parser.inline_scripts)
         for pattern, description in DISALLOWED_INLINE_SCRIPT_MARKERS:
             if pattern.search(inline_script_text):
                 raise ValueError(f"{path} includes {description}, which is not allowed.")
 
-        external_resources = _find_external_browser_resources(raw, allowed_hosts)
-        if external_resources:
-            tag, url = external_resources[0]
+        if parser.external_resources:
+            tag, url = parser.external_resources[0]
             raise ValueError(
                 f"{path} loads an off-site <{tag}> resource ({url}), which is not allowed."
             )
@@ -380,7 +395,7 @@ if __name__ == "__main__":
         "--step",
         choices=["pre", "post", "all"],
         default="all",
-        help="pre: homepage only; post: RSS only; all: both (default)",
+        help="pre: homepage only; post: RSS + built-site validation; all: both (requires existing site build)",
     )
     args = parser.parse_args()
 
