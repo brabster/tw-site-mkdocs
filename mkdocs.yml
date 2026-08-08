@@ -25,7 +25,8 @@ theme:
     - search.share
 
 plugins:
-  - glightbox
+  - glightbox:
+      auto_caption: false
   - meta
   - search
   - blog:

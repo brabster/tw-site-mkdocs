@@ -15,7 +15,8 @@ The goal is to make informative, engaging content, based on real-life experience
 - The blog must be formatted correctly, with appropriate use of bullet points, lists, and other formatting elements to enhance readability.
 - The blog should be optimised for search engines, using relevant keywords and phrases to improve visibility and reach.
 - The blog must include appropriate links to sources and references, providing additional context and information for the reader.
-- Images must have useful alt-text for audience with sight challenges including colour blindness. Captions must also be provided to be useful for the whole audience.
+- Images must have useful alt-text for audience with sight challenges including colour blindness. Alt text describes what the picture looks like and is read by screen readers; it is not a caption and must not appear as visible text on the page.
+- Captions must also be provided to be useful for the whole audience. Captions explain why the picture matters or what it means in context, and are distinct from alt text in both purpose and wording.
 - Any links in the blog must be checked for accuracy and functionality, ensuring they lead to the correct and relevant content.
 - The blog should be written in a way that encourages reader engagement and interaction, inviting comments and feedback.
 
