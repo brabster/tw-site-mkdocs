@@ -27,6 +27,7 @@ def _make_post(
     date_str: str = "2024-06-15",
     categories: list[str] | None = None,
     excerpt: str = "A short excerpt.",
+    cover_image: tuple[str, str] | None = None,
     url: str = "https://example.com/posts/test-post/",
     slug: str = "test-post",
 ) -> dict:
@@ -37,6 +38,7 @@ def _make_post(
         "date_str": date.strftime("%b %-d, %Y"),
         "categories": categories or [],
         "excerpt": excerpt,
+        "cover_image": cover_image,
         "url": url,
         "slug": slug,
     }
@@ -45,6 +47,47 @@ def _make_post(
 def _parse_rss(path: Path) -> ET.Element:
     """Return the root element of an RSS file."""
     return ET.parse(path).getroot()
+
+
+# ---------------------------------------------------------------------------
+# _extract_cover_image
+# ---------------------------------------------------------------------------
+
+class TestExtractCoverImage(unittest.TestCase):
+
+    def test_returns_none_when_no_image(self):
+        self.assertIsNone(gbm._extract_cover_image("No image here.", "my-slug"))
+
+    def test_finds_plain_markdown_image(self):
+        raw = "Some text\n![Alt text](./assets/photo.webp)\nMore text."
+        result = gbm._extract_cover_image(raw, "my-slug")
+        self.assertIsNotNone(result)
+        alt, src = result
+        self.assertEqual(alt, "Alt text")
+        self.assertEqual(src, "posts/my-slug/assets/photo.webp")
+
+    def test_finds_image_inside_figure_block(self):
+        raw = '<figure markdown="span">\n ![Alt](./assets/img.png)\n</figure>'
+        result = gbm._extract_cover_image(raw, "my-post")
+        self.assertIsNotNone(result)
+        alt, src = result
+        self.assertEqual(alt, "Alt")
+        self.assertEqual(src, "posts/my-post/assets/img.png")
+
+    def test_preserves_absolute_url(self):
+        raw = "![Alt](https://example.com/image.png)"
+        _, src = gbm._extract_cover_image(raw, "slug")
+        self.assertEqual(src, "https://example.com/image.png")
+
+    def test_handles_path_without_leading_dot_slash(self):
+        raw = "![Alt](assets/photo.webp)"
+        _, src = gbm._extract_cover_image(raw, "my-slug")
+        self.assertEqual(src, "posts/my-slug/assets/photo.webp")
+
+    def test_returns_first_image_when_multiple_present(self):
+        raw = "![First](./a.webp) and ![Second](./b.webp)"
+        _, src = gbm._extract_cover_image(raw, "slug")
+        self.assertIn("a.webp", src)
 
 
 # ---------------------------------------------------------------------------
@@ -188,6 +231,45 @@ class TestParsePost(unittest.TestCase):
         self.assertIsNotNone(post)
         self.assertEqual(post["categories"], [])
 
+    def test_cover_image_extracted_from_image_before_more(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_post(
+                Path(tmp),
+                "title: Image Post\ndate: 2024-06-15\n",
+                "![My alt](./assets/hero.webp)\n<!-- more -->\nBody.",
+            )
+            post = gbm.parse_post(path)
+        self.assertIsNotNone(post)
+        self.assertIsNotNone(post["cover_image"])
+        alt, src = post["cover_image"]
+        self.assertEqual(alt, "My alt")
+        self.assertIn("2024-06-15-my-post", src)
+        self.assertIn("assets/hero.webp", src)
+
+    def test_cover_image_is_none_when_no_image_before_more(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_post(
+                Path(tmp),
+                "title: Text Only\ndate: 2024-06-15\n",
+                "Text only intro.\n<!-- more -->\n![Image after more](./assets/img.webp)",
+            )
+            post = gbm.parse_post(path)
+        self.assertIsNotNone(post)
+        self.assertIsNone(post["cover_image"])
+
+    def test_cover_image_extracted_from_figure_block(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = self._write_post(
+                Path(tmp),
+                "title: Figure Post\ndate: 2024-06-15\n",
+                '<figure markdown="span">\n ![Alt text](./assets/photo.webp)\n</figure>\n<!-- more -->\nBody.',
+            )
+            post = gbm.parse_post(path)
+        self.assertIsNotNone(post)
+        self.assertIsNotNone(post["cover_image"])
+        _, src = post["cover_image"]
+        self.assertIn("assets/photo.webp", src)
+
 
 # ---------------------------------------------------------------------------
 # generate_homepage
@@ -263,6 +345,24 @@ class TestGenerateHomepage(unittest.TestCase):
         self.assertIn("...", result)
         # The displayed excerpt portion should not exceed 200 Xs followed by ...
         self.assertNotIn("X" * 201, result)
+
+    def test_cover_image_rendered_when_present(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            idx = Path(tmp) / "index.md"
+            self._write_index(idx, "# Home\n")
+            post = _make_post(cover_image=("Hero alt", "posts/my-slug/assets/hero.webp"))
+            gbm.generate_homepage([post], index_path=idx)
+            result = idx.read_text(encoding="utf-8")
+        self.assertIn("![Hero alt](posts/my-slug/assets/hero.webp)", result)
+
+    def test_no_image_tag_when_cover_image_absent(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            idx = Path(tmp) / "index.md"
+            self._write_index(idx, "# Home\n")
+            post = _make_post(cover_image=None)
+            gbm.generate_homepage([post], index_path=idx)
+            result = idx.read_text(encoding="utf-8")
+        self.assertNotIn("![", result)
 
 
 # ---------------------------------------------------------------------------
@@ -437,7 +537,7 @@ class TestLoadPosts(unittest.TestCase):
         self.assertGreater(len(self.posts), 0)
 
     def test_posts_have_required_keys(self):
-        required = {"title", "date", "date_str", "categories", "excerpt", "url", "slug"}
+        required = {"title", "date", "date_str", "categories", "excerpt", "cover_image", "url", "slug"}
         for post in self.posts:
             self.assertTrue(required.issubset(post.keys()), f"Post missing keys: {post}")
 

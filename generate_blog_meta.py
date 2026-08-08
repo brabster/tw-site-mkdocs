@@ -42,6 +42,22 @@ FEED_POSTS_COUNT = 20
 # Post parsing
 # ---------------------------------------------------------------------------
 
+def _extract_cover_image(raw: str, slug: str) -> tuple[str, str] | None:
+    """Return (alt_text, src_relative_to_docs_root) for the first image found in raw,
+    or None if no image is present. src paths relative to the post directory are
+    rebased so they work when referenced from docs/index.md."""
+    m = re.search(r'!\[([^\]]*)\]\(([^)\s]+)\)', raw)
+    if not m:
+        return None
+    alt = m.group(1)
+    src = m.group(2).strip()
+    # Rebase relative paths from post directory to docs root
+    if not src.startswith("http") and not src.startswith("/"):
+        src_rel = src.lstrip(".").lstrip("/")
+        src = f"posts/{slug}/{src_rel}"
+    return (alt, src)
+
+
 def parse_post(path: Path) -> dict | None:
     """Parse a post's front matter and extract a plain-text excerpt."""
     content = path.read_text(encoding="utf-8")
@@ -85,6 +101,7 @@ def parse_post(path: Path) -> dict | None:
         "date_str": post_date.strftime("%b %-d, %Y"),
         "categories": fm.get("categories", []) or [],
         "excerpt": excerpt,
+        "cover_image": _extract_cover_image(excerpt_raw, slug),
         "url": url,
         "slug": slug,
     }
@@ -142,9 +159,13 @@ def generate_homepage(posts: list[dict], index_path: Path | None = None) -> None
         )
         badge_line = f"  *{post['date_str']}*" + (f" &nbsp; {category_badges}" if category_badges else "")
 
+        cover = post.get("cover_image")
+        cover_md = f"\n![{cover[0]}]({cover[1]})\n\n" if cover else ""
+
         lines.append(
             f"\n### [{post['title']}]({post['url']})\n\n"
             f"{badge_line}\n\n"
+            f"{cover_md}"
             f"{post['excerpt'][:200]}{'...' if len(post['excerpt']) > 200 else ''}\n"
         )
 
