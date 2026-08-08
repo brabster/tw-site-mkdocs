@@ -55,6 +55,8 @@ DISALLOWED_INLINE_SCRIPT_MARKERS = [
     (re.compile(r"\bclarity\s*\(", re.IGNORECASE), "Microsoft Clarity"),
     (re.compile(r"\bhj\s*\(", re.IGNORECASE), "Hotjar"),
     (re.compile(r"\bfbq\s*\(", re.IGNORECASE), "Facebook Pixel"),
+    (re.compile(r"\bdocument\.cookie\s*=", re.IGNORECASE), "browser cookie writes"),
+    (re.compile(r"\bnavigator\.sendBeacon\s*\(", re.IGNORECASE), "navigator.sendBeacon"),
 ]
 
 RESOURCE_TAG_ATTRIBUTES = {

@@ -609,6 +609,26 @@ class TestValidateNoCookieBannerRisks(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "Google Tag Manager dataLayer"):
                 gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
 
+    def test_rejects_inline_cookie_write(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                "<html><body><script>document.cookie = 'consent=test';</script></body></html>",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "browser cookie writes"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
+    def test_rejects_inline_send_beacon_tracking(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                "<html><body><script>navigator.sendBeacon('/collect', 'hit=1');</script></body></html>",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "navigator.sendBeacon"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
     def test_allows_self_hosted_assets_and_external_links(self):
         with tempfile.TemporaryDirectory() as tmp:
             site_dir = Path(tmp)
