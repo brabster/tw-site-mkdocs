@@ -60,14 +60,21 @@ DISALLOWED_INLINE_SCRIPT_MARKERS = [
 ]
 
 RESOURCE_TAG_ATTRIBUTES = {
-    "audio": "src",
-    "iframe": "src",
-    "img": "src",
-    "link": "href",
-    "script": "src",
-    "source": "src",
-    "video": "src",
+    "audio": ("src",),
+    "iframe": ("src",),
+    "img": ("src", "srcset"),
+    "link": ("href",),
+    "script": ("src",),
+    "source": ("src", "srcset"),
+    "video": ("poster", "src"),
 }
+
+
+def _resource_urls(attribute: str, value: str) -> list[str]:
+    """Extract one or more resource URLs from an HTML attribute value."""
+    if attribute == "srcset":
+        return [candidate.split()[0] for candidate in value.split(",") if candidate.strip()]
+    return [value]
 
 
 class _CookieBannerRiskParser(HTMLParser):
@@ -85,10 +92,13 @@ class _CookieBannerRiskParser(HTMLParser):
         tag = tag.lower()
         attr_map = {name.lower(): value for name, value in attrs if value is not None}
 
-        resource_attr = RESOURCE_TAG_ATTRIBUTES.get(tag)
-        if resource_attr:
-            url = attr_map.get(resource_attr)
-            if url:
+        resource_attrs = RESOURCE_TAG_ATTRIBUTES.get(tag, ())
+        for resource_attr in resource_attrs:
+            value = attr_map.get(resource_attr)
+            if not value:
+                continue
+
+            for url in _resource_urls(resource_attr, value):
                 parsed = urlparse(url)
                 if (
                     (parsed.scheme in ("http", "https") or (not parsed.scheme and parsed.netloc))
@@ -96,6 +106,7 @@ class _CookieBannerRiskParser(HTMLParser):
                     and parsed.hostname not in self.allowed_hosts
                 ):
                     self.external_resources.append((tag, url))
+                    return
 
         if tag == "script":
             self._script_has_src = "src" in attr_map

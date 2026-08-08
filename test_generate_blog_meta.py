@@ -593,6 +593,35 @@ class TestValidateNoCookieBannerRisks(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "off-site <script> resource"):
                 gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
 
+    def test_rejects_off_site_srcset_resource(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                (
+                    '<html><body>'
+                    '<img src="/assets/hero.webp" '
+                    'srcset="/assets/hero.webp 1x, https://cdn.example.com/hero@2x.webp 2x">'
+                    '</body></html>'
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "off-site <img> resource"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
+    def test_rejects_off_site_video_poster_resource(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                (
+                    '<html><body>'
+                    '<video src="/assets/demo.mp4" poster="https://cdn.example.com/poster.webp"></video>'
+                    '</body></html>'
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "off-site <video> resource"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
     def test_rejects_missing_built_html(self):
         with tempfile.TemporaryDirectory() as tmp:
             site_dir = Path(tmp)
