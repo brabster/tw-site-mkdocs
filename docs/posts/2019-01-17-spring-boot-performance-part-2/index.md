@@ -16,6 +16,8 @@ We've already eliminate many potential culprits, so we continue using a process 
 > "Gatling showed us awful performance with a little Spring Boot app. I thought the story might be interesting or useful but quite long so I've written part 1 - discovering and narrowing down the problem - and published it."
 >
 > - [brabster, January 15, 2019](https://twitter.com/brabster/status/1085088894981455872?ref_src=twsrc%5Etfw)
+
+
 Thread starvation was amongst the guesses, so let's take a look.
 
 ## How Many Threads?
