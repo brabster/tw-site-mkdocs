@@ -64,3 +64,92 @@ Blog posts should have one or more categories, chosen from the `categories_allow
 
 - Descriptions for each categories can be found under `docs/categories`.
 - If no suitable categories are found, a new category should be suggested.
+
+## Build system
+
+The site is built with [Zensical](https://zensical.org), reading `mkdocs.yml` natively. Zensical replaced mkdocs-material in 2026.
+
+The full local build sequence (mirroring Netlify) is:
+
+```
+python -m unittest test_generate_blog_meta -v
+python generate_blog_meta.py --step pre
+zensical build --strict
+python generate_blog_meta.py --step post
+```
+
+`generate_blog_meta.py` is the build helper script. It has two responsibilities:
+
+- **`--step pre`** — regenerates the "recent posts" section of `docs/index.md` before the build, so the homepage content reaches `site/index.html`.
+- **`--step post`** — writes a valid RSS 2.0 feed to `site/feed_rss_created.xml` after the build.
+
+Always run the pre step before `zensical build` and the post step after, or the homepage and RSS feed will be stale.
+
+### docs/index.md
+
+`docs/index.md` is partially generated. The static header (profile card, contact line) sits above the `<!-- GENERATED_CONTENT -->` marker. Only edit content above that marker by hand; everything below it is overwritten by `generate_blog_meta.py --step pre`.
+
+### Post URLs
+
+Post URLs follow the pattern `https://tempered.works/posts/{YYYY}/{MM}/{DD}/{slug}/`. The slug comes from the `slug` front matter field if present, or is derived from the post title by lower-casing, removing non-word characters, and replacing whitespace with hyphens.
+
+### Draft posts
+
+Posts with `draft: true` in their front matter are excluded from the homepage recent-posts list and the RSS feed. Zensical also suppresses their pages from the built site.
+
+### RSS feed
+
+A custom RSS 2.0 feed is generated at `site/feed_rss_created.xml`. Items include title, link, publication date, categories, and excerpt text (up to the `<!-- more -->` marker). Full post content and feed image metadata are not included.
+
+### Generated and ignored files
+
+The following paths are in `.gitignore` and must not be committed:
+
+- `site/` — full build output
+- `__pycache__/` — Python bytecode cache
+- `.cache/` — Zensical build cache
+
+
+## Build system
+
+The site is built with [Zensical](https://zensical.org), reading `mkdocs.yml` natively. Zensical replaced mkdocs-material in 2026.
+
+The full local build sequence (mirroring Netlify) is:
+
+```
+python -m unittest test_generate_blog_meta -v
+python generate_blog_meta.py --step pre
+zensical build --strict
+python generate_blog_meta.py --step post
+```
+
+`generate_blog_meta.py` is the build helper script. It has two responsibilities:
+
+- **`--step pre`** — regenerates the "recent posts" section of `docs/index.md` before the build, so the homepage content reaches `site/index.html`.
+- **`--step post`** — writes a valid RSS 2.0 feed to `site/feed_rss_created.xml` after the build.
+
+Always run the pre step before `zensical build` and the post step after, or the homepage and RSS feed will be stale.
+
+### docs/index.md
+
+`docs/index.md` is partially generated. The static header (profile card, contact line) sits above the `<!-- GENERATED_CONTENT -->` marker. Only edit content above that marker by hand; everything below it is overwritten by `generate_blog_meta.py --step pre`.
+
+### Post URLs
+
+Post URLs follow the pattern `https://tempered.works/posts/{YYYY}/{MM}/{DD}/{slug}/`. The slug comes from the `slug` front matter field if present, or is derived from the post title by lower-casing, removing non-word characters, and replacing whitespace with hyphens.
+
+### Draft posts
+
+Posts with `draft: true` in their front matter are excluded from the homepage recent-posts list and the RSS feed. Zensical also suppresses their pages from the built site.
+
+### RSS feed
+
+A custom RSS 2.0 feed is generated at `site/feed_rss_created.xml`. Items include title, link, publication date, categories, and excerpt text (up to the `<!-- more -->` marker). Full post content and feed image metadata are not included.
+
+### Generated and ignored files
+
+The following paths are in `.gitignore` and must not be committed:
+
+- `site/` — full build output
+- `__pycache__/` — Python bytecode cache
+- `.cache/` — Zensical build cache
