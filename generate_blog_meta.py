@@ -247,7 +247,7 @@ def load_posts() -> list[dict]:
 def _allowed_resource_hosts(site_url: str = SITE_URL) -> set[str]:
     """Return hosts that are allowed in browser-loaded resource URLs."""
     parsed = urlparse(site_url)
-    hosts = {"localhost", "127.0.0.1"}
+    hosts: set[str] = set()
     if parsed.hostname:
         hosts.add(parsed.hostname)
     return hosts
