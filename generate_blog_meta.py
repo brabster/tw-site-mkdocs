@@ -42,6 +42,14 @@ FEED_POSTS_COUNT = 20
 # Post parsing
 # ---------------------------------------------------------------------------
 
+def _slugify(title: str) -> str:
+    """Convert a post title to a URL slug, matching the mkdocs blog plugin."""
+    s = title.lower()
+    s = re.sub(r"[^\w\s-]", "", s)
+    s = re.sub(r"[\s_]+", "-", s)
+    return s.strip("-")
+
+
 def _extract_cover_image(raw: str, slug: str) -> tuple[str, str, str] | None:
     """Return (alt_text, src_relative_to_docs_root, caption) for the first image
     found in raw, or None if no image is present. caption is the figcaption text
@@ -96,9 +104,8 @@ def parse_post(path: Path) -> dict | None:
 
     excerpt = _clean_excerpt(excerpt_raw)
 
-    # Derive post URL from directory name: posts/<dir-name>/
+    # slug for asset path rebasing uses the directory name
     slug = path.parent.name
-    url = f"{SITE_URL.rstrip('/')}/posts/{slug}/"
 
     date_val = fm["date"]
     if isinstance(date_val, str):
@@ -106,6 +113,13 @@ def parse_post(path: Path) -> dict | None:
     else:
         # yaml may parse it as a date object
         post_date = datetime(date_val.year, date_val.month, date_val.day, tzinfo=timezone.utc)
+
+    # Derive URL using the configured post_url_format: posts/{date}/{slug}
+    # {date} is YYYY/MM/DD, {slug} is the explicit slug from front matter or
+    # the title slugified to match how the mkdocs blog plugin generates permalinks.
+    url_slug = fm.get("slug") or _slugify(fm["title"])
+    date_path = post_date.strftime("%Y/%m/%d")
+    url = f"{SITE_URL.rstrip('/')}/posts/{date_path}/{url_slug}/"
 
     return {
         "title": fm["title"],

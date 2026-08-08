@@ -222,7 +222,7 @@ class TestParsePost(unittest.TestCase):
         self.assertEqual(post["date"].day, 15)
         self.assertIsNotNone(post["date"].tzinfo)
 
-    def test_url_derived_from_directory_name(self):
+    def test_url_uses_date_and_slugified_title(self):
         with tempfile.TemporaryDirectory() as tmp:
             d = Path(tmp) / "2024-06-15-slug-test"
             d.mkdir()
@@ -233,7 +233,7 @@ class TestParsePost(unittest.TestCase):
             )
             post = gbm.parse_post(path)
         self.assertIsNotNone(post)
-        self.assertIn("2024-06-15-slug-test", post["url"])
+        self.assertIn("/posts/2024/06/15/slug-test/", post["url"])
         self.assertTrue(post["url"].endswith("/"))
 
     def test_empty_categories_defaults_to_empty_list(self):

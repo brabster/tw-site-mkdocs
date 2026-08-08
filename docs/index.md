@@ -16,7 +16,7 @@
 
 ## Recent posts
 
-### [How to get pwned with --extra-index-url](https://tempered.works/posts/2025-12-06-how-to-get-pwned-with---extra-index-url/)
+### [How to get pwned with --extra-index-url](https://tempered.works/posts/2025/12/06/how-to-get-pwned-with---extra-index-url/)
 
   *Dec 6, 2025* &nbsp; `automation` `operations` `security`
 
@@ -27,7 +27,7 @@
 
 Python's built-in pip package manager is unsafe when used with the `--extra-index-url` flag (there are other dangerous variants too). An attacker can publish a malicious package with the same name and...
 
-### [UDAFs, stored procedures and more in dbt](https://tempered.works/posts/2025-08-04-udafs-stored-procedures-and-more-in-dbt/)
+### [UDAFs, stored procedures and more in dbt](https://tempered.works/posts/2025/08/04/udafs-stored-procedures-and-more-in-dbt/)
 
   *Aug 4, 2025* &nbsp; `insights`
 
@@ -38,7 +38,7 @@ Python's built-in pip package manager is unsafe when used with the `--extra-inde
 
 It's been over a year since I first wrote about managing UDFs using custom dbt materializations. The approach has held up well, but a recent project required me to go further and bring UDAFs (user-def...
 
-### [BigQuery, safer by default from September 2025](https://tempered.works/posts/2025-07-17-bigquery-will-be-safer-by-default/)
+### [BigQuery, safer by default from September 2025](https://tempered.works/posts/2025/07/17/bigquery-safer-by-default-from-september-2025/)
 
   *Jul 17, 2025* &nbsp; `insights` `operations`
 
@@ -49,7 +49,7 @@ It's been over a year since I first wrote about managing UDFs using custom dbt m
 
 On September 1st 2025, Google will make BigQuery a lot safer by default, changing the default quotas for projects under the default on-demand pricing model. Instead of unlimited financial damage, the ...
 
-### [GitHub Codespaces, one year later](https://tempered.works/posts/2025-06-07-my-year-with-github-codespaces/)
+### [GitHub Codespaces, one year later](https://tempered.works/posts/2025/06/07/github-codespaces-one-year-later/)
 
   *Jun 7, 2025* &nbsp; `operations` `security`
 
@@ -60,7 +60,7 @@ On September 1st 2025, Google will make BigQuery a lot safer by default, changin
 
 Back in early 2024 I tried GitHub Codespaces, and quickly ditched my local dev setup entirely. This post shares my experience going cloud-native for development: benefits for onboarding, agility, and ...
 
-### [GROUP BY ALL solves a really annoying SQL problem](https://tempered.works/posts/2025-05-29-group-by-all-solves-a-really-annoying-sql-problem/)
+### [GROUP BY ALL solves a really annoying SQL problem](https://tempered.works/posts/2025/05/29/group-by-all-solves-a-really-annoying-sql-problem/)
 
   *May 29, 2025*
 
@@ -71,7 +71,7 @@ Back in early 2024 I tried GitHub Codespaces, and quickly ditched my local dev s
 
 Does your SQL still copy most of your columns from `SELECT` after `GROUP BY`? Behold: `GROUP BY ALL`.
 
-### [My path to consultancy](https://tempered.works/posts/2025-05-11-my-consulting-story/)
+### [My path to consultancy](https://tempered.works/posts/2025/05/11/my-path-to-consultancy/)
 
   *May 11, 2025* &nbsp; `operations`
 
@@ -82,7 +82,7 @@ Does your SQL still copy most of your columns from `SELECT` after `GROUP BY`? Be
 
 I had big doubts about becoming a consultant or contractor. Could I do it? Would I find work? Could I run my own business? Would I need to change who I am, wear a suit, or buy a briefcase? Seven years...
 
-### [Rethinking the guest network to improve my home network security](https://tempered.works/posts/2025-03-23-rethinking-the-guest-network-to-improve-my-home-network-security/)
+### [Rethinking the guest network to improve my home network security](https://tempered.works/posts/2025/03/23/rethinking-the-guest-network-to-improve-my-home-network-security/)
 
   *Mar 23, 2025* &nbsp; `operations` `security`
 
@@ -93,7 +93,7 @@ I had big doubts about becoming a consultant or contractor. Could I do it? Would
 
 I believe that making my guest network my default network reduces the potential harm a compromised app or device can cause. What was my "trusted" network is now my "untrusted" network, with only a few...
 
-### [Generating portable and user-friendly identifiers](https://tempered.works/posts/2025-03-08-generating-portable-and-user-friendly-identifiers/)
+### [Generating portable and user-friendly identifiers](https://tempered.works/posts/2025/03/08/generating-portable-and-user-friendly-identifiers/)
 
   *Mar 8, 2025* &nbsp; `insights` `operations` `performance`
 
@@ -104,7 +104,7 @@ I believe that making my guest network my default network reduces the potential 
 
 I'll share how I generate unique identifiers from data in 2025, avoiding the pitfalls I've seen along the way. TL;DR: I'm using MD5 to produce a digest from a string or bytes value, then I'm using pla...
 
-### [Using AWS billing to track down lost resources](https://tempered.works/posts/2025-02-09-using-aws-billing-to-track-down-lost-resources/)
+### [Using AWS billing to track down lost resources](https://tempered.works/posts/2025/02/09/using-aws-billing-to-track-down-lost-resources/)
 
   *Feb 9, 2025* &nbsp; `operations`
 
@@ -115,7 +115,7 @@ I'll share how I generate unique identifiers from data in 2025, avoiding the pit
 
 My AWS bill was higher than I expected, and it wasn't immediately clear what was driving the cost. Here's how I tracked down the culprits.
 
-### [Testing stored procedures](https://tempered.works/posts/2025-01-18-testing-stored-procedures/)
+### [Testing stored procedures](https://tempered.works/posts/2025/01/18/testing-stored-procedures/)
 
   *Jan 18, 2025* &nbsp; `insights`
 
