@@ -4,7 +4,15 @@ Reads all posts in docs/posts/ and:
   - Regenerates the "recent posts" section of docs/index.md
   - Writes site/feed_rss_created.xml (RSS 2.0)
 
-Run this after `zensical build`. The netlify.toml does this automatically.
+Run in two steps around the site build:
+
+    python generate_blog_meta.py --step pre   # updates docs/index.md before build
+    zensical build --strict
+    python generate_blog_meta.py --step post  # writes site/feed_rss_created.xml after build
+
+The netlify.toml runs these steps automatically; local builds should follow the same order
+so that docs/index.md is up-to-date when the site is built and the RSS feed is generated
+from the final site output.
 """
 
 import argparse
@@ -199,6 +207,12 @@ def generate_homepage(posts: list[dict], index_path: Path | None = None) -> None
                 f'\n<figure markdown="span">\n'
                 f' ![{cover[0]}]({cover[1]})\n'
                 f' <figcaption>{cover[2]}</figcaption>\n'
+                f'</figure>\n\n'
+            )
+        elif cover:
+            cover_md = (
+                f'\n<figure markdown="span">\n'
+                f' ![{cover[0]}]({cover[1]})\n'
                 f'</figure>\n\n'
             )
         else:
