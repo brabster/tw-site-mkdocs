@@ -5,7 +5,10 @@ categories:
  - operations
 ---
 
-![hero image](./assets/aws_billing_console.webp)
+<figure markdown="span">
+ ![Screenshot of the AWS billing console showing cost and usage data with an unexpectedly higher bill](./assets/aws_billing_console.webp)
+ <figcaption>An unexpectedly high AWS bill that prompted a deeper investigation into forgotten resources.</figcaption>
+</figure>
 
 My AWS bill was higher than I expected, and it wasn't immediately clear what was driving the cost. Here's how I tracked down the culprits.
 

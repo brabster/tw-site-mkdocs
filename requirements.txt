@@ -1,3 +1,1 @@
-mkdocs-material
-git+https://github.com/brabster/mkdocs-rss-plugin.git@hacky-fix-relative-links-in-feed
-mkdocs-glightbox>=0.3.7
+zensical

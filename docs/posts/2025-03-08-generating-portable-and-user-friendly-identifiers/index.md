@@ -7,7 +7,10 @@ categories:
     - performance
 ---
 
-![A screenshot of the BigQuery console, with example SQL for generating an identfier from a string value as I outline below](./assets/image.webp)
+<figure markdown="span">
+ ![A screenshot of the BigQuery console, with example SQL for generating an identifier from a string value as I outline below](./assets/image.webp)
+ <figcaption>Generating a hex-encoded MD5 identifier in BigQuery from a string value.</figcaption>
+</figure>
 
 I'll share how I generate unique identifiers from data in 2025, avoiding the pitfalls I've seen along the way. TL;DR: I'm using [MD5](https://en.wikipedia.org/wiki/MD5) to produce a digest from a string or bytes value, then I'm using plain old [hexadecimal](https://en.wikipedia.org/wiki/Hexadecimal) encoding of that digest, specifying upper or lowercase for the alpha characters. This solution meets the needs I describe next.
 
