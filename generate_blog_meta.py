@@ -395,7 +395,7 @@ if __name__ == "__main__":
         "--step",
         choices=["pre", "post", "all"],
         default="all",
-        help="pre: homepage only; post: RSS + built-site validation; all: both (requires existing site build)",
+        help="pre: homepage only; post: RSS + built-site validation; all: both (use only when site/ is already built)",
     )
     args = parser.parse_args()
 
