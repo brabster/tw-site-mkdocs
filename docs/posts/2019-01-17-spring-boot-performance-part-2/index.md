@@ -14,8 +14,6 @@ We eliminate a couple of potential causes in the first part of the article. If y
 We've already eliminate many potential culprits, so we continue using a process of elimination to figure out what's causing the problem. I shared a link to the first part and invited people to guess what the problem was.
 
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Gatling showed us awful performance with a little Spring Boot app. I thought the story might be interesting or useful but quite long so I&#39;ve written part 1 - discovering and narrowing down the problem - and published it <a href="https://t.co/R7j46F7WSY">https://t.co/R7j46F7WSY</a></p>&mdash; brabster (@brabster) <a href="https://twitter.com/brabster/status/1085088894981455872?ref_src=twsrc%5Etfw">January 15, 2019</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
 Thread starvation was amongst the guesses, so let's take a look.
 
 ## How Many Threads?
@@ -116,8 +114,6 @@ I'm not sure how you'd figure it out if you didn't know where to start. GIven a 
 ### Password Encoding
 
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">My guess is password checking using a slow hash causing some sort of thread pool to fill up and incoming requests to queue</p>&mdash; Glen Mailer (@glenathan) <a href="https://twitter.com/glenathan/status/1085149805557489664?ref_src=twsrc%5Etfw">January 15, 2019</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
 We protect passwords for by 'encoding' or 'hashing' them before we store them. When the user authenticates, we encode the password they gave us and compare with our stored hash to see if the password was right.
 
 The choice of encoding algorithm is important in this world of cloud computing, GPUs and hardware acceleration. We need an algorithm that needs a lot of CPU power to encode. We get a password encoder using the bcrypt algorithm by default, an algorithm that's been designed to withstand modern techniques and compute power. You can read more about bcrypt and how it helps keep your user database secure in [Auth0's article](https://auth0.com/blog/hashing-in-action-understanding-bcrypt) and Jeff Attwood's post on [Coding Horror](https://blog.codinghorror.com/speed-hashing/).
@@ -127,8 +123,6 @@ See the connection yet? The choice of Bcrypt makes sense for protecting the cred
 ### Sessions
 
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Sessions are silent killers ;-) I had similar issue few years ago <a href="https://t.co/uIBP4eJJdD">https://t.co/uIBP4eJJdD</a> <a href="https://t.co/0iNEHaM9X9">pic.twitter.com/0iNEHaM9X9</a></p>&mdash; Maciej Walkowiak (@maciejwalkowiak) <a href="https://twitter.com/maciejwalkowiak/status/1085122819246252033?ref_src=twsrc%5Etfw">January 15, 2019</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
 
 By default, the security config responds to our first authentication with a cookie containing a session ID. That is exchanged without any encoding. Sessions come with lots of problems of their own, so we'll leave that one for another day. If we'd been using a browser, or Gatling had been set up to make lots of requests as the same user, we'd have used the session ID and not seen a performance problem.
 

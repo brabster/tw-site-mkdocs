@@ -22,6 +22,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from email.utils import format_datetime
 from pathlib import Path
+from urllib.parse import urlparse
 
 import yaml
 
@@ -44,6 +45,26 @@ AUTHOR_NAME = "Paul Brabban"
 AUTHOR_EMAIL = "paul@tempered.works"
 RECENT_POSTS_COUNT = 10
 FEED_POSTS_COUNT = 20
+
+DISALLOWED_INLINE_SCRIPT_MARKERS = [
+    (re.compile(r"\bgtag\s*\(", re.IGNORECASE), "Google Analytics gtag"),
+    (re.compile(r"\bdataLayer\b", re.IGNORECASE), "Google Tag Manager dataLayer"),
+    (re.compile(r"\b(?:window\.)?plausible\s*\(", re.IGNORECASE), "Plausible analytics"),
+    (re.compile(r"\bumami\.track\s*\(", re.IGNORECASE), "Umami analytics"),
+    (re.compile(r"\bclarity\s*\(", re.IGNORECASE), "Microsoft Clarity"),
+    (re.compile(r"\bhj\s*\(", re.IGNORECASE), "Hotjar"),
+    (re.compile(r"\bfbq\s*\(", re.IGNORECASE), "Facebook Pixel"),
+]
+
+RESOURCE_TAG_ATTRIBUTES = {
+    "audio": "src",
+    "iframe": "src",
+    "img": "src",
+    "link": "href",
+    "script": "src",
+    "source": "src",
+    "video": "src",
+}
 
 
 # ---------------------------------------------------------------------------
@@ -177,6 +198,61 @@ def load_posts() -> list[dict]:
     return posts
 
 
+def _allowed_resource_hosts(site_url: str = SITE_URL) -> set[str]:
+    """Return hosts that are allowed in browser-loaded resource URLs."""
+    parsed = urlparse(site_url)
+    hosts = {"localhost", "127.0.0.1"}
+    if parsed.hostname:
+        hosts.add(parsed.hostname)
+    return hosts
+
+
+def _find_external_browser_resources(raw: str, allowed_hosts: set[str]) -> list[tuple[str, str]]:
+    """Return (tag, url) pairs for browser-loaded off-site resources in HTML."""
+    matches = []
+    for tag, attr in RESOURCE_TAG_ATTRIBUTES.items():
+        pattern = re.compile(
+            rf"<{tag}\b[^>]*\b{attr}=['\"]([^'\"]+)['\"]",
+            re.IGNORECASE,
+        )
+        for url in pattern.findall(raw):
+            parsed = urlparse(url)
+            if parsed.scheme not in ("http", "https") or not parsed.hostname:
+                continue
+            if parsed.hostname not in allowed_hosts:
+                matches.append((tag, url))
+    return matches
+
+
+def validate_no_cookie_banner_risks(
+    site_dir: Path | None = None,
+    site_url: str = SITE_URL,
+) -> None:
+    """Fail if built pages include likely cookie-banner-triggering features."""
+    built_site = site_dir or SITE_DIR
+    allowed_hosts = _allowed_resource_hosts(site_url)
+
+    for path in built_site.rglob("*.html"):
+        raw = path.read_text(encoding="utf-8")
+
+        inline_scripts = re.findall(
+            r"<script\b(?![^>]*\bsrc=)[^>]*>(.*?)</script>",
+            raw,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        inline_script_text = "\n".join(inline_scripts)
+        for pattern, description in DISALLOWED_INLINE_SCRIPT_MARKERS:
+            if pattern.search(inline_script_text):
+                raise ValueError(f"{path} includes {description}, which is not allowed.")
+
+        external_resources = _find_external_browser_resources(raw, allowed_hosts)
+        if external_resources:
+            tag, url = external_resources[0]
+            raise ValueError(
+                f"{path} loads an off-site <{tag}> resource ({url}), which is not allowed."
+            )
+
+
 # ---------------------------------------------------------------------------
 # Homepage generation
 # ---------------------------------------------------------------------------
@@ -300,3 +376,4 @@ if __name__ == "__main__":
         generate_homepage(posts)
     if args.step in ("post", "all"):
         generate_rss(posts)
+        validate_no_cookie_banner_risks()

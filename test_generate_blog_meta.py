@@ -5,6 +5,7 @@ Covers:
   - parse_post: front-matter parsing, URL derivation, excerpt selection
   - generate_homepage: marker insertion and replacement, post count limit
   - generate_rss: RSS 2.0 structural compliance, date formats, item fields
+  - validate_no_cookie_banner_risks: blocking off-site browser resources and trackers
   - load_posts: integration smoke test against the real docs/posts/ tree
 """
 
@@ -554,6 +555,50 @@ class TestGenerateRss(unittest.TestCase):
         gbm.generate_rss([], output=self.out)
         items = self._root().findall("channel/item")
         self.assertEqual(len(items), 0)
+
+
+# ---------------------------------------------------------------------------
+# validate_no_cookie_banner_risks
+# ---------------------------------------------------------------------------
+
+class TestValidateNoCookieBannerRisks(unittest.TestCase):
+
+    def test_rejects_known_tracker_marker(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                '<html><body><script src="https://platform.twitter.com/widgets.js"></script></body></html>',
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "off-site <script> resource"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
+    def test_rejects_off_site_browser_resource(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                '<html><head><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"></head></html>',
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "off-site <link> resource"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
+    def test_allows_self_hosted_assets_and_external_links(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                (
+                    '<html><head>'
+                    '<link rel="canonical" href="https://tempered.works/posts/example/">'
+                    '<link rel="stylesheet" href="/assets/stylesheets/main.css">'
+                    '</head><body>'
+                    '<script src="/assets/javascripts/bundle.js"></script>'
+                    '<a href="https://example.com/article">Read more</a>'
+                    '</body></html>'
+                ),
+                encoding="utf-8",
+            )
+            gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
 
 
 # ---------------------------------------------------------------------------
