@@ -21,7 +21,9 @@ import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from email.utils import format_datetime
+from html.parser import HTMLParser
 from pathlib import Path
+from urllib.parse import urlparse
 
 import yaml
 
@@ -44,6 +46,82 @@ AUTHOR_NAME = "Paul Brabban"
 AUTHOR_EMAIL = "paul@tempered.works"
 RECENT_POSTS_COUNT = 10
 FEED_POSTS_COUNT = 20
+
+DISALLOWED_INLINE_SCRIPT_MARKERS = [
+    (re.compile(r"\bgtag\s*\(", re.IGNORECASE), "Google Analytics gtag"),
+    (re.compile(r"\bdataLayer\b", re.IGNORECASE), "Google Tag Manager dataLayer"),
+    (re.compile(r"\b(?:window\.)?plausible\s*\(", re.IGNORECASE), "Plausible analytics"),
+    (re.compile(r"\bumami\.track\s*\(", re.IGNORECASE), "Umami analytics"),
+    (re.compile(r"\bclarity\s*\(", re.IGNORECASE), "Microsoft Clarity"),
+    (re.compile(r"\bhj\s*\(", re.IGNORECASE), "Hotjar"),
+    (re.compile(r"\bfbq\s*\(", re.IGNORECASE), "Facebook Pixel"),
+    (re.compile(r"\bdocument\.cookie\s*=", re.IGNORECASE), "browser cookie writes"),
+    (re.compile(r"\bnavigator\.sendBeacon\s*\(", re.IGNORECASE), "beacon-style tracking calls"),
+]
+
+RESOURCE_TAG_ATTRIBUTES = {
+    "audio": ("src",),
+    "iframe": ("src",),
+    "img": ("src", "srcset"),
+    "link": ("href",),
+    "script": ("src",),
+    "source": ("src", "srcset"),
+    "video": ("poster", "src"),
+}
+
+
+def _resource_urls(attribute: str, value: str) -> list[str]:
+    """Extract one or more resource URLs from an HTML attribute value."""
+    if attribute == "srcset":
+        return [candidate.split()[0] for candidate in value.split(",") if candidate.strip()]
+    return [value]
+
+
+class _CookieBannerRiskParser(HTMLParser):
+    """Collect browser-loaded resources and inline script bodies from HTML."""
+
+    def __init__(self, allowed_hosts: set[str]):
+        super().__init__()
+        self.allowed_hosts = allowed_hosts
+        self.external_resources: list[tuple[str, str]] = []
+        self.inline_scripts: list[str] = []
+        self._script_chunks: list[str] | None = None
+        self._script_has_src = False
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        tag = tag.lower()
+        attr_map = {name.lower(): value for name, value in attrs if value is not None}
+
+        resource_attrs = RESOURCE_TAG_ATTRIBUTES.get(tag, ())
+        for resource_attr in resource_attrs:
+            value = attr_map.get(resource_attr)
+            if not value:
+                continue
+
+            for url in _resource_urls(resource_attr, value):
+                parsed = urlparse(url)
+                if (
+                    (parsed.scheme in ("http", "https") or (not parsed.scheme and parsed.netloc))
+                    and parsed.hostname
+                    and parsed.hostname not in self.allowed_hosts
+                ):
+                    self.external_resources.append((tag, url))
+                    return
+
+        if tag == "script":
+            self._script_has_src = "src" in attr_map
+            self._script_chunks = []
+
+    def handle_data(self, data: str) -> None:
+        if self._script_chunks is not None and not self._script_has_src:
+            self._script_chunks.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag.lower() == "script" and self._script_chunks is not None:
+            if not self._script_has_src:
+                self.inline_scripts.append("".join(self._script_chunks))
+            self._script_chunks = None
+            self._script_has_src = False
 
 
 # ---------------------------------------------------------------------------
@@ -177,6 +255,46 @@ def load_posts() -> list[dict]:
     return posts
 
 
+def _allowed_resource_hosts(site_url: str = SITE_URL) -> set[str]:
+    """Return hosts that are allowed in browser-loaded resource URLs."""
+    parsed = urlparse(site_url)
+    hosts: set[str] = set()
+    if parsed.hostname:
+        hosts.add(parsed.hostname)
+    return hosts
+
+
+def validate_no_cookie_banner_risks(
+    site_dir: Path | None = None,
+    site_url: str = SITE_URL,
+) -> None:
+    """Fail if built pages include likely cookie-banner-triggering features.
+
+    Assumes site_dir contains the current HTML output from the build that just ran.
+    """
+    built_site = site_dir or SITE_DIR
+    allowed_hosts = _allowed_resource_hosts(site_url)
+    html_files = list(built_site.rglob("*.html"))
+
+    if not html_files:
+        raise ValueError(f"{built_site} does not contain any built HTML files to validate.")
+
+    for path in html_files:
+        raw = path.read_text(encoding="utf-8")
+        parser = _CookieBannerRiskParser(allowed_hosts)
+        parser.feed(raw)
+        inline_script_text = "\n".join(parser.inline_scripts)
+        for pattern, description in DISALLOWED_INLINE_SCRIPT_MARKERS:
+            if pattern.search(inline_script_text):
+                raise ValueError(f"{path} includes {description}, which is not allowed.")
+
+        if parser.external_resources:
+            tag, url = parser.external_resources[0]
+            raise ValueError(
+                f"{path} loads an off-site <{tag}> resource ({url}), which is not allowed."
+            )
+
+
 # ---------------------------------------------------------------------------
 # Homepage generation
 # ---------------------------------------------------------------------------
@@ -290,7 +408,7 @@ if __name__ == "__main__":
         "--step",
         choices=["pre", "post", "all"],
         default="all",
-        help="pre: homepage only; post: RSS only; all: both (default)",
+        help="pre: homepage only; post: RSS + built-site validation; all: both (use only when site/ is already built)",
     )
     args = parser.parse_args()
 
@@ -300,3 +418,4 @@ if __name__ == "__main__":
         generate_homepage(posts)
     if args.step in ("post", "all"):
         generate_rss(posts)
+        validate_no_cookie_banner_risks()

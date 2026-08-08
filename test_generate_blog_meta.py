@@ -5,6 +5,7 @@ Covers:
   - parse_post: front-matter parsing, URL derivation, excerpt selection
   - generate_homepage: marker insertion and replacement, post count limit
   - generate_rss: RSS 2.0 structural compliance, date formats, item fields
+  - validate_no_cookie_banner_risks: blocking off-site browser resources and trackers
   - load_posts: integration smoke test against the real docs/posts/ tree
 """
 
@@ -554,6 +555,125 @@ class TestGenerateRss(unittest.TestCase):
         gbm.generate_rss([], output=self.out)
         items = self._root().findall("channel/item")
         self.assertEqual(len(items), 0)
+
+
+# ---------------------------------------------------------------------------
+# validate_no_cookie_banner_risks
+# ---------------------------------------------------------------------------
+
+class TestValidateNoCookieBannerRisks(unittest.TestCase):
+
+    def test_rejects_known_tracker_marker(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                '<html><body><script src="https://platform.twitter.com/widgets.js"></script></body></html>',
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "off-site <script> resource"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
+    def test_rejects_off_site_browser_resource(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                '<html><head><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto"></head></html>',
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "off-site <link> resource"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
+    def test_rejects_unquoted_off_site_browser_resource(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                '<html><body><script src=https://platform.twitter.com/widgets.js></script></body></html>',
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "off-site <script> resource"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
+    def test_rejects_off_site_srcset_resource(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                (
+                    '<html><body>'
+                    '<img src="/assets/hero.webp" '
+                    'srcset="/assets/hero.webp 1x, https://cdn.example.com/hero@2x.webp 2x">'
+                    '</body></html>'
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "off-site <img> resource"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
+    def test_rejects_off_site_video_poster_resource(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                (
+                    '<html><body>'
+                    '<video src="/assets/demo.mp4" poster="https://cdn.example.com/poster.webp"></video>'
+                    '</body></html>'
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "off-site <video> resource"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
+    def test_rejects_missing_built_html(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            with self.assertRaisesRegex(ValueError, "does not contain any built HTML files"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
+    def test_rejects_inline_tracker_script(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                "<html><body><script>window.dataLayer = window.dataLayer || [];</script></body></html>",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "Google Tag Manager dataLayer"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
+    def test_rejects_inline_cookie_write(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                "<html><body><script>document.cookie = 'consent=test';</script></body></html>",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "browser cookie writes"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
+    def test_rejects_inline_send_beacon_tracking(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                "<html><body><script>navigator.sendBeacon('/collect', 'hit=1');</script></body></html>",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "beacon-style tracking calls"):
+                gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
+
+    def test_allows_self_hosted_assets_and_external_links(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            site_dir = Path(tmp)
+            (site_dir / "index.html").write_text(
+                (
+                    '<html><head>'
+                    '<link rel="canonical" href="https://tempered.works/posts/example/">'
+                    '<link rel="stylesheet" href="/assets/stylesheets/main.css">'
+                    '</head><body>'
+                    '<script src="/assets/javascripts/bundle.js"></script>'
+                    '<a href="https://example.com/article">Read more</a>'
+                    '</body></html>'
+                ),
+                encoding="utf-8",
+            )
+            gbm.validate_no_cookie_banner_risks(site_dir=site_dir, site_url="https://tempered.works")
 
 
 # ---------------------------------------------------------------------------

@@ -13,6 +13,7 @@ theme:
   language: en
   favicon: favicon.ico
   logo: favicons/favicon-32x32.webp
+  font: false
   palette:
     primary: blue grey
   features:
@@ -25,8 +26,6 @@ theme:
     - search.share
 
 plugins:
-  - glightbox:
-      auto_caption: false
   - meta
   - search
   - blog:
@@ -64,7 +63,7 @@ markdown_extensions:
         - abbreviations.md
   - pymdownx.emoji:
       emoji_index: !!python/name:zensical.extensions.emoji.twemoji
-      emoji_generator: !!python/name:zensical.extensions.emoji.to_svg
+      emoji_generator: !!python/name:pymdownx.emoji.to_alt
   - def_list
   - attr_list
   - footnotes
