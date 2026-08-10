@@ -1,5 +1,6 @@
 ---
 title: Packer & Fedora Gotchas
+slug: packer--fedora-gotchas
 date: 2019-11-07
 categories:
     - security
