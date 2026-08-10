@@ -5,10 +5,7 @@ categories:
   - insights
 ---
 
-<figure markdown="span">
- ![Screenshot of a stored procedure definition and test written in BigQuery SQL](./assets/hero.webp)
- <figcaption>A stored procedure and its unit test, side by side in BigQuery SQL.</figcaption>
-</figure>
+![hero image](./assets/hero.webp)
 
 
 ## Update August 2025
