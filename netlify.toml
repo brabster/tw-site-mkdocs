@@ -1,5 +1,5 @@
 [build]
-    command = "python -m unittest test_generate_blog_meta -v && python generate_blog_meta.py --step pre && zensical build --strict && python generate_blog_meta.py --step post"
+    command = "mkdocs build --strict"
     publish = "site"
     environment = { PYTHON_VERSION = "3" }
 
