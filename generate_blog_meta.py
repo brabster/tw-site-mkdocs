@@ -230,6 +230,56 @@ def generate_homepage(posts: list[dict], index_path: Path | None = None) -> None
 
 
 # ---------------------------------------------------------------------------
+# Sitemap generation
+# ---------------------------------------------------------------------------
+
+def generate_sitemap(posts: list[dict], output: Path | None = None) -> None:
+    """Rewrite site/sitemap.xml to include canonical post URLs.
+
+    Zensical generates a sitemap that only covers pages in the nav (home,
+    company, portfolio). This function reads that sitemap, normalises any
+    preview/localhost URL prefix to SITE_URL, then appends canonical post
+    URLs in YYYY/MM/DD/slug format so search engines index the right pages.
+    """
+    out = output or SITE_DIR / "sitemap.xml"
+
+    # Collect existing locs from the Zensical-generated sitemap (nav pages).
+    locs: list[str] = []
+    if out.exists():
+        for m in re.finditer(r"<loc>(.*?)</loc>", out.read_text(encoding="utf-8")):
+            raw = m.group(1)
+            # Normalise any server origin (http/https + host) to SITE_URL so
+            # preview-deploy URLs like https://deploy-preview-74--tw.netlify.app/
+            # do not leak into the canonical sitemap.
+            normalised = re.sub(r"^https?://[^/]+", SITE_URL.rstrip("/"), raw)
+            locs.append(normalised)
+
+    # Append canonical post URLs, skipping duplicates.
+    seen: set[str] = set(locs)
+    for post in sorted(posts, key=lambda p: p["url"]):
+        url = post["url"]
+        if url not in seen:
+            locs.append(url)
+            seen.add(url)
+
+    # Build and write the sitemap.
+    root = ET.Element("urlset")
+    root.set("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9")
+    for loc in locs:
+        url_el = ET.SubElement(root, "url")
+        ET.SubElement(url_el, "loc").text = loc
+
+    tree = ET.ElementTree(root)
+    ET.indent(tree, space="  ")
+    out.parent.mkdir(exist_ok=True)
+    with out.open("w", encoding="utf-8") as fh:
+        fh.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+        tree.write(fh, encoding="unicode", xml_declaration=False)
+
+    print(f"Written {out} with {len(locs)} URLs ({len(posts)} posts).")
+
+
+# ---------------------------------------------------------------------------
 # RSS feed generation
 # ---------------------------------------------------------------------------
 
@@ -290,7 +340,7 @@ if __name__ == "__main__":
         "--step",
         choices=["pre", "post", "all"],
         default="all",
-        help="pre: homepage only; post: RSS only; all: both (default)",
+        help="pre: homepage only; post: RSS + sitemap; all: both (default)",
     )
     args = parser.parse_args()
 
@@ -300,3 +350,4 @@ if __name__ == "__main__":
         generate_homepage(posts)
     if args.step in ("post", "all"):
         generate_rss(posts)
+        generate_sitemap(posts)

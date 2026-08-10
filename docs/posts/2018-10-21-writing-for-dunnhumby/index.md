@@ -1,5 +1,6 @@
 ---
 title: Writing on the Dunnhumby Engineering Blog
+slug: writing-on-the-dunnhumby-engineering-posts
 date: 2018-10-21
 categories:
     - insights

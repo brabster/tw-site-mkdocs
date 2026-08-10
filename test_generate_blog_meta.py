@@ -557,6 +557,103 @@ class TestGenerateRss(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
+# generate_sitemap
+# ---------------------------------------------------------------------------
+
+_ZENSICAL_SITEMAP = """\
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>http://localhost:8000/</loc>
+  </url>
+  <url>
+    <loc>http://localhost:8000/company/</loc>
+  </url>
+</urlset>
+"""
+
+
+class TestGenerateSitemap(unittest.TestCase):
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.out = Path(self._tmp.name) / "sitemap.xml"
+        self.posts = [
+            _make_post(
+                title="First Post",
+                url="https://tempered.works/posts/2024/06/15/first-post/",
+                slug="2024-06-15-first-post",
+            ),
+            _make_post(
+                title="Second Post",
+                url="https://tempered.works/posts/2024/07/01/second-post/",
+                slug="2024-07-01-second-post",
+            ),
+        ]
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def _locs(self) -> list[str]:
+        root = ET.parse(self.out).getroot()
+        ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+        return [el.text for el in root.findall("sm:url/sm:loc", ns)]
+
+    def test_writes_file_to_specified_path(self):
+        gbm.generate_sitemap(self.posts, output=self.out)
+        self.assertTrue(self.out.exists())
+
+    def test_output_is_valid_xml(self):
+        gbm.generate_sitemap(self.posts, output=self.out)
+        ET.parse(self.out)  # raises if invalid
+
+    def test_root_element_is_urlset(self):
+        gbm.generate_sitemap(self.posts, output=self.out)
+        root = ET.parse(self.out).getroot()
+        self.assertIn("urlset", root.tag)
+
+    def test_post_urls_appear_in_sitemap(self):
+        gbm.generate_sitemap(self.posts, output=self.out)
+        locs = self._locs()
+        for post in self.posts:
+            self.assertIn(post["url"], locs)
+
+    def test_empty_post_list_creates_sitemap_with_no_urls(self):
+        gbm.generate_sitemap([], output=self.out)
+        locs = self._locs()
+        self.assertEqual(locs, [])
+
+    def test_preserves_existing_sitemap_nav_entries(self):
+        self.out.write_text(_ZENSICAL_SITEMAP, encoding="utf-8")
+        gbm.generate_sitemap(self.posts, output=self.out)
+        locs = self._locs()
+        self.assertIn(f"{gbm.SITE_URL}/", locs)
+        self.assertIn(f"{gbm.SITE_URL}/company/", locs)
+
+    def test_normalises_localhost_to_site_url(self):
+        self.out.write_text(_ZENSICAL_SITEMAP, encoding="utf-8")
+        gbm.generate_sitemap(self.posts, output=self.out)
+        locs = self._locs()
+        for loc in locs:
+            self.assertNotIn("localhost", loc, f"localhost leaked into sitemap: {loc}")
+
+    def test_no_duplicate_urls(self):
+        # Simulate a sitemap whose nav entries already match SITE_URL (as on Netlify).
+        existing = _ZENSICAL_SITEMAP.replace("http://localhost:8000", gbm.SITE_URL)
+        self.out.write_text(existing, encoding="utf-8")
+        gbm.generate_sitemap(self.posts, output=self.out)
+        locs = self._locs()
+        self.assertEqual(len(locs), len(set(locs)), "Duplicate URLs in sitemap")
+
+    def test_works_without_pre_existing_sitemap(self):
+        # No sitemap file exists yet – should still produce post URLs.
+        self.assertFalse(self.out.exists())
+        gbm.generate_sitemap(self.posts, output=self.out)
+        locs = self._locs()
+        self.assertEqual(len(locs), len(self.posts))
+
+
+# ---------------------------------------------------------------------------
 # load_posts  (integration smoke test against the real docs/posts/ tree)
 # ---------------------------------------------------------------------------
 
