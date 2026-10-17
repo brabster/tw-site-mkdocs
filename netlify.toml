@@ -1,5 +1,5 @@
 [build]
-    command = "zensical build --strict"
+    command = "zensical build --strict && python3 .dev_scripts/postprocess_rss.py"
     publish = "site"
     environment = { PYTHON_VERSION = "3" }
 
