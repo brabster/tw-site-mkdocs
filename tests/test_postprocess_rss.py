@@ -19,6 +19,8 @@ class PostprocessRSSTests(unittest.TestCase):
             "<h1>Post title</h1>"
             '<p>Rendered <a href="../../other/index.html">link</a>.</p>'
             '<img src="../../images/example.webp" alt="Example">'
+            '<p>{{&lt; figure\n src="./assets/photo.webp"\n caption="A caption" &gt;}}</p>'
+            '<p>{{&lt; img src="./assets/photo.webp" alt="Photo" &gt;}}</p>'
             "</article>",
             encoding="utf-8",
         )
@@ -53,6 +55,15 @@ class PostprocessRSSTests(unittest.TestCase):
             )
             self.assertIn(
                 'src="https://example.test/images/example.webp"',
+                description,
+            )
+            self.assertIn(
+                'src="https://example.test/posts/example/assets/photo.webp"',
+                description,
+            )
+            self.assertIn("<br />A caption", description)
+            self.assertIn(
+                'src="https://example.test/posts/example/assets/photo.webp" alt="Photo"',
                 description,
             )
             self.assertEqual(

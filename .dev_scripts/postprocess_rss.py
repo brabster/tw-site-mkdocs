@@ -5,11 +5,13 @@ import html
 from html.parser import HTMLParser
 from pathlib import Path
 import re
+import shlex
 from urllib.parse import unquote, urljoin, urlsplit
 from xml.etree import ElementTree as ET
 
 
 FEEDS = ("feed_rss_created.xml", "feed_rss_updated.xml")
+SHORTCODE_PATTERN = re.compile(r"\{\{<\s*(img|figure)\s+(.*?)\s*>\}\}", re.DOTALL)
 VOID_ELEMENTS = {
     "area", "base", "br", "col", "embed", "hr", "img", "input", "link",
     "meta", "param", "source", "track", "wbr",
@@ -64,7 +66,12 @@ class ArticleHTMLParser(HTMLParser):
 
     def handle_data(self, data):
         if self.in_article and not self.heading_depth:
-            self.parts.append(html.escape(data, quote=False))
+            cursor = 0
+            for match in SHORTCODE_PATTERN.finditer(data):
+                self.parts.append(html.escape(data[cursor:match.start()], quote=False))
+                self.parts.append(self._render_shortcode(match))
+                cursor = match.end()
+            self.parts.append(html.escape(data[cursor:], quote=False))
 
     def handle_entityref(self, name):
         if self.in_article and not self.heading_depth:
@@ -89,6 +96,23 @@ class ArticleHTMLParser(HTMLParser):
             rendered_attrs.append(f'{name}="{html.escape(value, quote=True)}"')
         ending = " />" if closed or tag in VOID_ELEMENTS else ">"
         return f"<{tag}{(' ' + ' '.join(rendered_attrs)) if rendered_attrs else ''}{ending}"
+
+    def _render_shortcode(self, match):
+        try:
+            attrs = dict(argument.split("=", 1) for argument in shlex.split(match.group(2)))
+        except ValueError:
+            return html.escape(match.group(0), quote=False)
+        src = attrs.get("src")
+        if not src:
+            return html.escape(match.group(0), quote=False)
+        src = html.escape(urljoin(self.page_url, src), quote=True)
+        if match.group(1) == "img":
+            alt = html.escape(attrs.get("alt", ""), quote=True)
+            return f'<img src="{src}" alt="{alt}" />'
+        caption = attrs.get("caption", "")
+        alt = html.escape(caption, quote=True)
+        caption = html.escape(caption, quote=False)
+        return f'<img src="{src}" alt="{alt}" /><br />{caption}'
 
 
 def rendered_article(page_path, page_url):
