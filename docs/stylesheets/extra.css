@@ -5,7 +5,8 @@
     color: var(--md-primary-bg-color);
 }
 
-.md-search {
+.md-search__button {
+    background-color: var(--md-default-bg-color);
     color: var(--md-default-fg-color);
 }
 
