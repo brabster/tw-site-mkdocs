@@ -1,0 +1,90 @@
+[project]
+site_name = "Tempered Works Ltd."
+site_description = "Software and Data Consulting Services"
+site_url = "https://tempered.works/"
+site_author = "brabster"
+copyright = """
+Copyright &copy; 2018 - 2024 Paul Brabban.
+Views expressed are my own and may not represent those of my employer or other associated entity.
+"""
+extra_css = ["stylesheets/extra.css"]
+watch = ["snippets"]
+
+[project.theme]
+language = "en"
+favicon = "favicon.ico"
+logo = "favicons/favicon-32x32.webp"
+features = [
+  "navigation.tabs",
+  "navigation.indexes",
+  "navigation.footer",
+  "content.footnote.tooltips",
+  "content.code.copy",
+  "content.code.annotate",
+  "search.share",
+]
+
+[[project.theme.palette]]
+scheme = "default"
+primary = "blue grey"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/github"
+link = "https://github.com/brabster"
+
+[[project.extra.social]]
+icon = "fontawesome/brands/linkedin"
+link = "https://www.linkedin.com/in/paulbrabban"
+
+[[project.extra.social]]
+icon = "fontawesome/solid/paper-plane"
+link = "mailto:paul@tempered.works"
+
+[[project.extra.social]]
+icon = "material/rss"
+link = "feed_rss_created.xml"
+
+[project.plugins.blog]
+blog_dir = "."
+post_url_format = "posts/{date}/{slug}"
+post_date_format = "MMM d, yyyy"
+categories_toc = true
+categories_allowed = [
+  "automation",
+  "contracts",
+  "insights",
+  "operations",
+  "performance",
+  "python",
+  "security",
+]
+
+[project.plugins.glightbox]
+
+[project.plugins.meta]
+
+[project.plugins.rss]
+match_path = "posts/.*"
+categories = ["categories", "tags"]
+
+[project.plugins.rss.date_from_meta]
+as_creation = "date"
+
+[project.markdown_extensions]
+md_in_html = {}
+def_list = {}
+attr_list = {}
+footnotes = {}
+admonition = {}
+toc.permalink = true
+pymdownx.highlight.anchor_linenums = true
+pymdownx.details = {}
+pymdownx.superfences.custom_fences = [
+  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
+]
+pymdownx.snippets.base_path = ["snippets"]
+pymdownx.snippets.check_paths = true
+pymdownx.snippets.auto_append = ["abbreviations.md"]
+pymdownx.emoji.emoji_index = "zensical.extensions.emoji.twemoji"
+pymdownx.emoji.emoji_generator = "zensical.extensions.emoji.to_svg"
+pymdownx.tasklist.custom_checkbox = true

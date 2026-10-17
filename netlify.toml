@@ -2,6 +2,3 @@
     command = "zensical build --strict && python3 .dev_scripts/postprocess_rss.py"
     publish = "site"
     environment = { PYTHON_VERSION = "3" }
-
-[context.production.environment]
-    SITE_URL = "https://tempered.works"

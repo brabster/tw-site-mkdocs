@@ -1,5 +1,6 @@
 venv/
 .cache/
 .site/
+site/
 __pycache__/
 *.py[cod]

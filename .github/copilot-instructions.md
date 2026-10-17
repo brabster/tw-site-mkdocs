@@ -1,4 +1,4 @@
-This is a blog and should follow a consistent style over time. Posts are in `docs/posts`. It is an mkdocs site, using the mkdocs-material theme. The configuration is in `mkdocs.yml`.
+This is a blog and should follow a consistent style over time. Posts are in `docs/posts`. It is a Zensical site using a Material-style theme. The configuration is in `zensical.toml`.
 
 The goal is to make informative, engaging content, based on real-life experience, accessible and easy to understand for a general audience.
 
@@ -59,7 +59,7 @@ Google is making BigQuery safer by default from September 2025, introducing dail
 
 ## Categories
 
-Blog posts should have one or more categories, chosen from the `categories_allowed` list in `mkdocs.yml`.
+Blog posts should have one or more categories, chosen from the `categories_allowed` list in `zensical.toml`.
 
 - Descriptions for each categories can be found under `docs/categories`.
 - If no suitable categories are found, a new category should be suggested.
