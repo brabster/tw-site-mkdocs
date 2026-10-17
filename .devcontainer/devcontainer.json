@@ -1,6 +1,6 @@
 {
   "build": { "dockerfile": "Dockerfile" },
-  "postCreateCommand": "git config --local core.hooksPath .githooks/",
+  "postCreateCommand": "git submodule update --init --recursive && git config --local core.hooksPath .githooks/",
   "customizations": {
     "codespaces": {
       "repositories": {

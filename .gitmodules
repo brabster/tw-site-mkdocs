@@ -1,0 +1,4 @@
+[submodule ".agent-system/xubuntu-workstation"]
+	path = .agent-system/xubuntu-workstation
+	url = https://github.com/brabster/xubuntu-workstation.git
+	branch = copilot/brabster-xubuntu-workstation-100-use-contribute-kn
