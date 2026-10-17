@@ -1,7 +1,7 @@
 [build]
-    command = "mkdocs build --strict"
+    command = "zensical build --strict"
     publish = "site"
-    environment = { PYTHON_VERSION = "3" }
+    environment = { PYTHON_VERSION = "3.11" }
 
 [context.production.environment]
     SITE_URL = "https://tempered.works"

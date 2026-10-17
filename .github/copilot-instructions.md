@@ -1,4 +1,4 @@
-This is a blog and should follow a consistent style over time. Posts are in `docs/posts`. It is an mkdocs site, using the mkdocs-material theme. The configuration is in `mkdocs.yml`.
+This is a blog and should follow a consistent style over time. Posts are in `docs/posts`. It is a Zensical site using the Material theme. The configuration is in `mkdocs.yml`.
 
 The goal is to make informative, engaging content, based on real-life experience, accessible and easy to understand for a general audience.
 
