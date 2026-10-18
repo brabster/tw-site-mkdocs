@@ -28,6 +28,7 @@ class PostprocessRSSTests(unittest.TestCase):
             '<?xml version="1.0"?>'
             '<rss version="2.0"><channel><title>Test</title>'
             '<link>https://example.test/</link>'
+            '<managingEditor>brabster</managingEditor>'
             '<item><title>Example</title>'
             '<link>https://example.test/posts/example/</link>'
             '<description>Raw markdown ![image](./image.webp)</description>'
@@ -45,6 +46,10 @@ class PostprocessRSSTests(unittest.TestCase):
         postprocess(self.site_dir)
         for filename in ("feed_rss_created.xml", "feed_rss_updated.xml"):
             root = ET.parse(self.site_dir / filename).getroot()
+            self.assertEqual(
+                root.findtext("./channel/managingEditor"),
+                "paul@tempered.works",
+            )
             description = root.findtext("./channel/item/description")
             self.assertIn("Rendered", description)
             self.assertNotIn("Raw markdown", description)
