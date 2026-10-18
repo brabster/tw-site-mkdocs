@@ -1,7 +1,9 @@
+import os
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 from xml.etree import ElementTree as ET
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / ".dev_scripts"))
@@ -18,7 +20,7 @@ class PostprocessRSSTests(unittest.TestCase):
             '<article class="md-content__inner md-typeset">'
             "<h1>Post title</h1>"
             '<p>Rendered <a href="../../other/index.html">link</a>.</p>'
-            '<img src="../../images/example.webp" alt="Example">'
+            '<img src="../../images/example.webp" alt="Example" data-type="image">'
             '<p>{{&lt; figure\n src="./assets/photo.webp"\n caption="A caption" &gt;}}</p>'
             '<p>{{&lt; img src="./assets/photo.webp" alt="Photo" &gt;}}</p>'
             "<!-- more -->"
@@ -28,8 +30,11 @@ class PostprocessRSSTests(unittest.TestCase):
         )
         self.feed_xml = (
             '<?xml version="1.0"?>'
-            '<rss version="2.0"><channel><title>Test</title>'
+            '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'
+            '<channel><title>Test</title>'
             '<link>https://example.test/</link>'
+            '<atom:link href="https://example.test/feed_rss_created.xml" '
+            'rel="self" type="application/rss+xml" />'
             '<managingEditor>brabster</managingEditor>'
             '<item><title>Example</title>'
             '<author>Paul Brabban</author>'
@@ -69,6 +74,7 @@ class PostprocessRSSTests(unittest.TestCase):
                 'src="https://example.test/images/example.webp"',
                 description,
             )
+            self.assertNotIn("data-type=", description)
             self.assertIn(
                 'src="https://example.test/posts/example/assets/photo.webp"',
                 description,
@@ -89,6 +95,19 @@ class PostprocessRSSTests(unittest.TestCase):
         homepage = self.index_path.read_text(encoding="utf-8")
         self.assertIn('href="feed_rss_created.xml"', homepage)
         self.assertIn('href="feed_rss_updated.xml"', homepage)
+
+    def test_atom_self_links_use_deploy_url(self):
+        deploy_url = "https://deploy-preview-42--example.netlify.app"
+        with patch.dict(os.environ, {"DEPLOY_PRIME_URL": deploy_url}):
+            postprocess(self.site_dir)
+
+        for filename in ("feed_rss_created.xml", "feed_rss_updated.xml"):
+            root = ET.parse(self.site_dir / filename).getroot()
+            self_link = root.find("./channel/{http://www.w3.org/2005/Atom}link")
+            self.assertEqual(
+                self_link.get("href"),
+                f"{deploy_url}/{filename}",
+            )
 
     def test_is_idempotent(self):
         postprocess(self.site_dir)

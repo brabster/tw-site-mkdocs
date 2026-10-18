@@ -3,6 +3,7 @@
 import argparse
 import html
 from html.parser import HTMLParser
+import os
 from pathlib import Path
 import re
 import shlex
@@ -14,6 +15,7 @@ FEEDS = ("feed_rss_created.xml", "feed_rss_updated.xml")
 AUTHOR_NAME = "Paul Brabban"
 DC_NAMESPACE = "http://purl.org/dc/elements/1.1/"
 DC_CREATOR = f"{{{DC_NAMESPACE}}}creator"
+ATOM_SELF_LINK = "{http://www.w3.org/2005/Atom}link"
 SHORTCODE_PATTERN = re.compile(r"\{\{<\s*(img|figure)\s+(.*?)\s*>\}\}", re.DOTALL)
 VOID_ELEMENTS = {
     "area", "base", "br", "col", "embed", "hr", "img", "input", "link",
@@ -93,6 +95,8 @@ class ArticleHTMLParser(HTMLParser):
     def _start_tag(self, tag, attrs, closed=False):
         rendered_attrs = []
         for name, value in attrs:
+            if name == "data-type":
+                continue
             if value is None:
                 rendered_attrs.append(name)
                 continue
@@ -150,6 +154,10 @@ def postprocess_feed(feed_path, site_dir):
     channel = tree.find("channel")
     if channel is None:
         raise ValueError(f"Missing RSS channel in {feed_path}")
+    deploy_url = os.environ.get("DEPLOY_PRIME_URL")
+    self_link = channel.find(ATOM_SELF_LINK)
+    if deploy_url and self_link is not None:
+        self_link.set("href", urljoin(f"{deploy_url.rstrip('/')}/", feed_path.name))
     managing_editor = channel.find("managingEditor")
     if managing_editor is not None:
         channel.remove(managing_editor)
