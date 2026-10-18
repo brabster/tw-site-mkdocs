@@ -11,7 +11,9 @@ from xml.etree import ElementTree as ET
 
 
 FEEDS = ("feed_rss_created.xml", "feed_rss_updated.xml")
-AUTHOR_EMAIL = "paul@tempered.works (Paul Brabban)"
+AUTHOR_NAME = "Paul Brabban"
+DC_NAMESPACE = "http://purl.org/dc/elements/1.1/"
+DC_CREATOR = f"{{{DC_NAMESPACE}}}creator"
 SHORTCODE_PATTERN = re.compile(r"\{\{<\s*(img|figure)\s+(.*?)\s*>\}\}", re.DOTALL)
 VOID_ELEMENTS = {
     "area", "base", "br", "col", "embed", "hr", "img", "input", "link",
@@ -141,16 +143,25 @@ def postprocess_feed(feed_path, site_dir):
     tree = ET.parse(feed_path, parser=parser)
     for _, (prefix, namespace) in ET.iterparse(feed_path, events=("start-ns",)):
         ET.register_namespace(prefix, namespace)
+    ET.register_namespace("dc", DC_NAMESPACE)
 
     channel = tree.find("channel")
     if channel is None:
         raise ValueError(f"Missing RSS channel in {feed_path}")
     managing_editor = channel.find("managingEditor")
     if managing_editor is not None:
-        managing_editor.text = AUTHOR_EMAIL
+        channel.remove(managing_editor)
     for item in channel.findall("item"):
+        author_index = len(item)
         for author in item.findall("author"):
-            author.text = AUTHOR_EMAIL
+            author_index = min(author_index, list(item).index(author))
+            item.remove(author)
+        for creator in item.findall(DC_CREATOR):
+            author_index = min(author_index, list(item).index(creator))
+            item.remove(creator)
+        creator = ET.Element(DC_CREATOR)
+        creator.text = AUTHOR_NAME
+        item.insert(author_index, creator)
         link = item.findtext("link")
         description = item.find("description")
         if not link or description is None:

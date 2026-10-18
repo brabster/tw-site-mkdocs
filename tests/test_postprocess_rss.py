@@ -47,13 +47,13 @@ class PostprocessRSSTests(unittest.TestCase):
         postprocess(self.site_dir)
         for filename in ("feed_rss_created.xml", "feed_rss_updated.xml"):
             root = ET.parse(self.site_dir / filename).getroot()
+            channel = root.find("channel")
+            self.assertIsNone(channel.find("managingEditor"))
+            item = channel.find("item")
+            self.assertIsNone(item.find("author"))
             self.assertEqual(
-                root.findtext("./channel/managingEditor"),
-                "paul@tempered.works (Paul Brabban)",
-            )
-            self.assertEqual(
-                root.findtext("./channel/item/author"),
-                "paul@tempered.works (Paul Brabban)",
+                item.findtext("{http://purl.org/dc/elements/1.1/}creator"),
+                "Paul Brabban",
             )
             description = root.findtext("./channel/item/description")
             self.assertIn("Rendered", description)
@@ -80,6 +80,8 @@ class PostprocessRSSTests(unittest.TestCase):
                 root.findtext("./channel/item/link"),
                 "https://example.test/posts/example/",
             )
+            xml = (self.site_dir / filename).read_text(encoding="utf-8")
+            self.assertIn('xmlns:dc="http://purl.org/dc/elements/1.1/"', xml)
 
         homepage = self.index_path.read_text(encoding="utf-8")
         self.assertIn('href="feed_rss_created.xml"', homepage)
