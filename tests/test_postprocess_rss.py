@@ -43,7 +43,11 @@ class PostprocessRSSTests(unittest.TestCase):
             '</item></channel></rss>'
         )
         for filename in ("feed_rss_created.xml", "feed_rss_updated.xml"):
-            (self.site_dir / filename).write_text(self.feed_xml, encoding="utf-8")
+            feed_xml = self.feed_xml.replace(
+                "feed_rss_created.xml",
+                filename,
+            )
+            (self.site_dir / filename).write_text(feed_xml, encoding="utf-8")
         self.index_path = self.site_dir / "index.html"
         self.index_path.write_text("<html><head></head><body></body></html>", encoding="utf-8")
 
@@ -51,10 +55,16 @@ class PostprocessRSSTests(unittest.TestCase):
         self.temp_dir.cleanup()
 
     def test_renders_feed_descriptions_and_adds_autodiscovery_links(self):
-        postprocess(self.site_dir)
+        with patch.dict(os.environ, {"DEPLOY_PRIME_URL": ""}):
+            postprocess(self.site_dir)
         for filename in ("feed_rss_created.xml", "feed_rss_updated.xml"):
             root = ET.parse(self.site_dir / filename).getroot()
             channel = root.find("channel")
+            self_link = channel.find("{http://www.w3.org/2005/Atom}link")
+            self.assertEqual(
+                self_link.get("href"),
+                f"https://example.test/{filename}",
+            )
             self.assertIsNone(channel.find("managingEditor"))
             item = channel.find("item")
             self.assertIsNone(item.find("author"))
