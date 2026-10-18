@@ -85,7 +85,9 @@ class ArticleHTMLParser(HTMLParser):
             self.parts.append(f"&#{name};")
 
     def handle_comment(self, data):
-        if self.in_article and not self.heading_depth:
+        if self.in_article and data.strip() == "more":
+            self.in_article = False
+        elif self.in_article and not self.heading_depth:
             self.parts.append(f"<!--{data}-->")
 
     def _start_tag(self, tag, attrs, closed=False):

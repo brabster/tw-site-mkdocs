@@ -21,6 +21,8 @@ class PostprocessRSSTests(unittest.TestCase):
             '<img src="../../images/example.webp" alt="Example">'
             '<p>{{&lt; figure\n src="./assets/photo.webp"\n caption="A caption" &gt;}}</p>'
             '<p>{{&lt; img src="./assets/photo.webp" alt="Photo" &gt;}}</p>'
+            "<!-- more -->"
+            "<p>Full post content after the excerpt.</p>"
             "</article>",
             encoding="utf-8",
         )
@@ -76,6 +78,7 @@ class PostprocessRSSTests(unittest.TestCase):
                 'src="https://example.test/posts/example/assets/photo.webp" alt="Photo"',
                 description,
             )
+            self.assertNotIn("Full post content after the excerpt", description)
             self.assertEqual(
                 root.findtext("./channel/item/link"),
                 "https://example.test/posts/example/",
