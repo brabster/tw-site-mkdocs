@@ -30,6 +30,7 @@ class PostprocessRSSTests(unittest.TestCase):
             '<link>https://example.test/</link>'
             '<managingEditor>brabster</managingEditor>'
             '<item><title>Example</title>'
+            '<author>Paul Brabban</author>'
             '<link>https://example.test/posts/example/</link>'
             '<description>Raw markdown ![image](./image.webp)</description>'
             '</item></channel></rss>'
@@ -48,7 +49,11 @@ class PostprocessRSSTests(unittest.TestCase):
             root = ET.parse(self.site_dir / filename).getroot()
             self.assertEqual(
                 root.findtext("./channel/managingEditor"),
-                "paul@tempered.works",
+                "paul@tempered.works (Paul Brabban)",
+            )
+            self.assertEqual(
+                root.findtext("./channel/item/author"),
+                "paul@tempered.works (Paul Brabban)",
             )
             description = root.findtext("./channel/item/description")
             self.assertIn("Rendered", description)

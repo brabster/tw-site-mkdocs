@@ -11,7 +11,7 @@ from xml.etree import ElementTree as ET
 
 
 FEEDS = ("feed_rss_created.xml", "feed_rss_updated.xml")
-MANAGING_EDITOR = "paul@tempered.works"
+AUTHOR_EMAIL = "paul@tempered.works (Paul Brabban)"
 SHORTCODE_PATTERN = re.compile(r"\{\{<\s*(img|figure)\s+(.*?)\s*>\}\}", re.DOTALL)
 VOID_ELEMENTS = {
     "area", "base", "br", "col", "embed", "hr", "img", "input", "link",
@@ -147,8 +147,10 @@ def postprocess_feed(feed_path, site_dir):
         raise ValueError(f"Missing RSS channel in {feed_path}")
     managing_editor = channel.find("managingEditor")
     if managing_editor is not None:
-        managing_editor.text = MANAGING_EDITOR
+        managing_editor.text = AUTHOR_EMAIL
     for item in channel.findall("item"):
+        for author in item.findall("author"):
+            author.text = AUTHOR_EMAIL
         link = item.findtext("link")
         description = item.find("description")
         if not link or description is None:
