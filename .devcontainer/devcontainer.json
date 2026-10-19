@@ -1,15 +1,4 @@
 {
   "build": { "dockerfile": "Dockerfile" },
-  "postCreateCommand": "git config --local core.hooksPath .githooks/",
-  "customizations": {
-    "codespaces": {
-      "repositories": {
-        "brabster/mkdocs-material-insiders": {
-          "permissions": {
-            "contents": "read"
-          }
-        }
-      }
-    }
-  }
+  "postCreateCommand": "git submodule update --init --recursive && git config --local core.hooksPath .githooks/"
 }
